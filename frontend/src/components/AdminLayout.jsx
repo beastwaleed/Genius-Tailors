@@ -88,7 +88,9 @@ export default function AdminLayout({ children, title }) {
           <SidebarLink to="/admin/fabrics" icon={Icons.Fabrics} label="Fabrics" />
           
           <div style={{ flex: 1 }} />
-          <SidebarLink onClick={handleLogout} icon={Icons.Logout} label="Logout" />
+          <div style={{ marginBottom: '4rem' }}>
+            <SidebarLink onClick={handleLogout} icon={Icons.Logout} label="Logout" />
+          </div>
         </nav>
       </aside>
 

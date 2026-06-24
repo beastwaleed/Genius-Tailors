@@ -86,7 +86,9 @@ export default function CustomerLayout({ children, title }) {
           <SidebarLink to="/profile" icon={Icons.Profile} label="Profile" />
 
           <div style={{ flex: 1 }} />
-          <SidebarLink onClick={handleLogout} icon={Icons.Logout} label="Logout" />
+          <div style={{ marginBottom: '4rem' }}>
+            <SidebarLink onClick={handleLogout} icon={Icons.Logout} label="Logout" />
+          </div>
         </nav>
       </aside>
 
