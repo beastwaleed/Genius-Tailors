@@ -1,0 +1,787 @@
+import { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import CustomerLayout from '../../components/CustomerLayout';
+import api from '../../api';
+import toast from 'react-hot-toast';
+
+import imgBanCollar from '../../assets/styles/ban_collar.png';
+import imgShirtCollar from '../../assets/styles/shirt_collar.png';
+import imgRoundNeck from '../../assets/styles/round_neck.png';
+
+import imgOpenSleeves from '../../assets/styles/open_sleeves.png';
+import imgSingleCuff from '../../assets/styles/single_cuff.png';
+import imgDoubleCuff from '../../assets/styles/double_cuff.png';
+
+import imgSidePockets from '../../assets/styles/side_pockets.png';
+import imgFrontPocket from '../../assets/styles/front_pocket.png';
+import imgFrontSidePockets from '../../assets/styles/front_side_pockets.png';
+
+import imgStandardShalwar from '../../assets/styles/standard_shalwar.png';
+import imgStraightTrouser from '../../assets/styles/straight_trouser.png';
+import imgNarrowPant from '../../assets/styles/narrow_pant.png';
+
+import imgFabricOwn from '../../assets/fabrics/fabric_own.png';
+import imgFabricCotton from '../../assets/fabrics/fabric_cotton.png';
+import imgFabricWashWear from '../../assets/fabrics/fabric_wash_wear.png';
+import imgFabricEgyptian from '../../assets/fabrics/fabric_egyptian.png';
+import imgFabricSilk from '../../assets/fabrics/fabric_silk.png';
+
+const SERVICES_PRICES = {
+  'Kameez Shalwar': 2500,
+  'Kurta Shalwar': 2000,
+  'Kurta Pajama': 2000,
+  'Waistcoat': 2000
+};
+
+const COLLAR_OPTIONS = [
+  { name: 'Ban Collar', img: imgBanCollar },
+  { name: 'Shirt Collar', img: imgShirtCollar },
+  { name: 'Round Neck', img: imgRoundNeck }
+];
+
+const CUFF_OPTIONS = [
+  { name: 'Open Sleeves', img: imgOpenSleeves },
+  { name: 'Single Cuff', img: imgSingleCuff },
+  { name: 'Double Cuff', img: imgDoubleCuff }
+];
+
+const POCKET_OPTIONS = [
+  { name: 'Side Pockets Only', img: imgSidePockets },
+  { name: 'Front Pocket', img: imgFrontPocket },
+  { name: 'Front & Side', img: imgFrontSidePockets }
+];
+
+const BOTTOM_OPTIONS = [
+  { name: 'Standard Shalwar', img: imgStandardShalwar },
+  { name: 'Straight Trouser', img: imgStraightTrouser },
+  { name: 'Narrow Pant', img: imgNarrowPant }
+];
+
+const FABRIC_COLORS = [
+  { name: 'Black', hex: '#000000' },
+  { name: 'Navy Blue', hex: '#0f172a' },
+  { name: 'Off-White', hex: '#f8fafc' },
+  { name: 'Pure White', hex: '#ffffff' },
+  { name: 'Charcoal Grey', hex: '#334155' },
+  { name: 'Olive Green', hex: '#3f6212' },
+  { name: 'Maroon', hex: '#7f1d1d' },
+];
+
+export default function Booking() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
+  const initialService = searchParams.get('service') || 'Kameez Shalwar';
+  
+  const [step, setStep] = useState(1);
+  const [serviceName, setServiceName] = useState(initialService);
+  const [profiles, setProfiles] = useState([]);
+  const [selectedProfileId, setSelectedProfileId] = useState('');
+  const [hasDiscount, setHasDiscount] = useState(false);
+  
+  useEffect(() => {
+    setSelectedProfileId('');
+  }, [serviceName]);
+  
+  // Customization State
+  const [styleVariations, setStyleVariations] = useState({
+    collar: 'Ban Collar',
+    sleeves: 'Open Sleeves',
+    front: 'Side Pockets Only',
+    bottom: 'Standard Shalwar'
+  });
+  
+  const [dbFabrics, setDbFabrics] = useState([]);
+  const fabricList = [
+    { name: 'Provide my own fabric', price: 0, desc: 'Drop off your unstitched fabric to our physical store within 3 days.', img: imgFabricOwn },
+    ...dbFabrics
+  ];
+
+  const [selectedFabric, setSelectedFabric] = useState(fabricList[0]);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [isRush, setIsRush] = useState(false);
+  const [customerNote, setCustomerNote] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [profRes, ordRes] = await Promise.all([
+          api.get('/api/measurements'),
+          api.get('/api/orders/myorders')
+        ]);
+        setProfiles(profRes.data);
+        if (ordRes.data.length === 0) setHasDiscount(true);
+        
+        try {
+          const fabRes = await api.get('/api/fabrics');
+          setDbFabrics(fabRes.data);
+        } catch (fabErr) {
+          console.error('Warning: Could not fetch fabrics from database', fabErr);
+        }
+      } catch (error) {
+        console.error('Failed to fetch data', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const basePrice = SERVICES_PRICES[serviceName] || 2500;
+  const discountAmount = hasDiscount ? (basePrice * 0.1) : 0;
+  const totalPrice = basePrice - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price;
+
+  const handleNext = () => setStep(s => s + 1);
+  const handleBack = () => setStep(s => s - 1);
+
+  const renderProfileIcon = (measurements) => {
+    const keys = Object.keys(measurements || {});
+    const isWaistcoat = keys.includes('Shoulders') && !keys.includes('Bottom (Pancha)');
+
+    if (isWaistcoat) {
+      // Waistcoat / Vest icon
+      return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M4 22V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14" />
+          <path d="M4 12h16" />
+          <path d="M9 6v2" />
+          <path d="M15 6v2" />
+        </svg>
+      );
+    }
+    
+    // Default / Shalwar Kameez (Shirt icon)
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z" />
+      </svg>
+    );
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!selectedProfileId) return toast.error('Please select a measurement profile');
+    if (selectedFabric.name !== 'Provide my own fabric' && !selectedColor) {
+      return toast.error('Please select a fabric color');
+    }
+    
+    const profile = profiles.find(p => p._id === selectedProfileId);
+    if (!profile) return toast.error('Invalid profile selected');
+
+    setLoading(true);
+    try {
+      await api.post('/api/orders', {
+        serviceName,
+        styleVariations,
+        fabricSelection: selectedFabric.name,
+        fabricColor: selectedColor,
+        measurementSnapshot: {
+          profileName: profile.profileName,
+          measurements: profile.measurements || {}
+        },
+        totalPrice,
+        isRush,
+        customerNote
+      });
+
+      toast.success('Order placed successfully! 🎉');
+      navigate('/my-orders');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to place order');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredProfiles = profiles.filter(p => {
+    const keysStr = Object.keys(p.measurements || {}).join(' ').toLowerCase();
+    
+    // Check if it's a generic profile from older versions (has 'shoulders' but no specific garment name)
+    const isOldGeneric = keysStr.includes('shoulders') && !keysStr.includes('kameez') && !keysStr.includes('kurta');
+    const hasOldBottom = keysStr.includes('bottom (pancha)');
+    
+    if (serviceName === 'Waistcoat') {
+      return keysStr.includes('waistcoat') || (isOldGeneric && !hasOldBottom);
+    }
+    
+    if (serviceName === 'Kameez Shalwar') {
+      return keysStr.includes('kameez') || keysStr.includes('shalwar') || hasOldBottom || isOldGeneric;
+    }
+    
+    if (serviceName === 'Kurta Shalwar') {
+      return keysStr.includes('kurta') || keysStr.includes('shalwar') || hasOldBottom || isOldGeneric;
+    }
+    
+    if (serviceName === 'Kurta Pajama') {
+      return keysStr.includes('kurta') || keysStr.includes('pajama') || hasOldBottom || isOldGeneric;
+    }
+
+    return true; // Fallback
+  });
+
+  return (
+    <CustomerLayout title="Place New Order">
+      <div className="booking-wizard">
+        
+        {/* Progress Bar */}
+        <div className="wizard-progress">
+          <div className={`step ${step >= 1 ? 'active' : ''}`}>1. Fit</div>
+          <div className="step-divider"></div>
+          <div className={`step ${step >= 2 ? 'active' : ''}`}>2. Style</div>
+          <div className="step-divider"></div>
+          <div className={`step ${step >= 3 ? 'active' : ''}`}>3. Details</div>
+          <div className="step-divider"></div>
+          <div className={`step ${step >= 4 ? 'active' : ''}`}>4. Checkout</div>
+        </div>
+
+        {/* Step 1: Garment and Profile */}
+        {step === 1 && (
+          <div className="wizard-step luxury-card">
+            <h2 className="step-title">What are we stitching for you?</h2>
+            
+            <div className="luxury-form-group">
+              <label>Garment Service</label>
+              <select value={serviceName} onChange={(e) => setServiceName(e.target.value)} className="luxury-select">
+                {Object.keys(SERVICES_PRICES).map(s => (
+                  <option key={s} value={s}>{s} (Base: Rs. {SERVICES_PRICES[s]})</option>
+                ))}
+              </select>
+            </div>
+
+            <h2 className="step-title" style={{ marginTop: '2rem' }}>Select Measurement Profile</h2>
+            {filteredProfiles.length > 0 ? (
+              <div className="minimal-profiles-list">
+                {filteredProfiles.map(p => (
+                  <label 
+                    key={p._id} 
+                    className={`minimal-profile-item ${selectedProfileId === p._id ? 'selected' : ''}`}
+                  >
+                    <input 
+                      type="radio" 
+                      name="measurementProfile" 
+                      checked={selectedProfileId === p._id} 
+                      onChange={() => setSelectedProfileId(p._id)} 
+                    />
+                    <div className="mp-icon-wrap">
+                      {renderProfileIcon(p.measurements)}
+                    </div>
+                    <div className="mp-info">
+                      <span className="mp-name">{p.profileName}</span>
+                      <span className="mp-meta">{Object.keys(p.measurements || {}).length} saved measurements</span>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <div style={{ padding: '2rem', textAlign: 'center', background: '#faf9f6', borderRadius: '8px' }}>
+                <p style={{ color: 'var(--stone)' }}>You do not have any saved profiles for {serviceName}.</p>
+                <Link to="/measurements" className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>Create Profile</Link>
+              </div>
+            )}
+
+            <div className="wizard-actions">
+              <button 
+                className="btn btn-primary btn-lg" 
+                onClick={handleNext} 
+                disabled={!selectedProfileId}
+              >
+                Next Step →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Customization (Visual Style Picks) */}
+        {step === 2 && (
+          <div className="wizard-step luxury-card">
+            <h2 className="step-title">Customize Your Style</h2>
+            <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>Select the specific tailoring details for your {serviceName}.</p>
+
+            {/* Collar Options */}
+            <div className="style-section">
+              <h3>Collar Style</h3>
+              <div className="style-grid">
+                {COLLAR_OPTIONS.map(opt => (
+                  <div key={opt.name} className={`style-card ${styleVariations.collar === opt.name ? 'selected' : ''}`} onClick={() => setStyleVariations({...styleVariations, collar: opt.name})}>
+                    <img src={opt.img} alt={opt.name} className="style-img" />
+                    <span>{opt.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Cuff Options */}
+            <div className="style-section">
+              <h3>Sleeve Cuffs</h3>
+              <div className="style-grid">
+                {CUFF_OPTIONS.map(opt => (
+                  <div key={opt.name} className={`style-card ${styleVariations.sleeves === opt.name ? 'selected' : ''}`} onClick={() => setStyleVariations({...styleVariations, sleeves: opt.name})}>
+                    <img src={opt.img} alt={opt.name} className="style-img" />
+                    <span>{opt.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pocket Options */}
+            <div className="style-section">
+              <h3>Pockets</h3>
+              <div className="style-grid">
+                {POCKET_OPTIONS.map(opt => (
+                  <div key={opt.name} className={`style-card ${styleVariations.front === opt.name ? 'selected' : ''}`} onClick={() => setStyleVariations({...styleVariations, front: opt.name})}>
+                    <img src={opt.img} alt={opt.name} className="style-img" />
+                    <span>{opt.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottoms Options */}
+            <div className="style-section">
+              <h3>Bottom Style</h3>
+              <div className="style-grid">
+                {BOTTOM_OPTIONS.map(opt => (
+                  <div key={opt.name} className={`style-card ${styleVariations.bottom === opt.name ? 'selected' : ''}`} onClick={() => setStyleVariations({...styleVariations, bottom: opt.name})}>
+                    <img src={opt.img} alt={opt.name} className="style-img" />
+                    <span>{opt.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="wizard-actions split">
+              <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
+              <button className="btn btn-primary btn-lg" onClick={handleNext}>Proceed to Details →</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Details & Priority */}
+        {step === 3 && (
+          <div className="wizard-step luxury-card">
+            <h2 className="step-title">Fabric & Order Preferences</h2>
+            
+            <div className="style-section" style={{ marginBottom: '2rem' }}>
+              <h3 style={{ marginBottom: '1rem' }}>Fabric Selection</h3>
+              <div className="fabric-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                {fabricList.map(opt => (
+                  <div 
+                    key={opt._id || opt.name} 
+                    className={`fabric-card ${selectedFabric.name === opt.name ? 'selected' : ''}`}
+                    onClick={() => { setSelectedFabric(opt); setSelectedColor(''); }}
+                    style={{ 
+                      border: selectedFabric.name === opt.name ? '2px solid var(--onyx)' : '1px solid #e2e8f0', 
+                      borderRadius: '8px', cursor: 'pointer', overflow: 'hidden', transition: 'all 0.2s',
+                      boxShadow: selectedFabric.name === opt.name ? '0 10px 15px -3px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                  >
+                    <div className="fabric-img-wrapper" style={{ height: '140px', overflow: 'hidden', background: '#f1f5f9' }}>
+                      <img src={opt.imageUrl || opt.img} alt={opt.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div className="fabric-info" style={{ padding: '1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                        <h4 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--onyx)' }}>{opt.name}</h4>
+                        <span style={{ fontWeight: '600', fontSize: '0.9rem', color: opt.price === 0 ? 'var(--stone)' : 'var(--primary)' }}>
+                          {opt.price === 0 ? 'Free' : `+Rs. ${opt.price}`}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, color: 'var(--stone)', fontSize: '0.85rem', lineHeight: 1.4 }}>{opt.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {selectedFabric.name !== 'Provide my own fabric' && (
+                <div className="color-selection fade-in" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
+                  <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Select Fabric Color</h3>
+                  <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                    {(selectedFabric.colors && selectedFabric.colors.length > 0 ? selectedFabric.colors : FABRIC_COLORS).map(color => (
+                      <label 
+                        key={color.name} 
+                        className="color-label"
+                        style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}
+                      >
+                        <input type="radio" name="color" checked={selectedColor === color.name} onChange={() => setSelectedColor(color.name)} style={{ display: 'none' }} />
+                        <div 
+                          className="color-swatch" 
+                          style={{ 
+                            width: '45px', height: '45px', borderRadius: '50%', backgroundColor: color.hex, 
+                            border: color.hex === '#ffffff' || color.hex === '#f8fafc' ? '1px solid #cbd5e1' : 'none',
+                            boxShadow: selectedColor === color.name ? '0 0 0 3px white, 0 0 0 5px var(--onyx)' : '0 2px 5px rgba(0,0,0,0.1)',
+                            transition: 'all 0.2s',
+                            transform: selectedColor === color.name ? 'scale(1.1)' : 'scale(1)'
+                          }}
+                        ></div>
+                        <span style={{ fontSize: '0.8rem', fontWeight: selectedColor === color.name ? '600' : '500', color: selectedColor === color.name ? 'var(--onyx)' : 'var(--stone)' }}>{color.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="luxury-form-group">
+              <label>Additional Design Notes (Optional)</label>
+              <textarea 
+                rows="4" 
+                placeholder="e.g. Please make the collar extra stiff, or keep the fit slightly loose."
+                value={customerNote}
+                onChange={(e) => setCustomerNote(e.target.value)}
+                className="luxury-textarea"
+              ></textarea>
+            </div>
+
+            <div className="priority-section">
+              <h3 style={{ marginBottom: '1rem' }}>Delivery Speed</h3>
+              <label className={`priority-card ${!isRush ? 'selected' : ''}`}>
+                <input type="radio" name="rush" checked={!isRush} onChange={() => setIsRush(false)} />
+                <div className="priority-info">
+                  <h4>Standard Delivery</h4>
+                  <p>5-7 working days. Included in base price.</p>
+                </div>
+              </label>
+
+              <label className={`priority-card rush-card ${isRush ? 'selected' : ''}`}>
+                <input type="radio" name="rush" checked={isRush} onChange={() => setIsRush(true)} />
+                <div className="priority-info">
+                  <h4>Expedited Rush ⚡</h4>
+                  <p>2-3 working days. +Rs. 1,000 extra charge.</p>
+                </div>
+              </label>
+            </div>
+
+            <div className="wizard-actions split">
+              <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
+              <button className="btn btn-primary btn-lg" onClick={handleNext}>Proceed to Summary →</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Summary & Place Order */}
+        {step === 4 && (
+          <div className="wizard-step luxury-card">
+            <h2 className="step-title">Order Summary</h2>
+            
+            <div className="receipt-box">
+              <div className="receipt-row">
+                <span>{serviceName} (Base Stitching)</span>
+                <span>Rs. {basePrice.toLocaleString()}</span>
+              </div>
+              <div className="receipt-row">
+                <span>Fabric: {selectedFabric.name} {selectedColor ? `(${selectedColor})` : ''}</span>
+                <span>{selectedFabric.price === 0 ? 'Customer Provided' : `Rs. ${selectedFabric.price.toLocaleString()}`}</span>
+              </div>
+              <div className="receipt-row">
+                <span>Measurement Profile</span>
+                <span>{profiles.find(p => p._id === selectedProfileId)?.profileName}</span>
+              </div>
+              
+              <div className="receipt-divider"></div>
+              <div style={{ padding: '0.5rem 0', color: 'var(--stone)' }}>
+                <strong style={{ color: 'var(--onyx)', display: 'block', marginBottom: '0.5rem' }}>Style Preferences:</strong>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
+                  <span>Collar: {styleVariations.collar}</span>
+                  <span>Cuffs: {styleVariations.sleeves}</span>
+                  <span>Pockets: {styleVariations.front}</span>
+                  <span>Bottom: {styleVariations.bottom}</span>
+                </div>
+              </div>
+              <div className="receipt-divider"></div>
+              {hasDiscount && (
+                <div className="receipt-row" style={{ color: '#16a34a', fontWeight: 500 }}>
+                  <span>First Order Promo (10% Off)</span>
+                  <span>- Rs. {discountAmount.toLocaleString()}</span>
+                </div>
+              )}
+              {isRush && (
+                <div className="receipt-row rush-row">
+                  <span>Expedited Rush Fee</span>
+                  <span>Rs. 1,000</span>
+                </div>
+              )}
+              <div className="receipt-divider"></div>
+              <div className="receipt-row total">
+                <span>Total Amount</span>
+                <span>Rs. {totalPrice.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '2rem', padding: '1rem', background: '#f8fafc', borderRadius: '8px', fontSize: '0.9rem', color: 'var(--stone)' }}>
+              <strong>Payment Policy:</strong> Payment is collected in cash or via transfer upon fabric drop-off or final delivery.
+            </div>
+
+            <div className="wizard-actions split">
+              <button className="btn btn-outline btn-lg" onClick={handleBack} disabled={loading}>← Edit Order</button>
+              <button className="btn btn-primary btn-lg" onClick={handlePlaceOrder} disabled={loading}>
+                {loading ? 'Processing...' : 'Place Order Now'}
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
+
+      <style>{`
+        .booking-wizard {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+        
+        .wizard-progress {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 2rem;
+          background: white;
+          padding: 1.5rem;
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--ivory-border);
+        }
+
+        .step {
+          font-weight: 500;
+          color: var(--stone-light);
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: all 0.3s ease;
+        }
+
+        .step.active {
+          color: var(--onyx);
+          font-weight: 600;
+        }
+
+        .step-divider {
+          flex: 1;
+          height: 2px;
+          background: var(--ivory-border);
+          margin: 0 1rem;
+        }
+
+        .step-title {
+          font-size: 1.5rem;
+          margin-bottom: 1.5rem;
+          color: var(--onyx);
+        }
+
+        .luxury-select, .luxury-textarea {
+          width: 100%;
+          padding: 0.875rem 1.25rem;
+          border: 1px solid var(--ivory-border);
+          border-radius: var(--radius-sm);
+          font-size: 1rem;
+          background: var(--ivory);
+          color: var(--onyx);
+          font-family: var(--font-sans);
+          outline: none;
+        }
+
+        .luxury-select:focus, .luxury-textarea:focus {
+          border-color: var(--onyx);
+          background: #ffffff;
+        }
+
+        .minimal-profiles-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
+        .minimal-profile-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 1.25rem;
+          border: 1px solid var(--ivory-border);
+          border-radius: var(--radius-sm);
+          background: white;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .minimal-profile-item:hover {
+          border-color: var(--stone-light);
+        }
+
+        .minimal-profile-item.selected {
+          border-color: var(--onyx);
+          background: #faf9f6;
+        }
+
+        .minimal-profile-item input[type="radio"] {
+          margin: 0;
+          transform: scale(1.1);
+          accent-color: var(--onyx);
+        }
+
+        .mp-icon-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          background: #f1f5f9;
+          border-radius: 8px;
+          color: var(--stone);
+          margin-left: 0.5rem;
+        }
+
+        .minimal-profile-item.selected .mp-icon-wrap {
+          background: #e2e8f0;
+          color: var(--onyx);
+        }
+
+        .mp-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.15rem;
+        }
+
+        .mp-name {
+          font-weight: 500;
+          font-size: 1.05rem;
+          color: var(--onyx);
+        }
+
+        .mp-meta {
+          font-size: 0.85rem;
+          color: var(--stone);
+        }
+
+        .priority-section {
+          margin-top: 2rem;
+        }
+
+        .priority-card {
+          display: flex;
+          align-items: flex-start;
+          gap: 1rem;
+          padding: 1.25rem;
+          border: 2px solid var(--ivory-border);
+          border-radius: var(--radius-md);
+          margin-bottom: 1rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .priority-card input[type="radio"] {
+          margin-top: 0.25rem;
+          transform: scale(1.2);
+        }
+
+        .priority-card.selected {
+          border-color: var(--onyx);
+          background: #faf9f6;
+        }
+
+        .priority-card.rush-card.selected {
+          border-color: #ef4444;
+          background: #fef2f2;
+        }
+
+        .priority-info h4 {
+          margin: 0 0 0.25rem 0;
+          font-size: 1.1rem;
+        }
+
+        .priority-info p {
+          margin: 0;
+          color: var(--stone);
+          font-size: 0.9rem;
+        }
+
+        /* Customization Styles */
+        .style-section {
+          margin-bottom: 2rem;
+        }
+
+        .style-section h3 {
+          font-size: 1.1rem;
+          color: var(--onyx);
+          margin-bottom: 1rem;
+          font-weight: 500;
+        }
+
+        .style-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 1rem;
+        }
+
+        .style-card {
+          border: 2px solid var(--ivory-border);
+          border-radius: var(--radius-sm);
+          overflow: hidden;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          background: white;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .style-card:hover {
+          border-color: var(--stone-light);
+        }
+
+        .style-card.selected {
+          border-color: var(--onyx);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .style-img {
+          width: 100%;
+          height: 100px;
+          object-fit: cover;
+          border-bottom: 1px solid var(--ivory-border);
+        }
+
+        .style-card span {
+          padding: 0.75rem;
+          text-align: center;
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: var(--onyx);
+        }
+
+        /* Receipt Box */
+        .receipt-box {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: var(--radius-md);
+          padding: 1.5rem;
+        }
+
+        .receipt-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 0.75rem 0;
+          color: var(--onyx);
+        }
+
+        .rush-row {
+          color: #ef4444;
+        }
+
+        .receipt-divider {
+          height: 1px;
+          background: #e2e8f0;
+          margin: 1rem 0;
+        }
+
+        .receipt-row.total {
+          font-weight: 700;
+          font-size: 1.25rem;
+        }
+
+        .wizard-actions {
+          margin-top: 2.5rem;
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        .wizard-actions.split {
+          justify-content: space-between;
+        }
+      `}</style>
+    </CustomerLayout>
+  );
+}
