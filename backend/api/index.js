@@ -19,8 +19,8 @@ const Fabric = require('../src/models/Fabric');
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/cloudinary');
-const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification } = require('../src/config/email');
-const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate } = require('../src/config/whatsapp');
+const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail } = require('../src/config/email');
+const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation } = require('../src/config/whatsapp');
 
 const app = express();
 
@@ -1113,7 +1113,7 @@ app.get('/api/admin/users', protect, admin, async (req, res) => {
 
 app.post('/api/admin/users', protect, admin, async (req, res) => {
   try {
-    const { name, email, password, phone, role, street, city, country } = req.body;
+    const { name, email, password, phone, role, street, city, country, measurements, profileName } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email, and password are required' });
@@ -1140,9 +1140,122 @@ app.post('/api/admin/users', protect, admin, async (req, res) => {
       }
     });
 
+    if (measurements && Object.keys(measurements).length > 0) {
+      const MeasurementProfile = require('../src/models/MeasurementProfile');
+      await MeasurementProfile.create({
+        customer: user._id,
+        profileName: profileName || 'Default Admin Profile',
+        measurements: measurements
+      });
+    }
+
+    try {
+      await sendAccountCreationEmail(user.email, user.name, password);
+      console.log('Account creation email sent to:', user.email);
+    } catch (err) {
+      console.error('Account creation email failed:', err.message);
+    }
+
+    if (user.phone) {
+      try {
+        await sendWhatsappAccountCreation(user.phone, user.name, user.email, password);
+        console.log('Account creation whatsapp sent to:', user.phone);
+      } catch (err) {
+        console.error('Account creation whatsapp failed:', err.message);
+      }
+    }
+
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ message: 'Failed to create user', error: error.message });
+  }
+});
+
+// Admin Gets a Specific Customer's Measurement Profiles
+app.get('/api/admin/users/:id/measurements', protect, admin, async (req, res) => {
+  try {
+    const profiles = await MeasurementProfile.find({ customer: req.params.id });
+    res.json(profiles);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch profiles', error: error.message });
+  }
+});
+
+// Admin Creates a Measurement Profile for a Customer
+app.post('/api/admin/users/:id/measurements', protect, admin, async (req, res) => {
+  try {
+    const { profileName, measurements } = req.body;
+    if (!profileName || !measurements) {
+      return res.status(400).json({ message: 'Profile name and measurements are required' });
+    }
+    const MeasurementProfile = require('../src/models/MeasurementProfile');
+    const profile = await MeasurementProfile.create({
+      customer: req.params.id,
+      profileName,
+      measurements
+    });
+    res.status(201).json(profile);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create profile', error: error.message });
+  }
+});
+
+// Admin Places an Order on Behalf of a Customer
+app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
+  try {
+    const { customerId, serviceName, styleVariations, measurementSnapshot, totalPrice, isRush, customerNote, neededByDate } = req.body;
+
+    if (!customerId) return res.status(400).json({ message: 'Customer ID is required' });
+    if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
+    if (!measurementSnapshot || !measurementSnapshot.measurements) return res.status(400).json({ message: 'Measurement snapshot is required' });
+    if (!totalPrice || totalPrice <= 0) return res.status(400).json({ message: 'A valid total price is required' });
+
+    const user = await User.findById(customerId);
+    if (!user) return res.status(404).json({ message: 'Customer not found' });
+
+    const activeSeason = await SeasonConfig.findOne({ isActive: true });
+    const isGoldMember = user.membershipLevel === 'Gold';
+    const isPriority = activeSeason ? isGoldMember : false;
+    const pointsEarned = Math.floor(totalPrice / 100);
+
+    const order = new Order({
+      customer: customerId,
+      serviceName,
+      styleVariations,
+      measurementSnapshot,
+      totalPrice,
+      pointsEarned,
+      isPriority,
+      isRush: isRush === true,
+      season: activeSeason ? activeSeason.name : '',
+      customerNote: customerNote || '',
+      neededByDate: neededByDate || null,
+      adminNotes: [{ text: 'Order placed by admin on behalf of customer.' }]
+    });
+
+    const createdOrder = await order.save();
+
+    user.loyaltyPoints += pointsEarned;
+    user.membershipLevel = upgradeMembership(user.loyaltyPoints);
+    await user.save();
+
+    await LoyaltyRecord.create({
+      customer: user._id,
+      order: createdOrder._id,
+      type: 'earned',
+      points: pointsEarned,
+      description: `Earned ${pointsEarned} points on order for ${serviceName} (Rs.${totalPrice}) (Admin placed)`
+    });
+
+    sendOrderConfirmationEmail(user.email, user.name, serviceName, totalPrice, createdOrder._id)
+      .catch(err => console.error('Confirmation email failed:', err.message));
+    
+    sendAdminNewOrderNotification(user.name, serviceName, totalPrice, createdOrder._id, isPriority, createdOrder.isRush)
+      .catch(err => console.error('Admin notification email failed:', err.message));
+
+    res.status(201).json(createdOrder);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to place order', error: error.message });
   }
 });
 

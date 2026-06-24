@@ -214,4 +214,36 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
   });
 };
 
-module.exports = { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification };
+// ── Email 6: Account Creation Notification ──────────────────────────────────
+const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword) => {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background: #1a1a2e; padding: 24px; text-align: center;">
+        <h1 style="color: #ffd700; margin: 0; font-size: 22px;">✂️ Genius Tailors</h1>
+        <p style="color: #ccc; margin: 4px 0 0 0; font-size: 13px;">Welcome to our digital platform!</p>
+      </div>
+      <div style="padding: 32px;">
+        <h2 style="color: #1a1a2e;">Your Account is Ready 🎉</h2>
+        <p style="color: #333;">Dear <strong>${customerName}</strong>,</p>
+        <p style="color: #555;">Our staff has successfully created your digital account. You can now log in to track your orders, view your measurement profiles, and easily place new orders online!</p>
+        <div style="background: #f9f9f9; border-left: 4px solid #ffd700; padding: 16px; margin: 20px 0; border-radius: 4px;">
+          <p style="margin: 0; color: #333;"><strong>Email:</strong> ${customerEmail}</p>
+          <p style="margin: 8px 0 0 0; color: #333;"><strong>Temporary Password:</strong> ${rawPassword}</p>
+        </div>
+        <p style="color: #999; font-size: 13px;">For your security, we strongly recommend changing your password from your profile settings after you log in.</p>
+      </div>
+      <div style="background: #f0f0f0; padding: 16px; text-align: center;">
+        <p style="color: #999; font-size: 12px; margin: 0;">© ${new Date().getFullYear()} Genius Tailors, Hyderabad. All rights reserved.</p>
+      </div>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
+    to: customerEmail,
+    subject: `🎉 Welcome to Genius Tailors - Your Account Details`,
+    html
+  });
+};
+
+module.exports = { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail };

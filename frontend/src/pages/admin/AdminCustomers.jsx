@@ -4,6 +4,13 @@ import api from '../../api';
 import toast from 'react-hot-toast';
 import Papa from 'papaparse';
 
+const MEASUREMENT_TEMPLATES = {
+  'Shalwar Kameez': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
+  'Kurta Shalwar': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
+  'Kurta Pajama': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', pajamaLength: '', bottomPanja: '' },
+  'Waistcoat': { length: '', shoulder: '', chest: '', waist: '', hip: '' }
+};
+
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,12 +18,41 @@ export default function AdminCustomers() {
   const [search, setSearch] = useState('');
   const [viewCustomer, setViewCustomer] = useState(null);
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', phone: '', street: '', city: '', country: 'Pakistan'
+    name: '', email: '', password: '', phone: '', street: '', city: '', country: 'Pakistan',
+    profileName: 'Shalwar Kameez',
+    measurements: { ...MEASUREMENT_TEMPLATES['Shalwar Kameez'] }
+  });
+
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    profileName: 'Shalwar Kameez',
+    measurements: { ...MEASUREMENT_TEMPLATES['Shalwar Kameez'] }
+  });
+
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [services, setServices] = useState([]);
+  const [customerProfiles, setCustomerProfiles] = useState([]);
+  const [customerOrders, setCustomerOrders] = useState([]);
+  const [orderForm, setOrderForm] = useState({
+    serviceName: '',
+    profileId: '',
+    totalPrice: '',
+    isRush: false
   });
 
   useEffect(() => {
     fetchCustomers();
+    fetchServices();
   }, []);
+
+  const fetchServices = async () => {
+    try {
+      const { data } = await api.get('/api/services');
+      setServices(data.filter(s => s.isActive));
+    } catch (error) {
+      console.error('Failed to fetch services', error);
+    }
+  };
 
   const fetchCustomers = async () => {
     try {
@@ -28,6 +64,24 @@ export default function AdminCustomers() {
       toast.error('Failed to load customers');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleViewProfile = async (customer) => {
+    setViewCustomer(customer);
+    setCustomerProfiles([]);
+    setCustomerOrders([]);
+    try {
+      const [profilesRes, ordersRes] = await Promise.all([
+        api.get(`/api/admin/users/${customer._id}/measurements`),
+        api.get('/api/orders') // Fetch all admin orders
+      ]);
+      setCustomerProfiles(profilesRes.data);
+      // Filter orders to only this customer
+      const userOrders = ordersRes.data.filter(o => o.customer && o.customer._id === customer._id);
+      setCustomerOrders(userOrders);
+    } catch (error) {
+      toast.error('Failed to load profile details');
     }
   };
 
@@ -151,7 +205,7 @@ export default function AdminCustomers() {
                   <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
                   <td style={{ fontWeight: 600, color: '#f59e0b' }}>{customer.loyaltyPoints || 0}</td>
                   <td>
-                    <button className="premium-btn-sm" onClick={() => setViewCustomer(customer)}>View Profile</button>
+                    <button className="premium-btn-sm" onClick={() => handleViewProfile(customer)}>View Profile</button>
                   </td>
                 </tr>
               ))}
@@ -168,9 +222,14 @@ export default function AdminCustomers() {
               e.preventDefault();
               try {
                 await api.post('/api/admin/users', formData);
-                toast.success('Customer created successfully');
+                toast.success('Customer created successfully. Email & WhatsApp sent!');
+                console.log('Success: Account creation email and WhatsApp message dispatched.');
                 setShowModal(false);
-                setFormData({ name: '', email: '', password: '', phone: '', street: '', city: '', country: 'Pakistan' });
+                setFormData({ 
+                  name: '', email: '', password: '', phone: '', street: '', city: '', country: 'Pakistan',
+                  profileName: 'Shalwar Kameez',
+                  measurements: { ...MEASUREMENT_TEMPLATES['Shalwar Kameez'] }
+                });
                 fetchCustomers();
               } catch (error) {
                 toast.error(error.response?.data?.message || 'Failed to create customer');
@@ -193,14 +252,37 @@ export default function AdminCustomers() {
                 <input type="text" style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
               </div>
               
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div style={{ flex: 1 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>City</label>
                   <input type="text" style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} />
                 </div>
-                <div style={{ flex: 1 }}>
+                <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Street Address</label>
                   <input type="text" style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={formData.street} onChange={(e) => setFormData({...formData, street: e.target.value})} />
+                </div>
+              </div>
+
+              <div style={{ marginTop: '1rem', padding: '1rem', background: '#f8fafc', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem', color: '#1e293b' }}>Initial Measurements (Optional)</h3>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.85rem', fontWeight: 500, color: '#475569' }}>Garment / Profile Type</label>
+                  <select style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }} value={formData.profileName} onChange={(e) => {
+                    const newProfile = e.target.value;
+                    setFormData({ ...formData, profileName: newProfile, measurements: { ...MEASUREMENT_TEMPLATES[newProfile] } });
+                  }}>
+                    {Object.keys(MEASUREMENT_TEMPLATES).map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '1rem' }}>
+                  {Object.keys(formData.measurements).map(key => (
+                    <div key={key}>
+                      <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.85rem', fontWeight: 500, color: '#475569', textTransform: 'capitalize' }}>{key}</label>
+                      <input type="text" placeholder={`e.g. ${key === 'length' ? '40' : '15'}`} style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }} value={formData.measurements[key]} onChange={(e) => setFormData({...formData, measurements: {...formData.measurements, [key]: e.target.value}})} />
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -232,10 +314,10 @@ export default function AdminCustomers() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem' }}>
                 <div>
                   <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>Email Address</p>
-                  <p style={{ margin: '0.25rem 0 0 0', color: '#1e293b', fontWeight: 500 }}>{viewCustomer.email}</p>
+                  <p style={{ margin: '0.25rem 0 0 0', color: '#1e293b', fontWeight: 500, wordBreak: 'break-all' }}>{viewCustomer.email}</p>
                 </div>
                 <div>
                   <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>Phone Number</p>
@@ -259,10 +341,180 @@ export default function AdminCustomers() {
                 </p>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              {/* Order Stats */}
+              <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', display: 'flex', gap: '2rem' }}>
+                <div>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>Total Orders</p>
+                  <p style={{ margin: '0.25rem 0 0 0', color: '#1e293b', fontSize: '1.25rem', fontWeight: 600 }}>{customerOrders.length}</p>
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>Current Active Orders</p>
+                  <p style={{ margin: '0.25rem 0 0 0', color: '#2563eb', fontSize: '1.25rem', fontWeight: 600 }}>
+                    {customerOrders.filter(o => !['Completed', 'Cancelled'].includes(o.status)).length}
+                  </p>
+                </div>
+              </div>
+
+              {/* Measurement Profiles List */}
+              <div>
+                <h4 style={{ margin: '0.5rem 0', color: '#1e293b' }}>Measurement Profiles</h4>
+                {customerProfiles.length === 0 ? (
+                  <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>No measurement profiles found.</p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '150px', overflowY: 'auto' }}>
+                    {customerProfiles.map(p => (
+                      <div key={p._id} style={{ background: '#f1f5f9', padding: '0.75rem', borderRadius: '0.5rem' }}>
+                        <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: '0.5rem' }}>{p.profileName}</div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          {Object.entries(p.measurements).map(([key, value]) => (
+                            <span key={key} style={{ fontSize: '0.8rem', background: '#e2e8f0', color: '#334155', padding: '0.1rem 0.4rem', borderRadius: '4px' }}>
+                              {key}: {value}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
                 <button type="button" className="btn btn-outline" onClick={() => setViewCustomer(null)}>Close</button>
+                <button type="button" className="btn btn-outline" onClick={() => setShowProfileModal(true)}>Add Profile</button>
+                <button type="button" className="premium-btn" style={{ padding: '0.6rem 1.25rem', fontSize: '0.9rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 600, cursor: 'pointer' }} onClick={async () => {
+                  try {
+                    const { data } = await api.get(`/api/admin/users/${viewCustomer._id}/measurements`);
+                    setCustomerProfiles(data);
+                    setShowOrderModal(true);
+                  } catch(err) {
+                    toast.error('Failed to load profiles');
+                  }
+                }}>Place an Order</button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showProfileModal && viewCustomer && (
+        <div className="modal-backdrop">
+          <div className="modal-content" style={{ maxWidth: '500px', width: '100%' }}>
+            <h2 style={{ marginBottom: '1.5rem', color: '#1e293b' }}>Add Measurement Profile</h2>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                await api.post(`/api/admin/users/${viewCustomer._id}/measurements`, profileForm);
+                toast.success('Profile added successfully');
+                setShowProfileModal(false);
+                setProfileForm({ profileName: 'Shalwar Kameez', measurements: { ...MEASUREMENT_TEMPLATES['Shalwar Kameez'] } });
+                
+                // If they add a profile, let's pre-load the updated list just in case they open the Order modal next
+                const { data } = await api.get(`/api/admin/users/${viewCustomer._id}/measurements`);
+                setCustomerProfiles(data);
+              } catch (error) {
+                toast.error(error.response?.data?.message || 'Failed to add profile');
+              }
+            }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Garment / Profile Type</label>
+                <select style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={profileForm.profileName} onChange={(e) => {
+                  const newProfile = e.target.value;
+                  setProfileForm({ ...profileForm, profileName: newProfile, measurements: { ...MEASUREMENT_TEMPLATES[newProfile] } });
+                }} required>
+                  {Object.keys(MEASUREMENT_TEMPLATES).map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
+                {Object.keys(profileForm.measurements).map(key => (
+                  <div key={key}>
+                    <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.85rem', fontWeight: 500, color: '#475569', textTransform: 'capitalize' }}>{key}</label>
+                    <input type="text" placeholder={`e.g. ${key === 'length' ? '40' : '15'}`} style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }} value={profileForm.measurements[key]} onChange={(e) => setProfileForm({...profileForm, measurements: {...profileForm.measurements, [key]: e.target.value}})} />
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
+                <button type="button" className="btn btn-outline" onClick={() => setShowProfileModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Profile</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showOrderModal && viewCustomer && (
+        <div className="modal-backdrop">
+          <div className="modal-content" style={{ maxWidth: '500px', width: '100%' }}>
+            <h2 style={{ marginBottom: '1.5rem', color: '#1e293b' }}>Place Order for {viewCustomer.name}</h2>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                const service = services.find(s => s._id === orderForm.serviceName);
+                if (!service) return toast.error('Select a service');
+                
+                const profile = customerProfiles.find(p => p._id === orderForm.profileId);
+                if (!profile) return toast.error('Select a measurement profile');
+
+                await api.post('/api/admin/orders/place', {
+                  customerId: viewCustomer._id,
+                  serviceName: service.name,
+                  measurementSnapshot: {
+                    profileName: profile.profileName,
+                    measurements: profile.measurements
+                  },
+                  totalPrice: Number(orderForm.totalPrice),
+                  isRush: orderForm.isRush
+                });
+                
+                toast.success('Order placed successfully');
+                setShowOrderModal(false);
+                setOrderForm({ serviceName: '', profileId: '', totalPrice: '', isRush: false });
+                setViewCustomer(null);
+              } catch (error) {
+                toast.error(error.response?.data?.message || 'Failed to place order');
+              }
+            }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Service *</label>
+                <select style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={orderForm.serviceName} onChange={(e) => {
+                  const sId = e.target.value;
+                  const s = services.find(s => s._id === sId);
+                  setOrderForm({...orderForm, serviceName: sId, totalPrice: s ? s.basePrice : ''});
+                }} required>
+                  <option value="">Select Service...</option>
+                  {services.map(s => <option key={s._id} value={s._id}>{s.name} (from Rs. {s.basePrice})</option>)}
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Measurement Profile *</label>
+                {customerProfiles.length === 0 ? (
+                  <p style={{ color: '#ef4444', fontSize: '0.9rem', margin: 0 }}>This customer has no measurement profiles. Please add measurements first via their profile.</p>
+                ) : (
+                  <select style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={orderForm.profileId} onChange={(e) => setOrderForm({...orderForm, profileId: e.target.value})} required>
+                    <option value="">Select Profile...</option>
+                    {customerProfiles.map(p => <option key={p._id} value={p._id}>{p.profileName}</option>)}
+                  </select>
+                )}
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Total Price (Rs.) *</label>
+                <input type="number" style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={orderForm.totalPrice} onChange={(e) => setOrderForm({...orderForm, totalPrice: e.target.value})} required min="1" />
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <input type="checkbox" id="isRush" checked={orderForm.isRush} onChange={(e) => setOrderForm({...orderForm, isRush: e.target.checked})} />
+                <label htmlFor="isRush" style={{ fontWeight: 500, color: '#475569', cursor: 'pointer' }}>Mark as Priority/Rush Order</label>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" className="btn btn-outline" onClick={() => setShowOrderModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={customerProfiles.length === 0}>Place Order</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -281,9 +533,17 @@ export default function AdminCustomers() {
         .modal-backdrop {
           position: fixed; top: 0; left: 0; right: 0; bottom: 0;
           background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;
+          padding: 1rem;
         }
         .modal-content {
           background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+          max-height: 90vh; overflow-y: auto; box-sizing: border-box;
+        }
+        @media (max-width: 600px) {
+          .modal-content {
+            padding: 1.5rem;
+            width: 100%;
+          }
         }
       `}</style>
       <style>{`

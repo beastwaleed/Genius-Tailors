@@ -94,4 +94,9 @@ const sendWhatsappStatusUpdate = async (customerPhone, customerName, serviceName
   await sendWhatsappMessage(customerPhone, message);
 };
 
-module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate };
+const sendWhatsappAccountCreation = async (customerPhone, customerName, email, rawPassword) => {
+  const message = `*Genius Tailors* ✂️\n\nWelcome ${customerName}! 🎉\n\nYour account has been created successfully by our staff.\n\nYou can now log in to your dashboard to track your orders, view measurements, and place new orders online.\n\n*Email:* ${email}\n*Password:* ${rawPassword}\n\nFor your security, please change your password after your first login.`;
+  await sendWhatsappMessage(customerPhone, message);
+};
+
+module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation };
