@@ -98,8 +98,12 @@ const sendPasswordResetEmail = async (customerEmail, customerName, resetUrl) => 
         <p style="color: #333;">Dear <strong>${customerName}</strong>,</p>
         <p style="color: #555;">We received a request to reset your password. Click the button below to set a new password. This link expires in <strong>15 minutes</strong>.</p>
         <div style="text-align: center; margin: 32px 0;">
-          <a href="${resetUrl}" style="background: #ffd700; color: #1a1a2e; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Reset My Password</a>
+          <a href="${resetUrl}" style="display: inline-block; background: #ffd700; color: #1a1a2e; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Reset My Password</a>
         </div>
+        <p style="color: #777; font-size: 13px; word-break: break-all; margin-bottom: 24px;">
+          If the button doesn't work, click or copy-paste this link into your browser:<br>
+          <a href="${resetUrl}" style="color: #2563eb;">${resetUrl}</a>
+        </p>
         <p style="color: #999; font-size: 13px;">If you did not request this, please ignore this email. Your password will remain unchanged.</p>
       </div>
       <div style="background: #f0f0f0; padding: 16px; text-align: center;">

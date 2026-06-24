@@ -985,7 +985,9 @@ app.post('/api/auth/forgot-password', async (req, res) => {
     user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
     await user.save();
 
-    const resetUrl = `${req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${rawToken}`;
+    let base = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5173';
+    if (!base.startsWith('http')) base = `https://${base}`;
+    const resetUrl = `${base}/reset-password/${rawToken}`;
 
     try {
       if (process.env.EMAIL_USER) {
