@@ -19,20 +19,24 @@ import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
 import HeroWaistcoat from '../assets/HeroWaistcoat.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
 
-import img1 from '../assets/port_model_shalwar_1781781002030.png';
-import img2 from '../assets/WaistcoatMain.jpeg';
-import img3 from '../assets/port_model_kurta_1781781028618.png';
-import img4 from '../assets/port_mannequin_kurta_1781781041804.png';
-import img5 from '../assets/port_detail_stitch_1781781054620.png';
-import img6 from '../assets/port_model_classic_1781781070827.png';
+import img1 from '../assets/portfolio_1.png';
+import img2 from '../assets/portfolio_2.png';
+import img3 from '../assets/portfolio_3.png';
+import img4 from '../assets/portfolio_4.png';
+import img5 from '../assets/portfolio_5.png';
+
+import proc1 from '../assets/process_1.png';
+import proc2 from '../assets/process_2.png';
+import proc3 from '../assets/process_3.png';
+import proc4 from '../assets/process_4.png';
 
 const PORTFOLIO_IMAGES = [
-  { id: 1, src: img1, title: 'Bespoke Kameez Shalwar' },
-  { id: 2, src: img2, title: 'Premium Waistcoat Display' },
-  { id: 3, src: img3, title: 'Evening Kurta Pajama' },
-  { id: 4, src: img4, title: 'Classic Kurta Shalwar' },
-  { id: 5, src: img5, title: 'Tailoring Details' },
-  { id: 6, src: img6, title: 'Signature Cut' },
+  { id: 1, src: img1, title: 'Bespoke Brown Kurta' },
+  { id: 2, src: img2, title: 'Classic Fit' },
+  { id: 3, src: img3, title: 'Dark Blue Kameez Shalwar' },
+  { id: 4, src: img4, title: 'White Formal Kurta' },
+  { id: 5, src: img5, title: 'Signature Black Cut' },
+  { id: 6, src: img1, title: 'Tailoring Details' },
 ];
 
 const SERVICES_PREVIEW = [
@@ -83,10 +87,10 @@ const SERVICES_PREVIEW = [
 ];
 
 const PROCESS_STEPS = [
-  { num: '01', title: 'Choose Your Garment', desc: 'Browse our catalog and select the style that speaks to you.' },
-  { num: '02', title: 'Enter Measurements', desc: 'Use saved profiles or enter fresh measurements for a perfect fit.' },
-  { num: '03', title: 'Customise the Details', desc: 'Pick collar, sleeve, front, and back styles down to the last stitch.' },
-  { num: '04', title: 'Track Your Order', desc: 'Follow every stage live — from cutting table to your door.' },
+  { num: '01', title: 'Choose Your Garment', desc: 'Browse our catalog and select the style that speaks to you.', bgImg: proc1 },
+  { num: '02', title: 'Enter Measurements', desc: 'Use saved profiles or enter fresh measurements for a perfect fit.', bgImg: proc2 },
+  { num: '03', title: 'Customise the Details', desc: 'Pick collar, sleeve, front, and back styles down to the last stitch.', bgImg: proc3 },
+  { num: '04', title: 'Track Your Order', desc: 'Follow every stage live — from cutting table to your door.', bgImg: proc4 },
 ];
 
 const STATS = [
@@ -234,6 +238,9 @@ export default function Home() {
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeCard, setActiveCard] = useState(0);
   const [showPromo, setShowPromo] = useState(false);
+  const [isBannerVisible, setIsBannerVisible] = useState(() => {
+    return !sessionStorage.getItem('gt_banner_dismissed');
+  });
   const [showIntro, setShowIntro] = useState(() => {
     return window.innerWidth <= 768 && !sessionStorage.getItem('introSeen');
   });
@@ -253,6 +260,11 @@ export default function Home() {
   const handleIntroComplete = () => {
     sessionStorage.setItem('introSeen', 'true');
     setShowIntro(false);
+  };
+
+  const handleBannerClose = () => {
+    sessionStorage.setItem('gt_banner_dismissed', 'true');
+    setIsBannerVisible(false);
   };
 
   const GARMENTS = [
@@ -277,16 +289,35 @@ export default function Home() {
           <Navbar />
 
           {/* ── Season Banner ──────────────────────────────── */}
-          {activeSeason && (
-            <div className="season-banner">
+          {(activeSeason && isBannerVisible) && (
+            <div className="season-banner" style={{ position: 'relative' }}>
               <span className="season-banner-icon">✦</span>
               <span>{activeSeason.announcement || `${activeSeason.name} — Special orders now open. Book early.`}</span>
               <span className="season-banner-icon">✦</span>
+              <button 
+                onClick={handleBannerClose}
+                style={{
+                  position: 'absolute',
+                  right: '1rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--gold)',
+                  fontSize: '1.5rem',
+                  cursor: 'pointer',
+                  padding: '0 0.5rem',
+                  lineHeight: 1
+                }}
+                aria-label="Close Announcement"
+              >
+                &times;
+              </button>
             </div>
           )}
 
           {/* ── Hero ───────────────────────────────────────── */}
-          <section className="hero" style={{ paddingTop: activeSeason ? 'calc(var(--nav-height) + 44px)' : 'var(--nav-height)' }}>
+          <section className="hero" style={{ paddingTop: (activeSeason && isBannerVisible) ? 'calc(var(--nav-height) + 44px)' : 'var(--nav-height)' }}>
             <div className="container">
               <div className="hero-inner">
                 <div className="hero-content animate-fade-in-up">
@@ -364,10 +395,30 @@ export default function Home() {
               </div>
               <div className="process-grid animate-children">
                 {PROCESS_STEPS.map(step => (
-                  <div key={step.num} className="process-step animate-fade-in">
-                    <div className="process-num text-label">{step.num}</div>
-                    <h3 className="process-title">{step.title}</h3>
-                    <p className="text-small process-desc">{step.desc}</p>
+                  <div key={step.num} className="process-step animate-fade-in" style={{ position: 'relative', overflow: 'hidden' }}>
+                    <div className="process-step-bg" style={{ 
+                      backgroundImage: `url(${step.bgImg})`,
+                      position: 'absolute',
+                      inset: 0,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      opacity: 0.15,
+                      zIndex: 0
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.4) 100%)',
+                      zIndex: 0
+                    }} />
+                    
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                        <div className="process-num text-label" style={{ marginBottom: 0 }}>{step.num}</div>
+                      </div>
+                      <h3 className="process-title">{step.title}</h3>
+                      <p className="text-small process-desc" style={{ position: 'relative', zIndex: 1 }}>{step.desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -497,6 +548,7 @@ export default function Home() {
             </div>
           </section>
 
+
           {/* ── Loyalty CTA ─────────────────────────────────── */}
           <section className="section loyalty-cta-section">
             <div className="container">
@@ -531,6 +583,76 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </section>
+          {/* ── Instagram Section ───────────────────────────── */}
+          <section className="section instagram-section" style={{ background: 'var(--ivory)' }}>
+            <div className="container">
+              <div className="section-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                <span className="text-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                  Follow Us
+                </span>
+                <h2 className="text-heading-2">@geniustailors</h2>
+                <p className="text-subtitle" style={{ maxWidth: '540px', margin: '0.5rem auto 1.5rem' }}>
+                  Join our community on Instagram for daily inspiration, behind-the-scenes tailoring, and exclusive drops.
+                </p>
+                <a href="https://www.instagram.com/geniustailors/" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '0.75rem 2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                  View Instagram
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+              </div>
+              
+              <div className="ig-grid">
+                {[img1, img3, img4, img5].map((img, idx) => (
+                  <a key={idx} href="https://www.instagram.com/geniustailors/" target="_blank" rel="noopener noreferrer" className="ig-post">
+                    <img src={img} alt="Instagram post" />
+                    <div className="ig-overlay">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+            <style>{`
+              .ig-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+              }
+              .ig-post {
+                position: relative;
+                aspect-ratio: 1 / 1;
+                border-radius: var(--radius-md);
+                overflow: hidden;
+                display: block;
+              }
+              .ig-post img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+              }
+              .ig-overlay {
+                position: absolute;
+                inset: 0;
+                background: rgba(0,0,0,0.4);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+              }
+              .ig-post:hover img {
+                transform: scale(1.05);
+              }
+              .ig-post:hover .ig-overlay {
+                opacity: 1;
+              }
+              @media (max-width: 768px) {
+                .ig-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+              }
+            `}</style>
           </section>
 
           <Footer />

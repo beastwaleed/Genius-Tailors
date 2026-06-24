@@ -77,6 +77,30 @@ export default function App() {
       <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Chatbot />
+      <a 
+        href="https://wa.me/923332662110" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          left: '24px',
+          color: '#25D366',
+          fontSize: '60px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+          textDecoration: 'none',
+          filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.15))',
+          transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        aria-label="Chat with us on WhatsApp"
+      >
+        <i className="fa-brands fa-whatsapp"></i>
+      </a>
     </>
   );
 }

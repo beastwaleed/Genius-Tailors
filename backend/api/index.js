@@ -1237,18 +1237,16 @@ module.exports = async (req, res) => {
   }
 };
 
-// 2. Local Development Server
-if (require.main === module) {
-  const PORT = process.env.PORT || 5000;
+// 2. Production Server Startup
+const PORT = process.env.PORT || 5000;
 
-  connectDB().then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server is running locally on http://localhost:${PORT}`);
-    });
-  }).catch((err) => {
-    console.error('Failed to connect to database', err);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
   });
-}
+}).catch((err) => {
+  console.error('Failed to connect to database', err);
+});
 
 
 

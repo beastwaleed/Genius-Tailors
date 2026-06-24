@@ -3,24 +3,23 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
-import img1 from '../assets/port_model_shalwar_1781781002030.png';
-import img2 from '../assets/port_mannequin_waistcoat_1781781013926.png';
-import img3 from '../assets/port_model_kurta_1781781028618.png';
-import img4 from '../assets/port_mannequin_kurta_1781781041804.png';
-import img5 from '../assets/port_detail_stitch_1781781054620.png';
-import img6 from '../assets/port_model_classic_1781781070827.png';
+import img1 from '../assets/portfolio_1.png';
+import img2 from '../assets/portfolio_2.png';
+import img3 from '../assets/portfolio_3.png';
+import img4 from '../assets/portfolio_4.png';
+import img5 from '../assets/portfolio_5.png';
 
-// Since we have a limited set of images for the demo, we duplicate a few to fill out the grid nicely
+// Since we have 5 images, we duplicate a few to fill out the 9-item grid nicely
 const PORTFOLIO_IMAGES = [
-  { id: 1, src: img1, title: 'Bespoke Kameez Shalwar' },
-  { id: 2, src: img2, title: 'Premium Waistcoat Display' },
-  { id: 3, src: img3, title: 'Evening Kurta Pajama' },
-  { id: 4, src: img4, title: 'Classic Kurta Shalwar' },
-  { id: 5, src: img5, title: 'Tailoring Details' },
-  { id: 6, src: img6, title: 'Signature Cut' },
-  { id: 7, src: img1, title: 'Traditional Details' },
-  { id: 8, src: img3, title: 'Casual Refined' },
-  { id: 9, src: img4, title: 'Event Wear' },
+  { id: 1, src: img1, title: 'Bespoke Brown Kurta' },
+  { id: 2, src: img2, title: 'Classic Fit' },
+  { id: 3, src: img3, title: 'Dark Blue Kameez Shalwar' },
+  { id: 4, src: img4, title: 'White Formal Kurta' },
+  { id: 5, src: img5, title: 'Signature Black Cut' },
+  { id: 6, src: img2, title: 'Tailoring Details' },
+  { id: 7, src: img3, title: 'Traditional Details' },
+  { id: 8, src: img4, title: 'Casual Refined' },
+  { id: 9, src: img5, title: 'Event Wear' },
 ];
 
 export default function Portfolio() {
