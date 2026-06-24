@@ -28,6 +28,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Ensure MongoDB is connected for Vercel Serverless Functions
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Database connection failed' });
+  }
+});
+
 // Base Route for Vercel Health Check
 app.get('/', (req, res) => {
   res.send('Genius Tailors API is successfully running on Vercel!');
