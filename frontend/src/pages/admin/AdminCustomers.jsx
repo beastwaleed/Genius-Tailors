@@ -64,33 +64,63 @@ export default function AdminCustomers() {
     link.click();
     document.body.removeChild(link);
     toast.success('Customers exported successfully');
+    toast.success('Customers exported successfully');
   };
+
+  const totalPoints = customers.reduce((acc, c) => acc + (c.loyaltyPoints || 0), 0);
+  const activeMembers = customers.filter(c => (c.loyaltyPoints || 0) > 0).length;
 
   return (
     <AdminLayout title="Customer Base">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2 className="admin-section-title" style={{ marginBottom: 0 }}>Registered Customers</h2>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <input 
-            type="text" 
-            placeholder="Search by name, email, or phone..." 
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ padding: '0.5rem 1rem', border: '1px solid #d1d5db', borderRadius: 'var(--radius-sm)', width: '250px' }}
-          />
-          <button className="admin-btn-primary" onClick={() => setShowModal(true)}>+ Add Customer</button>
-          <button className="btn btn-outline" onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Export CSV
-          </button>
+      <div className="premium-dashboard">
+        <div className="admin-stats-grid" style={{ marginBottom: '2rem' }}>
+          <div className="premium-stat-card">
+            <div className="stat-icon" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)' }}>👥</div>
+            <div className="stat-info">
+              <h4>Total Customers</h4>
+              <p className="stat-value">{customers.length}</p>
+            </div>
+          </div>
+          <div className="premium-stat-card">
+            <div className="stat-icon" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)' }}>⭐</div>
+            <div className="stat-info">
+              <h4>Loyalty Members</h4>
+              <p className="stat-value">{activeMembers}</p>
+            </div>
+          </div>
+          <div className="premium-stat-card">
+            <div className="stat-icon" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}>🏆</div>
+            <div className="stat-info">
+              <h4>Total Points Issued</h4>
+              <p className="stat-value">{totalPoints}</p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {loading ? (
-        <p>Loading customers...</p>
-      ) : (
-        <div className="admin-card admin-table-container">
-          <table className="admin-table">
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
+          <h2 className="premium-title" style={{ marginBottom: 0, fontSize: '1.5rem' }}>Customer Directory</h2>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <input 
+              type="text" 
+              placeholder="Search by name, email..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="premium-input"
+              style={{ width: '250px' }}
+            />
+            <button className="premium-btn" onClick={() => setShowModal(true)} style={{ background: '#1e293b', color: 'white', border: 'none', padding: '0.75rem 1.25rem', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>+ Add Customer</button>
+            <button className="premium-btn" onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#C9A96E', color: 'white', border: 'none', padding: '0.75rem 1.25rem', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Export CSV
+            </button>
+          </div>
+        </div>
+
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>Loading directory...</div>
+        ) : (
+        <div className="admin-table-container">
+          <table className="premium-table">
             <thead>
               <tr>
                 <th>Customer Name</th>
@@ -121,7 +151,7 @@ export default function AdminCustomers() {
                   <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
                   <td style={{ fontWeight: 600, color: '#f59e0b' }}>{customer.loyaltyPoints || 0}</td>
                   <td>
-                    <button className="btn-link" onClick={() => setViewCustomer(customer)}>View Profile</button>
+                    <button className="premium-btn-sm" onClick={() => setViewCustomer(customer)}>View Profile</button>
                   </td>
                 </tr>
               ))}
@@ -256,6 +286,43 @@ export default function AdminCustomers() {
           background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
       `}</style>
+      <style>{`
+        .premium-dashboard { animation: fadeUp 0.6s ease-out; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .admin-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+        
+        .premium-stat-card {
+          position: relative; background: linear-gradient(145deg, #0f172a, #1e293b); border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 1.25rem; padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; overflow: hidden;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; color: white; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+        .premium-stat-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4); border-color: rgba(255, 255, 255, 0.1); }
+        .stat-icon { width: 3.5rem; height: 3.5rem; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.1); }
+        .stat-info h4 { margin: 0 0 0.25rem 0; font-size: 0.85rem; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-value { margin: 0; font-size: 1.75rem; font-weight: 800; background: linear-gradient(to right, #ffffff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .premium-input {
+          padding: 0.75rem 1rem; border: 1px solid #e2e8f0; border-radius: 0.75rem; font-size: 0.95rem; color: #1e293b;
+          background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .premium-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+
+        .premium-table { width: 100%; min-width: 800px; border-collapse: separate; border-spacing: 0 0.75rem; font-size: 0.95rem; }
+        .premium-table th { font-weight: 600; color: #64748b; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; border: none; padding: 1rem 1.5rem; text-align: left; }
+        .premium-table tbody tr { background: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .premium-table tbody tr:hover { transform: translateY(-2px) scale(1.005); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .premium-table td { padding: 1rem 1.5rem; border: none; background: transparent; vertical-align: middle; }
+        .premium-table td:first-child { border-radius: 0.75rem 0 0 0.75rem; }
+        .premium-table td:last-child { border-radius: 0 0.75rem 0.75rem 0; }
+
+        .premium-btn-sm {
+          background: rgba(59, 130, 246, 0.1); color: #2563eb; border: none; padding: 0.5rem 1rem; border-radius: 999px;
+          font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s ease;
+        }
+        .premium-btn-sm:hover { background: #2563eb; color: white; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
+      `}</style>
+      </div>
     </AdminLayout>
   );
 }

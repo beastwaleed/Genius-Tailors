@@ -144,7 +144,7 @@ export default function AdminDashboard() {
             </div>
 
           <div style={{ marginTop: '3rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h2 className="premium-title" style={{ marginBottom: 0, fontSize: '1.5rem' }}>Recent Orders</h2>
               <Link to="/admin/orders" className="premium-link">View All Orders &rarr;</Link>
             </div>

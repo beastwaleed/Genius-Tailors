@@ -117,6 +117,8 @@ export default function AdminLayout({ children, title }) {
         .admin-dashboard-layout {
           display: flex;
           height: 100vh;
+          width: 100vw;
+          max-width: 100%;
           background-color: #f3f4f6; /* slightly cooler gray for admin */
           font-family: var(--font-sans);
           overflow: hidden;
@@ -228,6 +230,8 @@ export default function AdminLayout({ children, title }) {
           display: flex;
           flex-direction: column;
           min-width: 0;
+          max-width: 100%;
+          overflow: hidden;
         }
 
         .admin-main-header {
@@ -291,6 +295,8 @@ export default function AdminLayout({ children, title }) {
           flex: 1;
           padding: 2.5rem;
           overflow-y: auto;
+          overflow-x: hidden;
+          width: 100%;
         }
 
         /* Generic Admin Component Utilities */
@@ -312,6 +318,8 @@ export default function AdminLayout({ children, title }) {
         .admin-table-container {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
+          width: 100%;
+          max-width: 100%;
         }
 
         .admin-table {

@@ -13,12 +13,15 @@ const serviceSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  images: [{
+    type: String
+  }],
   // The customization options available for this specific garment
   customizations: {
     collarStyles: [{ type: String }], // e.g., ["Ban", "Classic", "Sherwani"]
     sleeveStyles: [{ type: String }], // e.g., ["Cuff", "Open"]
-    frontStyles:  [{ type: String }], // e.g., ["Hidden Placket", "Visible Buttons"]
-    backStyles:   [{ type: String }], // e.g., ["Plain", "Pleated"] — for shirts (PDF §5.1)
+    frontStyles: [{ type: String }], // e.g., ["Hidden Placket", "Visible Buttons"]
+    backStyles: [{ type: String }], // e.g., ["Plain", "Pleated"] — for shirts (PDF §5.1)
     bottomStyles: [{ type: String }]  // e.g., ["Straight Shalwar", "Pajama"]
   },
   isActive: {

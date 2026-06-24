@@ -144,7 +144,7 @@ function MobileIntro({ services, onComplete }) {
 
   const handleEnd = () => {
     setIsDragging(false);
-    if (Math.abs(dragX) > 100) {
+    if (Math.abs(dragX) > 70) {
       const topCard = cards[cards.length - 1];
       setSwipedCards([...swipedCards, { name: topCard.name, dir: dragX > 0 ? 1 : -1 }]);
 
@@ -153,9 +153,9 @@ function MobileIntro({ services, onComplete }) {
         newCards.pop();
         setCards(newCards);
         if (newCards.length === 0) {
-          setTimeout(onComplete, 200);
+          setTimeout(onComplete, 100);
         }
-      }, 300);
+      }, 150);
     } else {
       setDragX(0);
       setDragY(0);
@@ -189,13 +189,13 @@ function MobileIntro({ services, onComplete }) {
           if (swiped) {
             style = {
               transform: `translate(${swiped.dir * 500}px, ${dragY}px) rotate(${swiped.dir * 45}deg)`,
-              transition: 'transform 0.3s ease-out',
+              transition: 'transform 0.15s ease-out',
               zIndex: 20
             };
           } else if (isTop) {
             style = {
               transform: isDragging ? `translate(${dragX}px, ${dragY}px) rotate(${dragX * 0.05}deg)` : 'translate(0px, 0px) rotate(0deg)',
-              transition: isDragging ? 'none' : 'transform 0.3s ease',
+              transition: isDragging ? 'none' : 'transform 0.15s ease',
               zIndex: 10
             };
           } else {
@@ -229,6 +229,25 @@ function MobileIntro({ services, onComplete }) {
           )
         })}
       </div>
+      <button 
+        onClick={onComplete} 
+        style={{
+          position: 'absolute', 
+          bottom: '40px', 
+          background: 'var(--onyx)', 
+          color: 'var(--ivory)', 
+          border: 'none',
+          padding: '0.75rem 2.5rem', 
+          borderRadius: '999px', 
+          zIndex: 100,
+          fontWeight: 600,
+          letterSpacing: '0.5px',
+          cursor: 'pointer',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+        }}
+      >
+        Skip Intro
+      </button>
     </div>
   );
 }

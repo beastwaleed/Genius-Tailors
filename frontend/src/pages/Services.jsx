@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -17,6 +18,14 @@ import HeroKameezShalwar from '../assets/HeroKameezShalwar.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import HeroWaistcoat from '../assets/HeroWaistcoat.jpeg'
 import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
+
+// Close-up gallery images
+import closeupCollar from '../assets/closeup_collar.png';
+import closeupCuff from '../assets/closeup_cuff.png';
+import closeupFabric from '../assets/closeup_fabric.png';
+import closeupButtons from '../assets/closeup_buttons.png';
+
+const gallery = [closeupCollar, closeupCuff, closeupFabric, closeupButtons];
 
 const ALL_SERVICES = [
   {
@@ -36,6 +45,7 @@ const ALL_SERVICES = [
     category: 'Traditional',
     features: ['Custom collar styles', 'Choice of sleeve length', 'Front & pocket designs', 'Fitted or relaxed cut'],
     occasions: ['Daily wear', 'Office', 'Eid', 'Casual events'],
+    images: gallery,
   },
   {
     id: 'kurta-shalwar',
@@ -54,6 +64,7 @@ const ALL_SERVICES = [
     category: 'Traditional',
     features: ['Mandarin or standard collar', 'Various hem lengths', 'Front design options', 'Light & breathable fabrics'],
     occasions: ['Daily wear', 'Casual outings', 'Family gatherings'],
+    images: gallery,
   },
   {
     id: 'kurta-pajama',
@@ -72,6 +83,7 @@ const ALL_SERVICES = [
     category: 'Formal',
     features: ['Slim fit pajama options', 'Embroidered collar choices', 'Premium fabric selection', 'Button detailing'],
     occasions: ['Events', 'Evenings', 'Festive wear', 'Family Gatherings'],
+    images: gallery,
   },
   {
     id: 'waistcoat',
@@ -90,6 +102,7 @@ const ALL_SERVICES = [
     category: 'Formal',
     features: ['Single or double-breasted', 'Custom button design', 'Lining options', 'Pocket styles'],
     occasions: ['Semi-formal events', 'Office', 'Festive wear'],
+    images: gallery,
   }
 ];
 
@@ -98,10 +111,38 @@ const CATEGORIES = ['All', 'Traditional', 'Formal', 'Casual'];
 export default function Services() {
   const [filter, setFilter] = useState('All');
   const [selected, setSelected] = useState(null);
+  const [activeImage, setActiveImage] = useState(null);
+  const [servicesData, setServicesData] = useState(ALL_SERVICES);
+
+  useEffect(() => {
+    api.get('/api/services')
+      .then(res => {
+        const dbServices = res.data;
+        const merged = ALL_SERVICES.map(staticSvc => {
+          const dbSvc = dbServices.find(s => s.name.toLowerCase() === staticSvc.name.toLowerCase());
+          if (dbSvc) {
+            return {
+              ...staticSvc,
+              images: (dbSvc.images && dbSvc.images.length > 0) ? dbSvc.images : staticSvc.images,
+              price: `From Rs. ${dbSvc.basePrice.toLocaleString()}`,
+              desc: dbSvc.description || staticSvc.desc,
+            };
+          }
+          return staticSvc;
+        });
+        setServicesData(merged);
+      })
+      .catch(err => console.error('Failed to fetch services config', err));
+  }, []);
 
   const displayed = filter === 'All'
-    ? ALL_SERVICES
-    : ALL_SERVICES.filter(s => s.category === filter);
+    ? servicesData
+    : servicesData.filter(s => s.category === filter);
+
+  const handleOpenModal = (svc) => {
+    setSelected(svc);
+    setActiveImage(svc.img);
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--ivory)' }}>
@@ -127,10 +168,10 @@ export default function Services() {
               <div
                 key={svc.id}
                 className="sp-card"
-                onClick={() => setSelected(svc)}
+                onClick={() => handleOpenModal(svc)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={e => e.key === 'Enter' && setSelected(svc)}
+                onKeyDown={e => e.key === 'Enter' && handleOpenModal(svc)}
               >
                 {/* Image */}
                 <div className="sp-card-img-wrap">
@@ -179,11 +220,40 @@ export default function Services() {
 
             <div className="sp-modal-inner">
               {/* Left: image */}
-              <div className="sp-modal-img-wrap">
-                <img src={selected.img} alt={selected.name} className="sp-modal-img" />
-                <span className="svc-badge" style={{ background: selected.badgeColor, position: 'absolute', top: 16, left: 16 }}>
-                  {selected.badge}
-                </span>
+              <div className="sp-modal-img-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', borderRadius: '12px', overflow: 'hidden' }}>
+                  <img src={activeImage} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.3s' }} />
+                  <span className="svc-badge" style={{ background: selected.badgeColor, position: 'absolute', top: 16, left: 16 }}>
+                    {selected.badge}
+                  </span>
+                </div>
+                
+                {/* Image Gallery Row */}
+                {selected.images && selected.images.length > 0 && (
+                  <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                    <div 
+                      onClick={() => setActiveImage(selected.img)}
+                      style={{ 
+                        width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', flexShrink: 0,
+                        border: activeImage === selected.img ? '2px solid var(--gold)' : '2px solid transparent'
+                      }}
+                    >
+                      <img src={selected.img} alt="Main" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    {selected.images.map((imgUrl, idx) => (
+                      <div 
+                        key={idx}
+                        onClick={() => setActiveImage(imgUrl)}
+                        style={{ 
+                          width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', flexShrink: 0,
+                          border: activeImage === imgUrl ? '2px solid var(--gold)' : '2px solid transparent'
+                        }}
+                      >
+                        <img src={imgUrl} alt={`Gallery ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Right: info */}

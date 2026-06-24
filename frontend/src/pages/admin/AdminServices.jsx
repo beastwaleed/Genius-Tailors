@@ -8,9 +8,10 @@ export default function AdminServices() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingService, setEditingService] = useState(null);
+  const [imageUploading, setImageUploading] = useState(false);
   const [formData, setFormData] = useState({ 
     name: '', description: '', basePrice: '', 
-    collarStyles: '', sleeveStyles: '', frontStyles: '', bottomStyles: '' 
+    collarStyles: '', sleeveStyles: '', frontStyles: '', bottomStyles: '', images: []
   });
 
   useEffect(() => {
@@ -39,10 +40,11 @@ export default function AdminServices() {
         sleeveStyles: service.customizations?.sleeveStyles?.join(', ') || '',
         frontStyles: service.customizations?.frontStyles?.join(', ') || '',
         bottomStyles: service.customizations?.bottomStyles?.join(', ') || '',
+        images: service.images || []
       });
     } else {
       setEditingService(null);
-      setFormData({ name: '', description: '', basePrice: '', collarStyles: '', sleeveStyles: '', frontStyles: '', bottomStyles: '' });
+      setFormData({ name: '', description: '', basePrice: '', collarStyles: '', sleeveStyles: '', frontStyles: '', bottomStyles: '', images: [] });
     }
     setShowModal(true);
   };
@@ -61,7 +63,8 @@ export default function AdminServices() {
         sleeveStyles: processArray(formData.sleeveStyles),
         frontStyles: processArray(formData.frontStyles),
         bottomStyles: processArray(formData.bottomStyles),
-      }
+      },
+      images: formData.images
     };
 
     try {
@@ -80,6 +83,35 @@ export default function AdminServices() {
     }
   };
 
+  const handleUploadImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fd = new FormData();
+    fd.append('image', file);
+
+    try {
+      setImageUploading(true);
+      const { data } = await api.post('/api/upload/reference-image', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData(prev => ({ ...prev, images: [...prev.images, data.imageUrl] }));
+      toast.success('Image uploaded');
+    } catch (error) {
+      toast.error('Failed to upload image');
+    } finally {
+      setImageUploading(false);
+      e.target.value = null;
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, idx) => idx !== indexToRemove)
+    }));
+  };
+
   const handleDeleteService = async (id) => {
     if (window.confirm('Are you sure you want to delete this service?')) {
       try {
@@ -94,7 +126,7 @@ export default function AdminServices() {
 
   return (
     <AdminLayout title="Tailoring Services">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h2 className="admin-section-title" style={{ marginBottom: 0 }}>Available Services</h2>
         <button className="admin-btn-primary" onClick={() => handleOpenModal()}>+ Add New Service</button>
       </div>
@@ -158,6 +190,30 @@ export default function AdminServices() {
                   placeholder="e.g. 2500"
                 />
               </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Service Images (Closeups, Styles)</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  {formData.images.map((imgUrl, idx) => (
+                    <div key={idx} style={{ position: 'relative', width: '80px', height: '80px' }}>
+                      <img src={imgUrl} alt={`Service image ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+                      <button 
+                        type="button" 
+                        onClick={() => handleRemoveImage(idx)}
+                        style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >×</button>
+                    </div>
+                  ))}
+                </div>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleUploadImage}
+                  disabled={imageUploading}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px dashed #d1d5db' }}
+                />
+                {imageUploading && <span style={{ fontSize: '0.8rem', color: 'var(--gold)', marginTop: '0.25rem', display: 'block' }}>Uploading image...</span>}
+              </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Description</label>
                 <textarea 
@@ -171,7 +227,7 @@ export default function AdminServices() {
               <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
                 <h4 style={{ margin: '0 0 1rem 0', fontSize: '0.95rem', color: '#374151' }}>Customization Options (Comma-separated)</h4>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.85rem', color: '#6b7280' }}>Collar Styles</label>
                     <input 
@@ -337,7 +393,9 @@ export default function AdminServices() {
           padding: 2rem;
           border-radius: 1rem;
           width: 100%;
-          max-width: 450px;
+          max-width: 500px;
+          max-height: 90vh;
+          overflow-y: auto;
           box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
           animation: modalSlide 0.3s ease-out;
         }
