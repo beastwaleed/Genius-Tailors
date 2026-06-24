@@ -28,6 +28,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Base Route for Vercel Health Check
+app.get('/', (req, res) => {
+  res.send('Genius Tailors API is successfully running on Vercel!');
+});
+
 // ==========================================
 // HELPER FUNCTIONS
 // ==========================================
