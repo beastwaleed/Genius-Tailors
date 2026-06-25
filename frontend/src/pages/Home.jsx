@@ -263,6 +263,7 @@ export default function Home() {
   const [showIntro, setShowIntro] = useState(() => {
     return window.innerWidth <= 768 && !sessionStorage.getItem('introSeen');
   });
+  const [servicesData, setServicesData] = useState(SERVICES_PREVIEW);
 
   useEffect(() => {
     if (!isLoggedIn && !sessionStorage.getItem('gt_promo_dismissed') && !showIntro) {
@@ -297,12 +298,31 @@ export default function Home() {
     api.get('/api/season/active')
       .then(r => setActiveSeason(r.data?.season || null))
       .catch(() => { });
+
+    api.get('/api/services')
+      .then(res => {
+        const dbServices = res.data;
+        const merged = SERVICES_PREVIEW.map(staticSvc => {
+          const dbSvc = dbServices.find(s => s.name.toLowerCase() === staticSvc.name.toLowerCase());
+          if (dbSvc) {
+            return {
+              ...staticSvc,
+              img: dbSvc.featuredImage || staticSvc.img,
+              price: `From Rs. ${dbSvc.basePrice.toLocaleString()}`,
+              desc: dbSvc.description || staticSvc.desc,
+            };
+          }
+          return staticSvc;
+        });
+        setServicesData(merged);
+      })
+      .catch(err => console.error('Failed to fetch services config', err));
   }, []);
 
   return (
     <>
       {showIntro ? (
-        <MobileIntro services={SERVICES_PREVIEW} onComplete={handleIntroComplete} />
+        <MobileIntro services={servicesData} onComplete={handleIntroComplete} />
       ) : (
         <div className="home">
           <Navbar />
@@ -455,7 +475,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="services-grid animate-children">
-                {SERVICES_PREVIEW.map((svc) => (
+                {servicesData.map((svc) => (
                   <Link to={`/book?service=${encodeURIComponent(svc.name)}`} key={svc.name} className="svc-card animate-fade-in">
 
                     {/* Image */}

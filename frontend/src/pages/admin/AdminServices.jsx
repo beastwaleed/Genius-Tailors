@@ -11,7 +11,7 @@ export default function AdminServices() {
   const [imageUploading, setImageUploading] = useState(false);
   const [formData, setFormData] = useState({ 
     name: '', description: '', basePrice: '', 
-    collarStyles: '', sleeveStyles: '', frontStyles: '', bottomStyles: '', images: []
+    collarStyles: '', sleeveStyles: '', frontStyles: '', bottomStyles: '', featuredImage: '', images: []
   });
 
   useEffect(() => {
@@ -40,11 +40,12 @@ export default function AdminServices() {
         sleeveStyles: service.customizations?.sleeveStyles?.join(', ') || '',
         frontStyles: service.customizations?.frontStyles?.join(', ') || '',
         bottomStyles: service.customizations?.bottomStyles?.join(', ') || '',
+        featuredImage: service.featuredImage || '',
         images: service.images || []
       });
     } else {
       setEditingService(null);
-      setFormData({ name: '', description: '', basePrice: '', collarStyles: '', sleeveStyles: '', frontStyles: '', bottomStyles: '', images: [] });
+      setFormData({ name: '', description: '', basePrice: '', collarStyles: '', sleeveStyles: '', frontStyles: '', bottomStyles: '', featuredImage: '', images: [] });
     }
     setShowModal(true);
   };
@@ -64,6 +65,7 @@ export default function AdminServices() {
         frontStyles: processArray(formData.frontStyles),
         bottomStyles: processArray(formData.bottomStyles),
       },
+      featuredImage: formData.featuredImage,
       images: formData.images
     };
 
@@ -96,9 +98,31 @@ export default function AdminServices() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setFormData(prev => ({ ...prev, images: [...prev.images, data.imageUrl] }));
-      toast.success('Image uploaded');
+      toast.success('Gallery image uploaded');
     } catch (error) {
       toast.error('Failed to upload image');
+    } finally {
+      setImageUploading(false);
+      e.target.value = null;
+    }
+  };
+
+  const handleUploadFeaturedImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fd = new FormData();
+    fd.append('image', file);
+
+    try {
+      setImageUploading(true);
+      const { data } = await api.post('/api/upload/reference-image', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData(prev => ({ ...prev, featuredImage: data.imageUrl }));
+      toast.success('Featured image uploaded');
+    } catch (error) {
+      toast.error('Failed to upload featured image');
     } finally {
       setImageUploading(false);
       e.target.value = null;
@@ -192,11 +216,32 @@ export default function AdminServices() {
               </div>
 
               <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Service Images (Closeups, Styles)</label>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Featured Image (Main Card Image)</label>
+                {formData.featuredImage && (
+                  <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '0.5rem' }}>
+                    <img src={formData.featuredImage} alt="Featured" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+                    <button 
+                      type="button" 
+                      onClick={() => setFormData(prev => ({ ...prev, featuredImage: '' }))}
+                      style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >×</button>
+                  </div>
+                )}
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleUploadFeaturedImage}
+                  disabled={imageUploading}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px dashed #d1d5db' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Gallery Images (Detailed closeups)</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
                   {formData.images.map((imgUrl, idx) => (
                     <div key={idx} style={{ position: 'relative', width: '80px', height: '80px' }}>
-                      <img src={imgUrl} alt={`Service image ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+                      <img src={imgUrl} alt={`Service gallery image ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
                       <button 
                         type="button" 
                         onClick={() => handleRemoveImage(idx)}
