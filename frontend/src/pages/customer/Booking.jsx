@@ -331,9 +331,18 @@ export default function Booking() {
             <div className="luxury-form-group">
               <label>Garment Service</label>
               <select value={serviceName} onChange={(e) => setServiceName(e.target.value)} className="luxury-select">
-                {Object.keys(SERVICES_PRICES).map(s => (
-                  <option key={s} value={s}>{s} (Base: Rs. {SERVICES_PRICES[s]})</option>
-                ))}
+                {Object.keys(SERVICES_PRICES).map(s => {
+                  let displayPrice = SERVICES_PRICES[s];
+                  if (dbServices && dbServices.length > 0) {
+                    const activeSrv = dbServices.find(db => db.name === s);
+                    if (activeSrv && activeSrv.basePrice) {
+                      displayPrice = activeSrv.basePrice;
+                    }
+                  }
+                  return (
+                    <option key={s} value={s}>{s} (Base: Rs. {displayPrice})</option>
+                  );
+                })}
               </select>
             </div>
 
