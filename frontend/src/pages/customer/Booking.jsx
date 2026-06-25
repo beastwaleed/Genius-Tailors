@@ -808,7 +808,7 @@ export default function Booking() {
 
         .style-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
           gap: 1rem;
         }
 
@@ -834,8 +834,9 @@ export default function Booking() {
 
         .style-img {
           width: 100%;
-          height: 100px;
-          object-fit: cover;
+          height: 150px;
+          object-fit: contain;
+          background-color: #f8fafc;
           border-bottom: 1px solid var(--ivory-border);
         }
 
