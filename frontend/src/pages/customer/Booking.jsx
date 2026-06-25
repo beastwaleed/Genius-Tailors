@@ -19,8 +19,8 @@ import imgStandardShalwar from '../../assets/styles/standard_shalwar.png';
 import imgStraightTrouser from '../../assets/styles/straight_trouser.png';
 import imgNarrowPant from '../../assets/styles/narrow_pant.png';
 
-import imgShalwarNoPocket from '../../assets/styles/shalwar_no_pocket.png';
-import imgShalwarOnePocket from '../../assets/styles/shalwar_one_pocket.png';
+import imgShalwarNoPocket from '../../assets/styles/shalwar_no_pocket.jpg';
+import imgShalwarOnePocket from '../../assets/styles/shalwar_one_pocket.jpg';
 import imgShalwarNoDesign from '../../assets/styles/shalwar_no_design.png';
 import imgShalwarZigzag from '../../assets/styles/shalwar_zigzag.png';
 
