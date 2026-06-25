@@ -33,29 +33,52 @@ const SERVICES_PRICES = {
   'Waistcoat': 2000
 };
 
-const COLLAR_OPTIONS = [
-  { name: 'Ban Collar', img: imgBanCollar },
-  { name: 'Shirt Collar', img: imgShirtCollar },
-  { name: 'Round Neck', img: imgRoundNeck }
-];
-
-const CUFF_OPTIONS = [
-  { name: 'Open Sleeves', img: imgOpenSleeves },
-  { name: 'Single Cuff', img: imgSingleCuff },
-  { name: 'Double Cuff', img: imgDoubleCuff }
-];
-
-const POCKET_OPTIONS = [
-  { name: 'Side Pockets Only', img: imgSidePockets },
-  { name: 'Front Pocket', img: imgFrontPocket },
-  { name: 'Front & Side', img: imgFrontSidePockets }
-];
-
-const BOTTOM_OPTIONS = [
-  { name: 'Standard Shalwar', img: imgStandardShalwar },
-  { name: 'Straight Trouser', img: imgStraightTrouser },
-  { name: 'Narrow Pant', img: imgNarrowPant }
-];
+const STYLE_CONFIGS = {
+  'Kameez Shalwar': {
+    collarTypes: [
+      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] },
+      { name: 'Shirt Collar', img: imgShirtCollar, subs: ['2 inch notch', '2.25 inch notch', 'Arrow Collar'] }
+    ],
+    cuffs: [
+      { name: 'Round Cuff', img: imgOpenSleeves, price: 0 },
+      { name: 'Square Cuff', img: imgSingleCuff, price: 0 },
+      { name: 'Double Cuff', img: imgDoubleCuff, price: 100 }
+    ],
+    pockets: [
+      { name: 'Side Only', img: imgSidePockets },
+      { name: 'Front Only', img: imgFrontPocket },
+      { name: 'Both Pockets', img: imgFrontSidePockets }
+    ],
+    bottomPockets: [
+      { name: 'No Pocket', price: 0 },
+      { name: '1 Pocket', price: 100 }
+    ],
+    bottomDesigns: [
+      { name: 'No Design', price: 0 },
+      { name: 'Zigzag Stitch', price: 200 }
+    ]
+  },
+  'Kurta Pajama': {
+    collarTypes: [
+      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
+    ],
+    cuffs: [
+      { name: 'Round Sleeves', img: imgOpenSleeves, price: 0 },
+      { name: 'Square Cuff', img: imgSingleCuff, price: 0 }
+    ],
+    pockets: [
+      { name: 'Side Pocket Only', img: imgSidePockets }
+    ],
+    bottomPockets: [
+      { name: 'No Pocket', price: 0 },
+      { name: '1 Pocket', price: 100 }
+    ],
+    bottomDesigns: [
+      { name: 'No Design', price: 0 },
+      { name: 'Zigzag Stitch', price: 200 }
+    ]
+  }
+};
 
 const FABRIC_COLORS = [
   { name: 'Black', hex: '#000000' },
@@ -86,10 +109,25 @@ export default function Booking() {
   // Customization State
   const [styleVariations, setStyleVariations] = useState({
     collar: 'Ban Collar',
-    sleeves: 'Open Sleeves',
-    front: 'Side Pockets Only',
-    bottom: 'Standard Shalwar'
+    collarSub: '0.9 inch',
+    cuff: 'Round Cuff',
+    pockets: 'Side Only',
+    bottomPocket: 'No Pocket',
+    bottomDesign: 'No Design'
   });
+
+  // When service changes, reset variations to the new service's defaults
+  useEffect(() => {
+    const config = STYLE_CONFIGS[serviceName] || STYLE_CONFIGS['Kameez Shalwar'];
+    setStyleVariations({
+      collar: config.collarTypes[0].name,
+      collarSub: config.collarTypes[0].subs[0],
+      cuff: config.cuffs[0].name,
+      pockets: config.pockets[0].name,
+      bottomPocket: config.bottomPockets[0].name,
+      bottomDesign: config.bottomDesigns[0].name
+    });
+  }, [serviceName]);
   
   const [dbFabrics, setDbFabrics] = useState([]);
   const fabricList = [
@@ -126,9 +164,22 @@ export default function Booking() {
     fetchData();
   }, []);
 
+  const config = STYLE_CONFIGS[serviceName] || STYLE_CONFIGS['Kameez Shalwar'];
+  
+  // Calculate Extra Styling Charges
+  let styleExtras = 0;
+  const selectedCuff = config.cuffs.find(c => c.name === styleVariations.cuff);
+  if (selectedCuff && selectedCuff.price) styleExtras += selectedCuff.price;
+  
+  const selectedBP = config.bottomPockets.find(b => b.name === styleVariations.bottomPocket);
+  if (selectedBP && selectedBP.price) styleExtras += selectedBP.price;
+
+  const selectedBD = config.bottomDesigns.find(b => b.name === styleVariations.bottomDesign);
+  if (selectedBD && selectedBD.price) styleExtras += selectedBD.price;
+
   const basePrice = SERVICES_PRICES[serviceName] || 2500;
   const discountAmount = hasDiscount ? (basePrice * 0.1) : 0;
-  const totalPrice = basePrice - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price;
+  const totalPrice = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price;
 
   const handleNext = () => setStep(s => s + 1);
   const handleBack = () => setStep(s => s - 1);
@@ -298,24 +349,46 @@ export default function Booking() {
             {/* Collar Options */}
             <div className="style-section">
               <h3>Collar Style</h3>
-              <div className="style-grid">
-                {COLLAR_OPTIONS.map(opt => (
-                  <div key={opt.name} className={`style-card ${styleVariations.collar === opt.name ? 'selected' : ''}`} onClick={() => setStyleVariations({...styleVariations, collar: opt.name})}>
+              <div className="style-grid" style={{ marginBottom: '1rem' }}>
+                {config.collarTypes.map(opt => (
+                  <div key={opt.name} className={`style-card ${styleVariations.collar === opt.name ? 'selected' : ''}`} 
+                    onClick={() => setStyleVariations({...styleVariations, collar: opt.name, collarSub: opt.subs[0]})}
+                  >
                     <img src={opt.img} alt={opt.name} className="style-img" />
                     <span>{opt.name}</span>
                   </div>
                 ))}
               </div>
+              
+              {/* Collar Sub-option Dropdown */}
+              {config.collarTypes.find(c => c.name === styleVariations.collar) && (
+                <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, color: 'var(--onyx)', marginBottom: '0.5rem' }}>
+                    Select specific {styleVariations.collar} size/style:
+                  </label>
+                  <select 
+                    value={styleVariations.collarSub} 
+                    onChange={e => setStyleVariations({...styleVariations, collarSub: e.target.value})}
+                    className="luxury-select"
+                  >
+                    {config.collarTypes.find(c => c.name === styleVariations.collar).subs.map(sub => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* Cuff Options */}
             <div className="style-section">
               <h3>Sleeve Cuffs</h3>
               <div className="style-grid">
-                {CUFF_OPTIONS.map(opt => (
-                  <div key={opt.name} className={`style-card ${styleVariations.sleeves === opt.name ? 'selected' : ''}`} onClick={() => setStyleVariations({...styleVariations, sleeves: opt.name})}>
+                {config.cuffs.map(opt => (
+                  <div key={opt.name} className={`style-card ${styleVariations.cuff === opt.name ? 'selected' : ''}`} 
+                    onClick={() => setStyleVariations({...styleVariations, cuff: opt.name})}
+                  >
                     <img src={opt.img} alt={opt.name} className="style-img" />
-                    <span>{opt.name}</span>
+                    <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
                   </div>
                 ))}
               </div>
@@ -323,10 +396,12 @@ export default function Booking() {
 
             {/* Pocket Options */}
             <div className="style-section">
-              <h3>Pockets</h3>
+              <h3>Shirt Pockets</h3>
               <div className="style-grid">
-                {POCKET_OPTIONS.map(opt => (
-                  <div key={opt.name} className={`style-card ${styleVariations.front === opt.name ? 'selected' : ''}`} onClick={() => setStyleVariations({...styleVariations, front: opt.name})}>
+                {config.pockets.map(opt => (
+                  <div key={opt.name} className={`style-card ${styleVariations.pockets === opt.name ? 'selected' : ''}`} 
+                    onClick={() => setStyleVariations({...styleVariations, pockets: opt.name})}
+                  >
                     <img src={opt.img} alt={opt.name} className="style-img" />
                     <span>{opt.name}</span>
                   </div>
@@ -334,16 +409,37 @@ export default function Booking() {
               </div>
             </div>
 
-            {/* Bottoms Options */}
-            <div className="style-section">
-              <h3>Bottom Style</h3>
-              <div className="style-grid">
-                {BOTTOM_OPTIONS.map(opt => (
-                  <div key={opt.name} className={`style-card ${styleVariations.bottom === opt.name ? 'selected' : ''}`} onClick={() => setStyleVariations({...styleVariations, bottom: opt.name})}>
-                    <img src={opt.img} alt={opt.name} className="style-img" />
-                    <span>{opt.name}</span>
-                  </div>
-                ))}
+            {/* Bottoms Options (Pockets and Design) */}
+            <div className="style-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              <div>
+                <h3>Bottom Pockets</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {config.bottomPockets.map(opt => (
+                    <label key={opt.name} className={`minimal-profile-item ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`} style={{ padding: '0.75rem' }}>
+                      <input 
+                        type="radio" 
+                        checked={styleVariations.bottomPocket === opt.name} 
+                        onChange={() => setStyleVariations({...styleVariations, bottomPocket: opt.name})} 
+                      />
+                      <span style={{ marginLeft: '0.5rem', fontWeight: 500 }}>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3>Bottom Design</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {config.bottomDesigns.map(opt => (
+                    <label key={opt.name} className={`minimal-profile-item ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`} style={{ padding: '0.75rem' }}>
+                      <input 
+                        type="radio" 
+                        checked={styleVariations.bottomDesign === opt.name} 
+                        onChange={() => setStyleVariations({...styleVariations, bottomDesign: opt.name})} 
+                      />
+                      <span style={{ marginLeft: '0.5rem', fontWeight: 500 }}>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -478,12 +574,20 @@ export default function Booking() {
               <div style={{ padding: '0.5rem 0', color: 'var(--stone)' }}>
                 <strong style={{ color: 'var(--onyx)', display: 'block', marginBottom: '0.5rem' }}>Style Preferences:</strong>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
-                  <span>Collar: {styleVariations.collar}</span>
-                  <span>Cuffs: {styleVariations.sleeves}</span>
-                  <span>Pockets: {styleVariations.front}</span>
-                  <span>Bottom: {styleVariations.bottom}</span>
+                  <span>Collar: {styleVariations.collar} ({styleVariations.collarSub})</span>
+                  <span>Cuffs: {styleVariations.cuff}</span>
+                  <span>Shirt Pockets: {styleVariations.pockets}</span>
+                  <span>Bottom Pocket: {styleVariations.bottomPocket}</span>
+                  <span>Bottom Design: {styleVariations.bottomDesign}</span>
                 </div>
               </div>
+              <div className="receipt-divider"></div>
+              {styleExtras > 0 && (
+                <div className="receipt-row" style={{ color: 'var(--gold)', fontWeight: 500 }}>
+                  <span>Extra Styling Charges</span>
+                  <span>+ Rs. {styleExtras.toLocaleString()}</span>
+                </div>
+              )}
               <div className="receipt-divider"></div>
               {hasDiscount && (
                 <div className="receipt-row" style={{ color: '#16a34a', fontWeight: 500 }}>

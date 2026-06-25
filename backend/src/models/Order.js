@@ -14,9 +14,11 @@ const orderSchema = new mongoose.Schema({
   // The customized layers selected by the user
   styleVariations: {
     collar: { type: String },
-    sleeves: { type: String },
-    front: { type: String },
-    bottom: { type: String }
+    collarSub: { type: String },
+    cuff: { type: String },
+    pockets: { type: String },
+    bottomPocket: { type: String },
+    bottomDesign: { type: String }
   },
   // The fabric selected by the customer (own fabric or premium store fabric)
   fabricSelection: { 
