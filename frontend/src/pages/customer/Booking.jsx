@@ -4,7 +4,7 @@ import CustomerLayout from '../../components/CustomerLayout';
 import api from '../../api';
 import toast from 'react-hot-toast';
 
-import imgBanCollar from '../../assets/styles/ban_collar.png';
+import imgBanCollar from '../../assets/styles/ban_collar.jpg';
 import imgShirtCollar from '../../assets/styles/shirt_collar.png';
 import imgRoundNeck from '../../assets/styles/round_neck.png';
 
