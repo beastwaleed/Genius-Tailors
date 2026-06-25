@@ -86,21 +86,25 @@ export default function AdminServices() {
   };
 
   const handleUploadImage = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const fd = new FormData();
-    fd.append('image', file);
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
 
     try {
       setImageUploading(true);
-      const { data } = await api.post('/api/upload/reference-image', fd, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const uploadPromises = files.map(async (file) => {
+        const fd = new FormData();
+        fd.append('image', file);
+        const { data } = await api.post('/api/upload/reference-image', fd, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return data.url;
       });
-      setFormData(prev => ({ ...prev, images: [...prev.images, data.url] }));
-      toast.success('Gallery image uploaded');
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+      setFormData(prev => ({ ...prev, images: [...prev.images, ...uploadedUrls] }));
+      toast.success(`${uploadedUrls.length} gallery image(s) uploaded`);
     } catch (error) {
-      toast.error('Failed to upload image');
+      toast.error('Failed to upload one or more images');
     } finally {
       setImageUploading(false);
       e.target.value = null;
@@ -256,6 +260,7 @@ export default function AdminServices() {
                 <input 
                   type="file" 
                   accept="image/*"
+                  multiple
                   onChange={handleUploadImage}
                   disabled={imageUploading}
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px dashed #d1d5db' }}
