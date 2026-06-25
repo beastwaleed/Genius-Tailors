@@ -42,6 +42,36 @@ export default function AdminOrders() {
     }
   };
 
+  const handleDownloadLabels = async () => {
+    if (selectedOrders.length === 0) return toast.error('Select at least one order to print labels for.');
+    
+    // Filter selected orders that actually have a tracking number synced
+    const selectedTracking = orders
+      .filter(o => selectedOrders.includes(o._id) && o.trackingNumber)
+      .map(o => o.trackingNumber);
+
+    if (selectedTracking.length === 0) return toast.error('None of the selected orders have a PostEx tracking number.');
+    if (selectedTracking.length > 10) return toast.error('PostEx allows a maximum of 10 labels to be downloaded at once.');
+
+    const toastId = toast.loading('Generating shipping labels from PostEx...');
+    try {
+      const res = await api.get('/api/admin/orders/labels', {
+        params: { trackingNumbers: selectedTracking.join(',') },
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Shipping_Labels_${new Date().toISOString().split('T')[0]}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success('Labels downloaded!', { id: toastId });
+    } catch (err) {
+      toast.error('Failed to download shipping labels. PostEx may be temporarily unavailable.', { id: toastId });
+    }
+  };
+
   // Memoized filters
   const filteredOrders = useMemo(() => {
     return orders.filter(order => {
@@ -153,7 +183,22 @@ export default function AdminOrders() {
             style={{ padding: '0.6rem 1.25rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#C9A96E', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Export CSV {selectedOrders.length > 0 ? `(${selectedOrders.length} Selected)` : '(All)'}
+            Export CSV {selectedOrders.length > 0 ? `(${selectedOrders.length})` : '(All)'}
+          </button>
+          
+          <button 
+            className="premium-btn" 
+            onClick={handleDownloadLabels}
+            disabled={selectedOrders.length === 0}
+            style={{ 
+              padding: '0.6rem 1.25rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.5rem', 
+              background: selectedOrders.length > 0 ? '#1e293b' : '#cbd5e1', 
+              color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', 
+              cursor: selectedOrders.length > 0 ? 'pointer' : 'not-allowed' 
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Print Labels {selectedOrders.length > 0 && `(${selectedOrders.length})`}
           </button>
         </div>
       </div>

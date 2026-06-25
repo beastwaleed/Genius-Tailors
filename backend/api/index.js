@@ -589,6 +589,52 @@ app.get('/api/orders/:id', protect, async (req, res) => {
   }
 });
 
+// Live Order Tracking Timeline (Customer / Admin)
+app.get('/api/orders/:id/tracking', protect, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+    
+    const isOwner = order.customer.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'Admin';
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    if (!order.trackingNumber) {
+      return res.json({ history: [], message: 'No tracking number assigned yet' });
+    }
+
+    const trackRes = await postexService.trackBulkOrders([order.trackingNumber]);
+    if (trackRes && trackRes.dist && trackRes.dist.length > 0) {
+      const trackingData = trackRes.dist[0].trackingResponse;
+      return res.json({ history: trackingData.transactionStatusHistory || [] });
+    }
+    return res.json({ history: [] });
+  } catch (error) {
+    console.error('Failed to fetch tracking details:', error);
+    res.status(500).json({ message: 'Error fetching live tracking' });
+  }
+});
+
+// Airway Bill PDF Generation (Admin)
+app.get('/api/admin/orders/labels', protect, admin, async (req, res) => {
+  try {
+    const { trackingNumbers } = req.query; // Comma separated string
+    if (!trackingNumbers) return res.status(400).json({ message: 'No tracking numbers provided' });
+
+    const pdfBuffer = await postexService.getInvoice(trackingNumbers);
+    
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="shipping_labels_${Date.now()}.pdf"`);
+    res.send(Buffer.from(pdfBuffer, 'binary'));
+  } catch (error) {
+    console.error('Failed to generate shipping labels:', error);
+    res.status(500).json({ message: 'Error fetching shipping labels from PostEx' });
+  }
+});
+
 // Get ALL orders — Admin Dashboard
 // Also supports ?membership=Gold for VIP filtering (PDF §11)
 app.get('/api/orders', protect, admin, async (req, res) => {
