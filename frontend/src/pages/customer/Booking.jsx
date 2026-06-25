@@ -9,6 +9,7 @@ import imgShirtCollar from '../../assets/styles/shirt_collar.jpg';
 import imgRoundNeck from '../../assets/styles/round_neck.png';
 
 import imgOpenSleeves from '../../assets/styles/round_cuff.jpg';
+import imgRoundSleeves from '../../assets/roundSleeves.jpeg';
 import imgSingleCuff from '../../assets/styles/single_cuff.jpg';
 import imgDoubleCuff from '../../assets/styles/double_cuff.jpg';
 
@@ -49,8 +50,8 @@ const STYLE_CONFIGS = {
       { name: 'Double Cuff', img: imgDoubleCuff, price: 100 }
     ],
     pockets: [
-      { name: 'Side Only', img: imgSidePockets },
-      { name: 'Both Pockets', img: imgFrontSidePockets }
+      { name: '2 Side Pockets', img: imgSidePockets },
+      { name: '1 Front and 2 Sides', img: imgFrontSidePockets }
     ],
     bottomPockets: [
       { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
@@ -66,13 +67,12 @@ const STYLE_CONFIGS = {
       { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
     ],
     cuffs: [
-      { name: 'Round Cuff', img: imgOpenSleeves, price: 0 },
-      { name: 'Square Cuff', img: imgSingleCuff, price: 0 },
-      { name: 'Double Cuff', img: imgDoubleCuff, price: 100 }
+      { name: 'Round Sleeves', img: imgRoundSleeves, price: 0 },
+      { name: 'Square Cuff', img: imgSingleCuff, price: 0 }
     ],
     pockets: [
-      { name: 'Side Only', img: imgSidePockets },
-      { name: 'Both Pockets', img: imgFrontSidePockets }
+      { name: '2 Side Pockets', img: imgSidePockets },
+      { name: '1 Front and 2 Sides', img: imgFrontSidePockets }
     ],
     bottomPockets: [
       { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
@@ -88,11 +88,11 @@ const STYLE_CONFIGS = {
       { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
     ],
     cuffs: [
-      { name: 'Round Sleeves', img: imgOpenSleeves, price: 0 },
+      { name: 'Round Sleeves', img: imgRoundSleeves, price: 0 },
       { name: 'Square Cuff', img: imgSingleCuff, price: 0 }
     ],
     pockets: [
-      { name: 'Side Only', img: imgSidePockets }
+      { name: '2 Side Pockets', img: imgSidePockets }
     ],
     bottomPockets: [
       { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
@@ -136,7 +136,7 @@ export default function Booking() {
     collar: 'Ban Collar',
     collarSub: '0.9 inch',
     cuff: 'Round Cuff',
-    pockets: 'Side Only',
+    pockets: '2 Side Pockets',
     bottomPocket: 'No Pocket',
     bottomDesign: 'No Design'
   });
@@ -447,9 +447,9 @@ export default function Booking() {
               </div>
             </div>
 
-            {/* Pocket Options */}
+            {/* Pockets */}
             <div className="style-section">
-              <h3>Shirt Pockets</h3>
+              <h3>{serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}</h3>
               <div className="style-grid">
                 {config.pockets.map(opt => (
                   <div key={opt.name} className={`style-card ${styleVariations.pockets === opt.name ? 'selected' : ''}`} 
@@ -625,7 +625,7 @@ export default function Booking() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
                   <span>Collar: {styleVariations.collar} ({styleVariations.collarSub})</span>
                   <span>Cuffs: {styleVariations.cuff}</span>
-                  <span>Shirt Pockets: {styleVariations.pockets}</span>
+                  <span>{serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}: {styleVariations.pockets}</span>
                   <span>Bottom Pocket: {styleVariations.bottomPocket}</span>
                   <span>Bottom Design: {styleVariations.bottomDesign}</span>
                 </div>
