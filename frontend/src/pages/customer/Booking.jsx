@@ -178,13 +178,13 @@ export default function Booking() {
     const fetchData = async () => {
       try {
         const [profRes, ordRes, userRes, citiesRes] = await Promise.all([
-          api.get('/api/measurements'),
-          api.get('/api/orders/myorders'),
-          api.get('/api/users/profile'),
+          api.get('/api/measurements').catch(() => ({ data: [] })),
+          api.get('/api/orders/myorders').catch(() => ({ data: [] })),
+          api.get('/api/profile').catch(() => ({ data: {} })),
           api.get('/api/shipping/cities').catch(() => ({ data: [] }))
         ]);
-        setProfiles(profRes.data);
-        if (ordRes.data.length === 0) setHasDiscount(true);
+        if (profRes.data) setProfiles(profRes.data);
+        if (ordRes.data && ordRes.data.length === 0) setHasDiscount(true);
         if (userRes.data && userRes.data.loyaltyPoints) setUserPoints(userRes.data.loyaltyPoints);
         if (citiesRes.data) setOperationalCities(citiesRes.data);
         
