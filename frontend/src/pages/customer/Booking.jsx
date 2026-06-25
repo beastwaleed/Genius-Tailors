@@ -5,10 +5,10 @@ import api from '../../api';
 import toast from 'react-hot-toast';
 
 import imgBanCollar from '../../assets/styles/ban_collar.jpg';
-import imgShirtCollar from '../../assets/styles/shirt_collar.png';
+import imgShirtCollar from '../../assets/styles/shirt_collar.jpg';
 import imgRoundNeck from '../../assets/styles/round_neck.png';
 
-import imgOpenSleeves from '../../assets/styles/open_sleeves.png';
+import imgOpenSleeves from '../../assets/styles/round_cuff.jpg';
 import imgSingleCuff from '../../assets/styles/single_cuff.png';
 import imgDoubleCuff from '../../assets/styles/double_cuff.png';
 
