@@ -348,11 +348,22 @@ app.delete('/api/measurements/:id', protect, async (req, res) => {
 // Place a new order (Customer)
 app.post('/api/orders', protect, async (req, res) => {
   try {
-    const { serviceName, styleVariations, measurementSnapshot, totalPrice, isRush, referenceImageUrl, customerNote, neededByDate } = req.body;
+    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, isRush, referenceImageUrl, customerNote, neededByDate } = req.body;
 
     if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
     if (!measurementSnapshot || !measurementSnapshot.measurements) return res.status(400).json({ message: 'Measurement snapshot is required' });
     if (!totalPrice || totalPrice <= 0) return res.status(400).json({ message: 'A valid total price is required' });
+
+    const user = await User.findById(req.user._id);
+    let actualPointsUsed = 0;
+    if (pointsUsed && pointsUsed > 0) {
+      if (user.loyaltyPoints >= pointsUsed) {
+        user.loyaltyPoints -= pointsUsed;
+        actualPointsUsed = pointsUsed;
+      } else {
+        return res.status(400).json({ message: 'Insufficient loyalty points' });
+      }
+    }
 
     const activeSeason = await SeasonConfig.findOne({ isActive: true });
     const isGoldMember = req.user.membershipLevel === 'Gold';
@@ -366,6 +377,7 @@ app.post('/api/orders', protect, async (req, res) => {
       measurementSnapshot,
       totalPrice,
       pointsEarned,
+      pointsUsed: actualPointsUsed,
       isPriority,
       isRush: isRush === true,
       season: activeSeason ? activeSeason.name : '',
@@ -376,10 +388,19 @@ app.post('/api/orders', protect, async (req, res) => {
 
     const createdOrder = await order.save();
 
-    const user = await User.findById(req.user._id);
     user.loyaltyPoints += pointsEarned;
     user.membershipLevel = upgradeMembership(user.loyaltyPoints);
     await user.save();
+
+    if (actualPointsUsed > 0) {
+      await LoyaltyRecord.create({
+        customer: user._id,
+        order: createdOrder._id,
+        type: 'redeemed',
+        points: actualPointsUsed,
+        description: `Redeemed ${actualPointsUsed} points for order ${serviceName}`
+      });
+    }
 
     await LoyaltyRecord.create({
       customer: user._id,

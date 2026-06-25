@@ -166,16 +166,21 @@ export default function Booking() {
   const [isRush, setIsRush] = useState(false);
   const [customerNote, setCustomerNote] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  const [userPoints, setUserPoints] = useState(0);
+  const [usePoints, setUsePoints] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profRes, ordRes] = await Promise.all([
+        const [profRes, ordRes, userRes] = await Promise.all([
           api.get('/api/measurements'),
-          api.get('/api/orders/myorders')
+          api.get('/api/orders/myorders'),
+          api.get('/api/users/profile')
         ]);
         setProfiles(profRes.data);
         if (ordRes.data.length === 0) setHasDiscount(true);
+        if (userRes.data && userRes.data.loyaltyPoints) setUserPoints(userRes.data.loyaltyPoints);
         
         try {
           const fabRes = await api.get('/api/fabrics');
@@ -221,7 +226,9 @@ export default function Booking() {
   }
 
   const discountAmount = hasDiscount ? (basePrice * 0.1) : 0;
-  const totalPrice = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price;
+  const subTotal = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price;
+  const pointsDiscount = usePoints ? Math.min(userPoints, subTotal) : 0;
+  const totalPrice = subTotal - pointsDiscount;
 
   const handleNext = () => setStep(s => s + 1);
   const handleBack = () => setStep(s => s - 1);
@@ -271,6 +278,7 @@ export default function Booking() {
           measurements: profile.measurements || {}
         },
         totalPrice,
+        pointsUsed: usePoints ? pointsDiscount : 0,
         isRush,
         customerNote
       });
@@ -648,6 +656,20 @@ export default function Booking() {
                 <div className="receipt-row rush-row">
                   <span>Expedited Rush Fee</span>
                   <span>Rs. 1,000</span>
+                </div>
+              )}
+              {userPoints > 0 && (
+                <div className="receipt-row" style={{ marginTop: '1rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--stone)', fontSize: '0.9rem' }}>
+                    <input type="checkbox" checked={usePoints} onChange={(e) => setUsePoints(e.target.checked)} />
+                    Use Loyalty Points ({userPoints} available = -Rs. {userPoints.toLocaleString()})
+                  </label>
+                </div>
+              )}
+              {usePoints && (
+                <div className="receipt-row" style={{ color: '#16a34a', fontWeight: 500 }}>
+                  <span>Loyalty Points Redeemed</span>
+                  <span>- Rs. {pointsDiscount.toLocaleString()}</span>
                 </div>
               )}
               <div className="receipt-divider"></div>

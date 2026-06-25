@@ -48,6 +48,10 @@ const orderSchema = new mongoose.Schema({
     type: Number, 
     default: 0 
   },
+  pointsUsed: {
+    type: Number,
+    default: 0
+  },
 
   // ── Priority System (Ramazan/Eid Queue) ──────────────────────────
   // Auto-set to true for Gold members when a peak season is active.
