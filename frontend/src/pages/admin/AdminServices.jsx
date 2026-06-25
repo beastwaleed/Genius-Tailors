@@ -162,6 +162,9 @@ export default function AdminServices() {
           {services.length > 0 ? (
             services.map(service => (
               <div key={service._id} className="admin-card service-card">
+                {service.featuredImage && (
+                  <img src={service.featuredImage} alt={service.name} style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '8px', marginBottom: '1rem' }} />
+                )}
                 <div className="service-header">
                   <h3>{service.name}</h3>
                   <span className="price-tag">Rs. {service.basePrice.toLocaleString()}</span>
