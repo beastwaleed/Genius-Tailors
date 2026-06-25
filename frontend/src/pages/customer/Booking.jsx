@@ -12,9 +12,8 @@ import imgOpenSleeves from '../../assets/styles/round_cuff.jpg';
 import imgSingleCuff from '../../assets/styles/single_cuff.jpg';
 import imgDoubleCuff from '../../assets/styles/double_cuff.jpg';
 
-import imgSidePockets from '../../assets/styles/side_pockets.png';
-import imgFrontPocket from '../../assets/styles/front_pocket.png';
-import imgFrontSidePockets from '../../assets/styles/front_side_pockets.png';
+import imgSidePockets from '../../assets/styles/side_pockets.jpg';
+import imgFrontSidePockets from '../../assets/styles/front_side_pockets.jpg';
 
 import imgStandardShalwar from '../../assets/styles/standard_shalwar.png';
 import imgStraightTrouser from '../../assets/styles/straight_trouser.png';
@@ -51,7 +50,6 @@ const STYLE_CONFIGS = {
     ],
     pockets: [
       { name: 'Side Only', img: imgSidePockets },
-      { name: 'Front Only', img: imgFrontPocket },
       { name: 'Both Pockets', img: imgFrontSidePockets }
     ],
     bottomPockets: [
@@ -72,7 +70,7 @@ const STYLE_CONFIGS = {
       { name: 'Square Cuff', img: imgSingleCuff, price: 0 }
     ],
     pockets: [
-      { name: 'Side Pocket Only', img: imgSidePockets }
+      { name: 'Side Only', img: imgSidePockets }
     ],
     bottomPockets: [
       { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
