@@ -37,7 +37,15 @@ export default function AdminCustomers() {
     serviceName: '',
     profileId: '',
     totalPrice: '',
-    isRush: false
+    isRush: false,
+    styleVariations: {
+      collar: 'Ban Collar',
+      collarSub: '0.9 inch',
+      cuff: 'Round Cuff',
+      pockets: '2 Side Pockets',
+      bottomPocket: 'No Pocket',
+      bottomDesign: 'No Design'
+    }
   });
 
   useEffect(() => {
@@ -463,13 +471,17 @@ export default function AdminCustomers() {
                     profileName: profile.profileName,
                     measurements: profile.measurements
                   },
+                  styleVariations: orderForm.styleVariations,
                   totalPrice: Number(orderForm.totalPrice),
                   isRush: orderForm.isRush
                 });
                 
                 toast.success('Order placed successfully');
                 setShowOrderModal(false);
-                setOrderForm({ serviceName: '', profileId: '', totalPrice: '', isRush: false });
+                setOrderForm({ 
+                  serviceName: '', profileId: '', totalPrice: '', isRush: false,
+                  styleVariations: { collar: 'Ban Collar', collarSub: '0.9 inch', cuff: 'Round Cuff', pockets: '2 Side Pockets', bottomPocket: 'No Pocket', bottomDesign: 'No Design' }
+                });
                 setViewCustomer(null);
               } catch (error) {
                 toast.error(error.response?.data?.message || 'Failed to place order');
@@ -508,6 +520,23 @@ export default function AdminCustomers() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
                 <input type="checkbox" id="isRush" checked={orderForm.isRush} onChange={(e) => setOrderForm({...orderForm, isRush: e.target.checked})} />
                 <label htmlFor="isRush" style={{ fontWeight: 500, color: '#475569', cursor: 'pointer' }}>Mark as Priority/Rush Order</label>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Styling Variations</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+                  {Object.keys(orderForm.styleVariations).map(key => (
+                    <div key={key}>
+                      <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b', textTransform: 'capitalize' }}>{key.replace(/([A-Z])/g, ' $1').trim()}</label>
+                      <input 
+                        type="text" 
+                        value={orderForm.styleVariations[key]} 
+                        onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, [key]: e.target.value}})}
+                        style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
