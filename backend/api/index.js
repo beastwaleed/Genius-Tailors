@@ -21,6 +21,7 @@ const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/cloudinary');
 const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail } = require('../src/config/email');
 const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation } = require('../src/config/whatsapp');
+const postexService = require('../src/services/postexService');
 
 const app = express();
 
@@ -345,14 +346,40 @@ app.delete('/api/measurements/:id', protect, async (req, res) => {
 // 5. ORDER ROUTES (Cash Register & Dashboard)
 // ==========================================
 
+let cachedCities = null;
+let lastCacheTime = 0;
+
+// Operational Cities caching for frontend dropdown
+app.get('/api/shipping/cities', async (req, res) => {
+  try {
+    const now = Date.now();
+    if (cachedCities && now - lastCacheTime < 12 * 60 * 60 * 1000) {
+      return res.json(cachedCities);
+    }
+    
+    const postexRes = await postexService.getOperationalCities();
+    if (postexRes && postexRes.dist) {
+      // Filter for cities where PostEx allows delivery
+      cachedCities = postexRes.dist.filter(c => c.isDeliveryCity === 'true' || c.isDeliveryCity === true);
+      lastCacheTime = now;
+      res.json(cachedCities);
+    } else {
+      res.status(400).json({ message: 'Failed to parse cities from PostEx' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching operational cities', error: error.message });
+  }
+});
+
 // Place a new order (Customer)
 app.post('/api/orders', protect, async (req, res) => {
   try {
-    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, isRush, referenceImageUrl, customerNote, neededByDate } = req.body;
+    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, isRush, referenceImageUrl, customerNote, neededByDate, deliveryCity, deliveryAddress } = req.body;
 
     if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
     if (!measurementSnapshot || !measurementSnapshot.measurements) return res.status(400).json({ message: 'Measurement snapshot is required' });
     if (!totalPrice || totalPrice <= 0) return res.status(400).json({ message: 'A valid total price is required' });
+    if (!deliveryCity || !deliveryAddress) return res.status(400).json({ message: 'Delivery city and address are required' });
 
     const user = await User.findById(req.user._id);
     let actualPointsUsed = 0;
@@ -378,6 +405,8 @@ app.post('/api/orders', protect, async (req, res) => {
       totalPrice,
       pointsEarned,
       pointsUsed: actualPointsUsed,
+      deliveryCity,
+      deliveryAddress,
       isPriority,
       isRush: isRush === true,
       season: activeSeason ? activeSeason.name : '',
@@ -387,6 +416,36 @@ app.post('/api/orders', protect, async (req, res) => {
     });
 
     const createdOrder = await order.save();
+
+    // ── POSTEX INTEGRATION: PUSH ORDER TO 3PL ──────────────────────────────
+    try {
+      const postexPayload = {
+        cityName: deliveryCity,
+        customerName: user.name,
+        customerPhone: user.phone || '03000000000',
+        deliveryAddress: deliveryAddress,
+        invoicePayment: totalPrice,
+        orderRefNumber: createdOrder.orderNumber,
+        invoiceDivision: 1,
+        items: 1,
+        orderType: 'Normal'
+      };
+      
+      const postexRes = await postexService.createOrder(postexPayload);
+      if (postexRes && postexRes.statusCode === '200' && postexRes.dist) {
+        createdOrder.trackingNumber = postexRes.dist.trackingNumber;
+        createdOrder.postexSyncStatus = 'Synced';
+      } else {
+        createdOrder.postexSyncStatus = 'Failed';
+        console.error('PostEx returned an error status:', postexRes);
+      }
+      await createdOrder.save();
+    } catch (postexErr) {
+      console.error('Graceful Degradation: PostEx Order Creation Failed:', postexErr.message);
+      createdOrder.postexSyncStatus = 'Failed';
+      await createdOrder.save();
+    }
+    // ───────────────────────────────────────────────────────────────────────
 
     user.loyaltyPoints += pointsEarned;
     user.membershipLevel = upgradeMembership(user.loyaltyPoints);

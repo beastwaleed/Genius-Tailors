@@ -170,17 +170,23 @@ export default function Booking() {
   const [userPoints, setUserPoints] = useState(0);
   const [usePoints, setUsePoints] = useState(false);
 
+  const [operationalCities, setOperationalCities] = useState([]);
+  const [deliveryCity, setDeliveryCity] = useState('');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profRes, ordRes, userRes] = await Promise.all([
+        const [profRes, ordRes, userRes, citiesRes] = await Promise.all([
           api.get('/api/measurements'),
           api.get('/api/orders/myorders'),
-          api.get('/api/users/profile')
+          api.get('/api/users/profile'),
+          api.get('/api/shipping/cities').catch(() => ({ data: [] }))
         ]);
         setProfiles(profRes.data);
         if (ordRes.data.length === 0) setHasDiscount(true);
         if (userRes.data && userRes.data.loyaltyPoints) setUserPoints(userRes.data.loyaltyPoints);
+        if (citiesRes.data) setOperationalCities(citiesRes.data);
         
         try {
           const fabRes = await api.get('/api/fabrics');
@@ -265,6 +271,8 @@ export default function Booking() {
     
     const profile = profiles.find(p => p._id === selectedProfileId);
     if (!profile) return toast.error('Invalid profile selected');
+    if (!deliveryCity) return toast.error('Please select a delivery city');
+    if (!deliveryAddress || deliveryAddress.trim().length < 5) return toast.error('Please provide a complete delivery address');
 
     setLoading(true);
     try {
@@ -279,6 +287,8 @@ export default function Booking() {
         },
         totalPrice,
         pointsUsed: usePoints ? pointsDiscount : 0,
+        deliveryCity,
+        deliveryAddress,
         isRush,
         customerNote
       });
@@ -569,6 +579,32 @@ export default function Booking() {
                   </div>
                 </div>
               )}
+            </div>
+
+            <div className="luxury-form-group" style={{ marginBottom: '1.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '12px' }}>
+              <h3 style={{ marginBottom: '1rem' }}>Shipping Details (via PostEx)</h3>
+              
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--stone)' }}>City <span style={{color: 'red'}}>*</span></label>
+              <select 
+                className="luxury-input" 
+                style={{ marginBottom: '1rem', width: '100%', appearance: 'auto' }}
+                value={deliveryCity}
+                onChange={(e) => setDeliveryCity(e.target.value)}
+              >
+                <option value="">Select your city...</option>
+                {operationalCities.map((city, idx) => (
+                  <option key={idx} value={city.operationalCityName}>{city.operationalCityName}</option>
+                ))}
+              </select>
+
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--stone)' }}>Complete Delivery Address <span style={{color: 'red'}}>*</span></label>
+              <textarea 
+                className="luxury-textarea" 
+                rows="2"
+                placeholder="House #, Street, Block, Area..."
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+              ></textarea>
             </div>
 
             <div className="luxury-form-group">

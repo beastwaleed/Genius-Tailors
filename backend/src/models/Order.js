@@ -53,6 +53,25 @@ const orderSchema = new mongoose.Schema({
     default: 0
   },
 
+  // ── PostEx Logistics Integration ─────────────────────────────────────────
+  trackingNumber: {
+    type: String,
+    default: null
+  },
+  postexSyncStatus: {
+    type: String,
+    enum: ['Pending', 'Synced', 'Failed'],
+    default: 'Pending'
+  },
+  deliveryCity: {
+    type: String,
+    default: ''
+  },
+  deliveryAddress: {
+    type: String,
+    default: ''
+  },
+
   // ── Priority System (Ramazan/Eid Queue) ──────────────────────────
   // Auto-set to true for Gold members when a peak season is active.
   // Admins can also manually override this.
