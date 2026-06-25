@@ -495,7 +495,8 @@ app.post('/api/orders', protect, async (req, res) => {
         orderRefNumber: createdOrder.orderNumber,
         invoiceDivision: 1,
         items: 1,
-        orderType: 'Normal'
+        orderType: 'Normal',
+        pickupAddressCode: process.env.POSTEX_PICKUP_ADDRESS_CODE || '001'
       };
       
       const postexRes = await postexService.createOrder(postexPayload);
