@@ -645,11 +645,12 @@ app.post('/api/upload/reference-image', protect, upload.single('image'), (req, r
       return res.status(400).json({ message: 'No image file provided' });
     }
 
+    console.log('UPLOAD SUCCESS, REQ.FILE:', req.file);
     // Cloudinary URL is attached by multer-storage-cloudinary automatically
     res.json({
       message: 'Image uploaded successfully',
-      url: req.file.path,           // Secure Cloudinary URL
-      publicId: req.file.filename   // Cloudinary public_id (useful if you want to delete later)
+      url: req.file.secure_url || req.file.url || req.file.path,
+      publicId: req.file.public_id || req.file.filename
     });
   } catch (error) {
     res.status(500).json({ message: 'Image upload failed', error: error.message });
@@ -1278,7 +1279,7 @@ app.get('/api/fabrics', async (req, res) => {
 app.post('/api/fabrics', protect, admin, upload.single('image'), async (req, res) => {
   try {
     if (req.file) {
-      req.body.imageUrl = req.file.path;
+      req.body.imageUrl = req.file.secure_url || req.file.url || req.file.path;
     }
     if (typeof req.body.colors === 'string') {
       req.body.colors = JSON.parse(req.body.colors);
@@ -1294,7 +1295,7 @@ app.post('/api/fabrics', protect, admin, upload.single('image'), async (req, res
 app.put('/api/fabrics/:id', protect, admin, upload.single('image'), async (req, res) => {
   try {
     if (req.file) {
-      req.body.imageUrl = req.file.path;
+      req.body.imageUrl = req.file.secure_url || req.file.url || req.file.path;
     }
     if (typeof req.body.colors === 'string') {
       req.body.colors = JSON.parse(req.body.colors);
