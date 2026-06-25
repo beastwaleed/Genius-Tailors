@@ -155,6 +155,7 @@ export default function Booking() {
   }, [serviceName]);
   
   const [dbFabrics, setDbFabrics] = useState([]);
+  const [dbServices, setDbServices] = useState([]);
   const fabricList = [
     { name: 'Provide my own fabric', price: 0, desc: 'Drop off your unstitched fabric to our physical store within 3 days.', img: imgFabricOwn },
     ...dbFabrics
@@ -182,6 +183,13 @@ export default function Booking() {
         } catch (fabErr) {
           console.error('Warning: Could not fetch fabrics from database', fabErr);
         }
+
+        try {
+          const srvRes = await api.get('/api/services');
+          setDbServices(srvRes.data);
+        } catch (srvErr) {
+          console.error('Warning: Could not fetch services from database', srvErr);
+        }
       } catch (error) {
         console.error('Failed to fetch data', error);
       }
@@ -202,7 +210,14 @@ export default function Booking() {
   const selectedBD = config.bottomDesigns.find(b => b.name === styleVariations.bottomDesign);
   if (selectedBD && selectedBD.price) styleExtras += selectedBD.price;
 
-  const basePrice = SERVICES_PRICES[serviceName] || 2500;
+  let basePrice = SERVICES_PRICES[serviceName] || 2500;
+  if (dbServices && dbServices.length > 0) {
+    const activeService = dbServices.find(s => s.name === serviceName);
+    if (activeService && activeService.basePrice) {
+      basePrice = activeService.basePrice;
+    }
+  }
+
   const discountAmount = hasDiscount ? (basePrice * 0.1) : 0;
   const totalPrice = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price;
 
