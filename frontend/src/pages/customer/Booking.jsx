@@ -856,7 +856,7 @@ export default function Booking() {
           width: 100%;
           height: 220px;
           object-fit: cover;
-          object-position: top center;
+          object-position: center center;
           border-bottom: 1px solid var(--ivory-border);
         }
 
