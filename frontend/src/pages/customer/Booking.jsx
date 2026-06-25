@@ -21,7 +21,7 @@ import imgNarrowPant from '../../assets/styles/narrow_pant.png';
 
 import imgShalwarNoPocket from '../../assets/styles/shalwar_no_pocket.jpg';
 import imgShalwarOnePocket from '../../assets/styles/shalwar_one_pocket.jpg';
-import imgShalwarNoDesign from '../../assets/styles/shalwar_no_design.png';
+import imgShalwarNoDesign from '../../assets/styles/shalwar_no_design.jpg';
 import imgShalwarZigzag from '../../assets/styles/shalwar_zigzag.jpg';
 
 import imgFabricOwn from '../../assets/fabrics/fabric_own.png';
@@ -414,8 +414,8 @@ export default function Booking() {
 
             {/* Bottoms Options (Pockets and Design) */}
             <div className="style-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-              <div>
-                <h3>Bottom Pockets</h3>
+              <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
+                <h3 style={{ marginTop: 0 }}>Bottom Pockets</h3>
                 <div className="style-grid">
                   {config.bottomPockets.map(opt => (
                     <div key={opt.name} className={`style-card ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`} 
@@ -427,8 +427,8 @@ export default function Booking() {
                   ))}
                 </div>
               </div>
-              <div>
-                <h3>Bottom Design</h3>
+              <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
+                <h3 style={{ marginTop: 0 }}>Bottom Design</h3>
                 <div className="style-grid">
                   {config.bottomDesigns.map(opt => (
                     <div key={opt.name} className={`style-card ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`} 
