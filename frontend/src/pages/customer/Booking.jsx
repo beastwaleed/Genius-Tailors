@@ -22,7 +22,7 @@ import imgNarrowPant from '../../assets/styles/narrow_pant.png';
 import imgShalwarNoPocket from '../../assets/styles/shalwar_no_pocket.jpg';
 import imgShalwarOnePocket from '../../assets/styles/shalwar_one_pocket.jpg';
 import imgShalwarNoDesign from '../../assets/styles/shalwar_no_design.png';
-import imgShalwarZigzag from '../../assets/styles/shalwar_zigzag.png';
+import imgShalwarZigzag from '../../assets/styles/shalwar_zigzag.jpg';
 
 import imgFabricOwn from '../../assets/fabrics/fabric_own.png';
 import imgFabricCotton from '../../assets/fabrics/fabric_cotton.png';
