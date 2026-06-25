@@ -834,9 +834,9 @@ export default function Booking() {
 
         .style-img {
           width: 100%;
-          height: 150px;
-          object-fit: contain;
-          background-color: #f8fafc;
+          height: 220px;
+          object-fit: cover;
+          object-position: top center;
           border-bottom: 1px solid var(--ivory-border);
         }
 
