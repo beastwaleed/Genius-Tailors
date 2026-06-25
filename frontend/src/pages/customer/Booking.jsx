@@ -61,6 +61,28 @@ const STYLE_CONFIGS = {
       { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
     ]
   },
+  'Kurta Shalwar': {
+    collarTypes: [
+      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
+    ],
+    cuffs: [
+      { name: 'Round Cuff', img: imgOpenSleeves, price: 0 },
+      { name: 'Square Cuff', img: imgSingleCuff, price: 0 },
+      { name: 'Double Cuff', img: imgDoubleCuff, price: 100 }
+    ],
+    pockets: [
+      { name: 'Side Only', img: imgSidePockets },
+      { name: 'Both Pockets', img: imgFrontSidePockets }
+    ],
+    bottomPockets: [
+      { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
+      { name: '1 Pocket', img: imgShalwarOnePocket, price: 100 }
+    ],
+    bottomDesigns: [
+      { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
+      { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
+    ]
+  },
   'Kurta Pajama': {
     collarTypes: [
       { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
