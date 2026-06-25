@@ -343,6 +343,73 @@ app.delete('/api/measurements/:id', protect, async (req, res) => {
 
 
 // ==========================================
+// 4.5 POSTEX WEBHOOKS (Logistics Automations)
+// ==========================================
+app.post('/api/webhooks/postex', async (req, res) => {
+  try {
+    const expectedKey = process.env.POSTEX_WEBHOOK_KEY;
+    const expectedValue = process.env.POSTEX_WEBHOOK_VALUE;
+
+    // Authenticate Webhook
+    if (!expectedKey || req.headers[expectedKey.toLowerCase()] !== expectedValue) {
+      console.warn('Unauthorized PostEx Webhook Attempt. Headers provided:', req.headers);
+      return res.status(401).json({ message: 'Unauthorized webhook request' });
+    }
+
+    const payload = req.body;
+    console.log('PostEx Webhook Received:', payload);
+
+    const trackingNumber = payload.trackingNumber;
+    const statusCode = payload.transactionStatusMessageCode || payload.statusCode || payload.statusId;
+    const statusMessage = payload.transactionStatusMessage || payload.status || payload.remarks;
+
+    if (!trackingNumber) {
+      return res.status(400).json({ message: 'Tracking number missing in payload' });
+    }
+
+    const order = await Order.findOne({ trackingNumber });
+    if (!order) {
+      return res.status(404).json({ message: 'Order with this tracking number not found' });
+    }
+
+    let updatedStatus = null;
+
+    // Map PostEx status codes to internal GT order statuses
+    switch (String(statusCode)) {
+      case '0004': // Package on Root (Out for delivery)
+        updatedStatus = 'Ready';
+        break;
+      case '0005': // Delivered
+        updatedStatus = 'Delivered';
+        break;
+      default:
+        // Fallback fuzzy matching for generic string remarks
+        if (typeof statusMessage === 'string') {
+          const msg = statusMessage.toLowerCase();
+          if (msg.includes('delivered')) updatedStatus = 'Delivered';
+          else if (msg.includes('out for delivery') || msg.includes('on root')) updatedStatus = 'Ready';
+        }
+    }
+
+    if (updatedStatus && order.status !== updatedStatus) {
+      order.status = updatedStatus;
+    }
+
+    // Always append an internal note so admins can trace exact logistics events
+    order.adminNotes.push({
+      text: `PostEx Update: [Code ${statusCode || 'N/A'}] ${statusMessage || 'Status Changed'}`
+    });
+
+    await order.save();
+    return res.status(200).json({ message: 'Webhook processed successfully' });
+
+  } catch (error) {
+    console.error('PostEx Webhook Error:', error);
+    return res.status(500).json({ message: 'Internal Server Error processing webhook' });
+  }
+});
+
+// ==========================================
 // 5. ORDER ROUTES (Cash Register & Dashboard)
 // ==========================================
 
