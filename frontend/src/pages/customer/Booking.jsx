@@ -9,8 +9,8 @@ import imgShirtCollar from '../../assets/styles/shirt_collar.jpg';
 import imgRoundNeck from '../../assets/styles/round_neck.png';
 
 import imgOpenSleeves from '../../assets/styles/round_cuff.jpg';
-import imgSingleCuff from '../../assets/styles/single_cuff.png';
-import imgDoubleCuff from '../../assets/styles/double_cuff.png';
+import imgSingleCuff from '../../assets/styles/single_cuff.jpg';
+import imgDoubleCuff from '../../assets/styles/double_cuff.jpg';
 
 import imgSidePockets from '../../assets/styles/side_pockets.png';
 import imgFrontPocket from '../../assets/styles/front_pocket.png';
