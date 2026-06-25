@@ -97,7 +97,7 @@ export default function AdminServices() {
       const { data } = await api.post('/api/upload/reference-image', fd, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      setFormData(prev => ({ ...prev, images: [...prev.images, data.imageUrl] }));
+      setFormData(prev => ({ ...prev, images: [...prev.images, data.url] }));
       toast.success('Gallery image uploaded');
     } catch (error) {
       toast.error('Failed to upload image');
@@ -119,7 +119,7 @@ export default function AdminServices() {
       const { data } = await api.post('/api/upload/reference-image', fd, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      setFormData(prev => ({ ...prev, featuredImage: data.imageUrl }));
+      setFormData(prev => ({ ...prev, featuredImage: data.url }));
       toast.success('Featured image uploaded');
     } catch (error) {
       toast.error('Failed to upload featured image');
