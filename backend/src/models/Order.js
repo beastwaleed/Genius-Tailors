@@ -44,6 +44,19 @@ const orderSchema = new mongoose.Schema({
     type: Number, 
     required: true 
   },
+  advancePaid: {
+    type: Number,
+    default: 0
+  },
+  remainingBalance: {
+    type: Number,
+    required: true
+  },
+  advancePaymentStatus: {
+    type: String,
+    enum: ['Pending', 'Paid', 'Failed'],
+    default: 'Pending'
+  },
   pointsEarned: { 
     type: Number, 
     default: 0 

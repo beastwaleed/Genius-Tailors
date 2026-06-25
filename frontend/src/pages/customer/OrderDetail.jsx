@@ -182,6 +182,18 @@ export default function OrderDetail() {
                 <span className="label">Total Price</span>
                 <span className="val price-val">Rs. {order.totalPrice.toLocaleString()}</span>
               </div>
+              {(order.advancePaid > 0) && (
+                <>
+                  <div className="detail-row">
+                    <span className="label" style={{ color: '#0284c7' }}>Advance Paid (Online)</span>
+                    <span className="val" style={{ color: '#0284c7', fontWeight: 600 }}>- Rs. {order.advancePaid.toLocaleString()}</span>
+                  </div>
+                  <div className="detail-row" style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '4px', marginTop: '0.5rem' }}>
+                    <span className="label" style={{ color: '#0f172a', fontWeight: 600 }}>Remaining Balance (COD)</span>
+                    <span className="val" style={{ color: '#0f172a', fontWeight: 700 }}>Rs. {order.remainingBalance.toLocaleString()}</span>
+                  </div>
+                </>
+              )}
               <div className="detail-row">
                 <span className="label">Loyalty Points Earned</span>
                 <span className="val" style={{ color: 'var(--gold)', fontWeight: 'bold' }}>+{order.pointsEarned} pts</span>

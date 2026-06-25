@@ -253,7 +253,14 @@ export default function AdminOrders() {
                        </div>
                     </td>
                     <td style={{ color: '#475569', fontWeight: 500 }}>{order.serviceName}</td>
-                    <td style={{ fontWeight: 700, color: '#1e293b' }}>Rs. {order.totalPrice.toLocaleString()}</td>
+                    <td style={{ fontWeight: 700, color: '#1e293b' }}>
+                      Rs. {order.totalPrice.toLocaleString()}
+                      {order.advancePaid > 0 && (
+                        <div style={{ fontSize: '0.7rem', color: '#059669', fontWeight: 600, marginTop: '0.2rem' }}>
+                          Paid: Rs. {order.advancePaid.toLocaleString()}
+                        </div>
+                      )}
+                    </td>
                     <td>
                       {order.priorityStatus === 'Expedited' ? (
                         <span style={{ color: '#ef4444', fontWeight: 700, fontSize: '0.75rem', background: '#fee2e2', padding: '0.35rem 0.65rem', borderRadius: '0.5rem', letterSpacing: '0.5px' }}>🔥 RUSH</span>

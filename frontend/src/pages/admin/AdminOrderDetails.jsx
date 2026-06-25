@@ -311,15 +311,28 @@ export default function AdminOrderDetails() {
 
                <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.1)', margin: '1rem 0' }}></div>
 
-               <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+               <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
                  <span style={{ color: '#cbd5e1', fontSize: '1.2rem', fontWeight: 600 }}>Total</span>
                  <span className="stat-value" style={{ fontSize: '2.5rem' }}>Rs. {order.totalPrice.toLocaleString()}</span>
                </div>
 
+               {order.advancePaid > 0 && (
+                 <>
+                   <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                     <span style={{ color: '#34d399', fontSize: '0.9rem' }}>Advance Paid (Online)</span>
+                     <span style={{ color: '#34d399', fontWeight: 600, fontSize: '0.9rem' }}>- Rs. {order.advancePaid.toLocaleString()}</span>
+                   </div>
+                   <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: 'rgba(255,255,255,0.1)', borderRadius: '6px' }}>
+                     <span style={{ color: '#f8fafc', fontWeight: 600 }}>To Collect (COD)</span>
+                     <span style={{ color: '#f8fafc', fontWeight: 700 }}>Rs. {order.remainingBalance.toLocaleString()}</span>
+                   </div>
+                 </>
+               )}
+
                <div style={{ marginTop: '2rem', width: '100%', background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.1)' }}>
                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Payment Status</div>
-                 <div style={{ fontSize: '1.1rem', fontWeight: 600, color: order.paymentStatus === 'Paid' ? '#10b981' : '#f59e0b' }}>
-                   {order.paymentStatus} via {order.paymentMethod || 'Manual'}
+                 <div style={{ fontSize: '1.1rem', fontWeight: 600, color: order.advancePaymentStatus === 'Paid' ? '#10b981' : '#f59e0b' }}>
+                   {order.advancePaymentStatus === 'Paid' ? 'Advance Paid' : 'Pending'} via {order.advancePaid > 0 ? 'PostEx XPay' : 'Manual'}
                  </div>
                </div>
             </div>
