@@ -20,6 +20,11 @@ import imgStandardShalwar from '../../assets/styles/standard_shalwar.png';
 import imgStraightTrouser from '../../assets/styles/straight_trouser.png';
 import imgNarrowPant from '../../assets/styles/narrow_pant.png';
 
+import imgShalwarNoPocket from '../../assets/styles/shalwar_no_pocket.png';
+import imgShalwarOnePocket from '../../assets/styles/shalwar_one_pocket.png';
+import imgShalwarNoDesign from '../../assets/styles/shalwar_no_design.png';
+import imgShalwarZigzag from '../../assets/styles/shalwar_zigzag.png';
+
 import imgFabricOwn from '../../assets/fabrics/fabric_own.png';
 import imgFabricCotton from '../../assets/fabrics/fabric_cotton.png';
 import imgFabricWashWear from '../../assets/fabrics/fabric_wash_wear.png';
@@ -50,12 +55,12 @@ const STYLE_CONFIGS = {
       { name: 'Both Pockets', img: imgFrontSidePockets }
     ],
     bottomPockets: [
-      { name: 'No Pocket', price: 0 },
-      { name: '1 Pocket', price: 100 }
+      { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
+      { name: '1 Pocket', img: imgShalwarOnePocket, price: 100 }
     ],
     bottomDesigns: [
-      { name: 'No Design', price: 0 },
-      { name: 'Zigzag Stitch', price: 200 }
+      { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
+      { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
     ]
   },
   'Kurta Pajama': {
@@ -70,12 +75,12 @@ const STYLE_CONFIGS = {
       { name: 'Side Pocket Only', img: imgSidePockets }
     ],
     bottomPockets: [
-      { name: 'No Pocket', price: 0 },
-      { name: '1 Pocket', price: 100 }
+      { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
+      { name: '1 Pocket', img: imgShalwarOnePocket, price: 100 }
     ],
     bottomDesigns: [
-      { name: 'No Design', price: 0 },
-      { name: 'Zigzag Stitch', price: 200 }
+      { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
+      { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
     ]
   }
 };
@@ -413,31 +418,27 @@ export default function Booking() {
             <div className="style-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
               <div>
                 <h3>Bottom Pockets</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div className="style-grid">
                   {config.bottomPockets.map(opt => (
-                    <label key={opt.name} className={`minimal-profile-item ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`} style={{ padding: '0.75rem' }}>
-                      <input 
-                        type="radio" 
-                        checked={styleVariations.bottomPocket === opt.name} 
-                        onChange={() => setStyleVariations({...styleVariations, bottomPocket: opt.name})} 
-                      />
-                      <span style={{ marginLeft: '0.5rem', fontWeight: 500 }}>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
-                    </label>
+                    <div key={opt.name} className={`style-card ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`} 
+                      onClick={() => setStyleVariations({...styleVariations, bottomPocket: opt.name})}
+                    >
+                      <img src={opt.img} alt={opt.name} className="style-img" />
+                      <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                    </div>
                   ))}
                 </div>
               </div>
               <div>
                 <h3>Bottom Design</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div className="style-grid">
                   {config.bottomDesigns.map(opt => (
-                    <label key={opt.name} className={`minimal-profile-item ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`} style={{ padding: '0.75rem' }}>
-                      <input 
-                        type="radio" 
-                        checked={styleVariations.bottomDesign === opt.name} 
-                        onChange={() => setStyleVariations({...styleVariations, bottomDesign: opt.name})} 
-                      />
-                      <span style={{ marginLeft: '0.5rem', fontWeight: 500 }}>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
-                    </label>
+                    <div key={opt.name} className={`style-card ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`} 
+                      onClick={() => setStyleVariations({...styleVariations, bottomDesign: opt.name})}
+                    >
+                      <img src={opt.img} alt={opt.name} className="style-img" />
+                      <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                    </div>
                   ))}
                 </div>
               </div>
