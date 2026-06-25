@@ -212,7 +212,9 @@ export default function Booking() {
 
   let basePrice = SERVICES_PRICES[serviceName] || 2500;
   if (dbServices && dbServices.length > 0) {
-    const activeService = dbServices.find(s => s.name === serviceName);
+    const activeService = dbServices.find(s => 
+      s.name && serviceName && s.name.toLowerCase().trim() === serviceName.toLowerCase().trim()
+    );
     if (activeService && activeService.basePrice) {
       basePrice = activeService.basePrice;
     }
@@ -334,7 +336,9 @@ export default function Booking() {
                 {Object.keys(SERVICES_PRICES).map(s => {
                   let displayPrice = SERVICES_PRICES[s];
                   if (dbServices && dbServices.length > 0) {
-                    const activeSrv = dbServices.find(db => db.name === s);
+                    const activeSrv = dbServices.find(db => 
+                      db.name && s && db.name.toLowerCase().trim() === s.toLowerCase().trim()
+                    );
                     if (activeSrv && activeSrv.basePrice) {
                       displayPrice = activeSrv.basePrice;
                     }
