@@ -50,7 +50,7 @@ const orderSchema = new mongoose.Schema({
   },
   remainingBalance: {
     type: Number,
-    required: true
+    default: 0
   },
   advancePaymentStatus: {
     type: String,
