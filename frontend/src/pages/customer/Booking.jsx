@@ -102,6 +102,21 @@ const STYLE_CONFIGS = {
       { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
       { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
     ]
+    ]
+  },
+  'Waistcoat': {
+    collarTypes: [
+      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch'] },
+      { name: 'V Collar', img: imgShirtCollar, subs: ['Standard V', 'Deep V'] },
+      { name: 'Round Neck Collar (Without Ban)', img: imgRoundNeck, subs: ['Standard Round'] }
+    ],
+    cuffs: [],
+    pockets: [
+      { name: '3 Pockets (1 Front, 2 Sides)', img: imgFrontSidePockets },
+      { name: '2 Side Pockets', img: imgSidePockets }
+    ],
+    bottomPockets: [],
+    bottomDesigns: []
   }
 };
 
@@ -149,10 +164,10 @@ export default function Booking() {
     setStyleVariations({
       collar: config.collarTypes[0].name,
       collarSub: config.collarTypes[0].subs[0],
-      cuff: config.cuffs[0].name,
-      pockets: config.pockets[0].name,
-      bottomPocket: config.bottomPockets[0].name,
-      bottomDesign: config.bottomDesigns[0].name
+      cuff: config.cuffs?.length > 0 ? config.cuffs[0].name : '',
+      pockets: config.pockets?.length > 0 ? config.pockets[0].name : '',
+      bottomPocket: config.bottomPockets?.length > 0 ? config.bottomPockets[0].name : '',
+      bottomDesign: config.bottomDesigns?.length > 0 ? config.bottomDesigns[0].name : ''
     });
   }, [serviceName]);
   
@@ -520,64 +535,72 @@ export default function Booking() {
             </div>
 
             {/* Cuff Options */}
-            <div className="style-section">
-              <h3>Sleeve Cuffs</h3>
-              <div className="style-grid">
-                {config.cuffs.map(opt => (
-                  <div key={opt.name} className={`style-card ${styleVariations.cuff === opt.name ? 'selected' : ''}`} 
-                    onClick={() => setStyleVariations({...styleVariations, cuff: opt.name})}
-                  >
-                    <img src={opt.img} alt={opt.name} className="style-img" />
-                    <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
-                  </div>
-                ))}
+            {config.cuffs && config.cuffs.length > 0 && (
+              <div className="style-section">
+                <h3>Sleeve Cuffs</h3>
+                <div className="style-grid">
+                  {config.cuffs.map(opt => (
+                    <div key={opt.name} className={`style-card ${styleVariations.cuff === opt.name ? 'selected' : ''}`} 
+                      onClick={() => setStyleVariations({...styleVariations, cuff: opt.name})}
+                    >
+                      <img src={opt.img} alt={opt.name} className="style-img" />
+                      <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Pockets */}
-            <div className="style-section">
-              <h3>{serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}</h3>
-              <div className="style-grid">
-                {config.pockets.map(opt => (
-                  <div key={opt.name} className={`style-card ${styleVariations.pockets === opt.name ? 'selected' : ''}`} 
-                    onClick={() => setStyleVariations({...styleVariations, pockets: opt.name})}
-                  >
-                    <img src={opt.img} alt={opt.name} className="style-img" />
-                    <span>{opt.name}</span>
-                  </div>
-                ))}
+            {config.pockets && config.pockets.length > 0 && (
+              <div className="style-section">
+                <h3>{serviceName === 'Waistcoat' ? 'Waistcoat Pockets' : serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}</h3>
+                <div className="style-grid">
+                  {config.pockets.map(opt => (
+                    <div key={opt.name} className={`style-card ${styleVariations.pockets === opt.name ? 'selected' : ''}`} 
+                      onClick={() => setStyleVariations({...styleVariations, pockets: opt.name})}
+                    >
+                      <img src={opt.img} alt={opt.name} className="style-img" />
+                      <span>{opt.name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Bottoms Options (Pockets and Design) */}
-            <div className="style-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-              <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
-                <h3 style={{ marginTop: 0 }}>Bottom Pockets</h3>
-                <div className="style-grid">
-                  {config.bottomPockets.map(opt => (
-                    <div key={opt.name} className={`style-card ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`} 
-                      onClick={() => setStyleVariations({...styleVariations, bottomPocket: opt.name})}
-                    >
-                      <img src={opt.img} alt={opt.name} className="style-img" />
-                      <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
-                    </div>
-                  ))}
+            {config.bottomPockets && config.bottomPockets.length > 0 && (
+              <div className="style-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
+                  <h3 style={{ marginTop: 0 }}>Bottom Pockets</h3>
+                  <div className="style-grid">
+                    {config.bottomPockets.map(opt => (
+                      <div key={opt.name} className={`style-card ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`} 
+                        onClick={() => setStyleVariations({...styleVariations, bottomPocket: opt.name})}
+                      >
+                        <img src={opt.img} alt={opt.name} className="style-img" />
+                        <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
-                <h3 style={{ marginTop: 0 }}>Bottom Design</h3>
-                <div className="style-grid">
-                  {config.bottomDesigns.map(opt => (
-                    <div key={opt.name} className={`style-card ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`} 
-                      onClick={() => setStyleVariations({...styleVariations, bottomDesign: opt.name})}
-                    >
-                      <img src={opt.img} alt={opt.name} className="style-img" />
-                      <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                {config.bottomDesigns && config.bottomDesigns.length > 0 && (
+                  <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
+                    <h3 style={{ marginTop: 0 }}>Bottom Design</h3>
+                    <div className="style-grid">
+                      {config.bottomDesigns.map(opt => (
+                        <div key={opt.name} className={`style-card ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`} 
+                          onClick={() => setStyleVariations({...styleVariations, bottomDesign: opt.name})}
+                        >
+                          <img src={opt.img} alt={opt.name} className="style-img" />
+                          <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             <div className="wizard-actions split">
               <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
