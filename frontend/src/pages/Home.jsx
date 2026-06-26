@@ -290,9 +290,9 @@ export default function Home() {
 
   const GARMENTS = [
     { name: 'Kameez Shalwar', label: 'Traditional Classic', img: heroShalwarKameez },
-    { name: 'Kurta Shalwar', label: 'Casual Refined', img: imgKurta },
-    { name: 'Kurta Pajama', label: 'Evening Elegance', img: imgKurta },
-    { name: 'Waistcoat', label: 'Perfect Companion', img: imgWaistcoat },
+    { name: 'Kurta Shalwar', label: 'Casual Refined', img: HeroKurtaShalwar },
+    { name: 'Kurta Pajama', label: 'Evening Elegance', img: HeroKurtaPajama },
+    { name: 'Waistcoat', label: 'Perfect Companion', img: HeroWaistcoat },
   ];
 
   useEffect(() => {
