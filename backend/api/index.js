@@ -669,12 +669,12 @@ app.put('/api/orders/:id/status', protect, admin, async (req, res) => {
   try {
     const { status, estimatedDelivery } = req.body;
 
-    const validStatuses = ['Pending', 'Cutting', 'Stitching', 'Ready', 'Delivered'];
+    const validStatuses = ['Pending', 'Cutting', 'Stitching', 'Ready', 'Delivered', 'Cancelled'];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({ message: `Status must be one of: ${validStatuses.join(', ')}` });
     }
 
-    const order = await Order.findById(req.params.id).populate('customer', 'name email phone');
+    const order = await Order.findById(req.params.id).populate('customer', 'name email phone membershipLevel loyaltyPoints tags');
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }

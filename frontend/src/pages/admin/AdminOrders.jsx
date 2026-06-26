@@ -17,6 +17,7 @@ export default function AdminOrders() {
   const [priorityFilter, setPriorityFilter] = useState('All');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [bulkStatus, setBulkStatus] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -71,6 +72,25 @@ export default function AdminOrders() {
       toast.success('Labels downloaded!', { id: toastId });
     } catch (err) {
       toast.error('Failed to download shipping labels. PostEx may be temporarily unavailable.', { id: toastId });
+    }
+  };
+
+  const handleBulkUpdate = async () => {
+    if (selectedOrders.length === 0) return toast.error('Select orders first');
+    if (!bulkStatus) return toast.error('Select a status to apply');
+
+    const toastId = toast.loading(`Updating ${selectedOrders.length} orders...`);
+    try {
+      await Promise.all(selectedOrders.map(id => 
+        api.put(`/api/orders/${id}/status`, { status: bulkStatus })
+      ));
+      
+      toast.success(`Successfully updated ${selectedOrders.length} orders to ${bulkStatus}`, { id: toastId });
+      setSelectedOrders([]);
+      setBulkStatus('');
+      fetchOrders(); // Refresh table to pull all populated data cleanly
+    } catch (error) {
+      toast.error('Failed to process some or all updates', { id: toastId });
     }
   };
 
@@ -220,6 +240,29 @@ export default function AdminOrders() {
             Print Labels {selectedOrders.length > 0 && `(${selectedOrders.length})`}
           </button>
         </div>
+
+        {selectedOrders.length > 0 && (
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem', padding: '1rem', background: '#e0f2fe', borderRadius: '0.75rem', border: '1px solid #bae6fd' }}>
+            <span style={{ fontWeight: 'bold', color: '#0369a1' }}>Bulk Actions:</span>
+            <select className="premium-input" value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)} style={{ padding: '0.5rem', width: '200px' }}>
+              <option value="">Select new status...</option>
+              <option value="Pending">Pending</option>
+              <option value="Cutting">Cutting</option>
+              <option value="Stitching">Stitching</option>
+              <option value="Ready">Ready</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            <button 
+              className="premium-btn" 
+              onClick={handleBulkUpdate}
+              disabled={!bulkStatus}
+              style={{ padding: '0.5rem 1.25rem', background: bulkStatus ? '#0284c7' : '#94a3b8', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: bulkStatus ? 'pointer' : 'not-allowed' }}
+            >
+              Apply to {selectedOrders.length} Orders
+            </button>
+          </div>
+        )}
       </div>
       
       {loading ? (
