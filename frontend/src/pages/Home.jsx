@@ -18,6 +18,7 @@ import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
 import HeroWaistcoat from '../assets/HeroWaistcoat.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
+import heroShalwarKameez from '../assets/heroShalwarKameez.jpeg'
 
 import img1 from '../assets/portfolio_1.png';
 import img2 from '../assets/portfolio_2.png';
@@ -288,7 +289,7 @@ export default function Home() {
   };
 
   const GARMENTS = [
-    { name: 'Kameez Shalwar', label: 'Traditional Classic', img: imgShalwar },
+    { name: 'Kameez Shalwar', label: 'Traditional Classic', img: heroShalwarKameez },
     { name: 'Kurta Shalwar', label: 'Casual Refined', img: imgKurta },
     { name: 'Kurta Pajama', label: 'Evening Elegance', img: imgKurta },
     { name: 'Waistcoat', label: 'Perfect Companion', img: imgWaistcoat },
