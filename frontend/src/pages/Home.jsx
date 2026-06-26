@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 
 import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
-import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
+import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
 
@@ -49,7 +49,7 @@ const SERVICES_PREVIEW = [
     urdu: 'کرتا شلوار',
     desc: 'Relaxed, comfortable, and refined. Perfect for everyday and casual occasions.',
     price: 'From Rs. 2,000',
-    img: HeroKurtaShalwar,
+    img: kurtaShalwarFeatured,
     badge: 'Classic Choice',
     badgeColor: '#2E86C1',
     stars: 5,
@@ -282,7 +282,7 @@ export default function Home() {
 
   const GARMENTS = [
     { name: 'Kameez Shalwar', label: 'Traditional Classic', img: ShalwarKameezFeaturedImage },
-    { name: 'Kurta Shalwar', label: 'Casual Refined', img: HeroKurtaShalwar },
+    { name: 'Kurta Shalwar', label: 'Casual Refined', img: kurtaShalwarFeatured },
     { name: 'Kurta Pajama', label: 'Evening Elegance', img: HeroKurtaPajama },
     { name: 'Waistcoat', label: 'Perfect Companion', img: WaistcoatFront },
   ];

@@ -14,7 +14,7 @@ const tryImg = (heroImg, fallback) => {
 import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
-import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
+import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 
 import WaistcoatV from '../assets/V collar waistcoat.jpeg';
 import WaistcoatRound from '../assets/round neck collar waistcoat.jpeg';
@@ -33,6 +33,11 @@ import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
 import ShalwarKameezGallery1 from '../assets/ShalwarKameezGallery1.jpeg';
 import ShalwarKameezGallery2 from '../assets/ShalwarKameezGallery2.jpeg';
 const shalwarKameezGallery = [ShalwarKameezGallery0, ShalwarKameezGallery1, ShalwarKameezGallery2];
+
+import kurtaShalwar0 from '../assets/kurtaShalwar0.png';
+import kurtaShalwar1 from '../assets/kurtaShalwar1.jpeg';
+import kurtaShalwar2 from '../assets/kurtaShalwar2.jpeg';
+const kurtaShalwarGallery = [kurtaShalwar0, kurtaShalwar1, kurtaShalwar2];
 
 const ALL_SERVICES = [
   {
@@ -61,7 +66,7 @@ const ALL_SERVICES = [
     desc: 'A shorter, lighter alternative. Our Kurta Shalwars are cut for comfort without sacrificing style — ideal for everyday wear and casual gatherings.',
     price: 'From Rs. 2,000',
     deliveryDays: '4–6 working days',
-    img: HeroKurtaShalwar,
+    img: kurtaShalwarFeatured,
     badge: 'Classic Choice',
     badgeColor: '#2E86C1',
     stars: 5,
@@ -69,7 +74,7 @@ const ALL_SERVICES = [
     category: 'Traditional',
     features: ['Mandarin or standard collar', 'Various hem lengths', 'Front design options', 'Light & breathable fabrics'],
     occasions: ['Daily wear', 'Casual outings', 'Family gatherings'],
-    images: gallery,
+    images: kurtaShalwarGallery,
   },
   {
     id: 'kurta-pajama',
