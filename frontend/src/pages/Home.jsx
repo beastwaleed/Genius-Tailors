@@ -285,7 +285,7 @@ export default function Home() {
     { name: 'Kameez Shalwar', label: 'Traditional Classic', img: heroShalwarKameez },
     { name: 'Kurta Shalwar', label: 'Casual Refined', img: HeroKurtaShalwar },
     { name: 'Kurta Pajama', label: 'Evening Elegance', img: HeroKurtaPajama },
-    { name: 'Waistcoat', label: 'Perfect Companion', img: HeroWaistcoat },
+    { name: 'Waistcoat', label: 'Perfect Companion', img: WaistcoatFront },
   ];
 
   useEffect(() => {
