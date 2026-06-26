@@ -1872,8 +1872,16 @@ app.get('/api/admin/stats', protect, admin, async (req, res) => {
     const monthlyRevenue = {};
     const monthlyOrders = {};
 
+    // Prefill last 6 months to ensure Recharts always renders (needs >= 2 data points)
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthStr = d.toLocaleString('default', { month: 'short' });
+      monthlyRevenue[monthStr] = 0;
+      monthlyOrders[monthStr] = 0;
+    }
+
     orders.forEach(o => {
-      // Exclude cancelled from total revenue if needed, but we'll count all valid ones
       if (o.status !== 'Cancelled') {
         totalRevenue += o.totalPrice || 0;
       }
@@ -1887,9 +1895,12 @@ app.get('/api/admin/stats', protect, admin, async (req, res) => {
       const date = new Date(o.createdAt);
       const month = date.toLocaleString('default', { month: 'short' });
       
-      monthlyOrders[month] = (monthlyOrders[month] || 0) + 1;
-      if (o.status !== 'Cancelled') {
-        monthlyRevenue[month] = (monthlyRevenue[month] || 0) + (o.totalPrice || 0);
+      // Only track if it falls in our prefilled months (last 6)
+      if (monthlyOrders[month] !== undefined) {
+        monthlyOrders[month] += 1;
+        if (o.status !== 'Cancelled') {
+          monthlyRevenue[month] += (o.totalPrice || 0);
+        }
       }
     });
 
