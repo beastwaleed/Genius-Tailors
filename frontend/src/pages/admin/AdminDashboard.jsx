@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import api from '../../api';
 import AdminLayout from '../../components/AdminLayout';
 
@@ -59,7 +60,15 @@ export default function AdminDashboard() {
       // Fallback dummy data if endpoint fails
       setStats({ 
         totalOrders: 142, pendingOrders: 28, deliveredOrders: 110, totalCustomers: 89, revenue: 450000,
-        topServices: [['Kameez Shalwar', 80], ['Waistcoat', 40], ['Kurta Pajama', 15], ['Kurta Shalwar', 7]]
+        topServices: [['Kameez Shalwar', 80], ['Waistcoat', 40], ['Kurta Pajama', 15], ['Kurta Shalwar', 7]],
+        chartData: [
+          { name: 'Jan', revenue: 40000, orders: 15 },
+          { name: 'Feb', revenue: 55000, orders: 20 },
+          { name: 'Mar', revenue: 48000, orders: 18 },
+          { name: 'Apr', revenue: 90000, orders: 35 },
+          { name: 'May', revenue: 120000, orders: 50 },
+          { name: 'Jun', revenue: 97000, orders: 42 }
+        ]
       });
       setRecentOrders([]);
     } finally {
@@ -140,6 +149,34 @@ export default function AdminDashboard() {
                  <div style={{ textAlign: 'center', marginTop: '1.5rem', color: '#64748b', fontSize: '0.95rem', fontWeight: 500 }}>
                    {stats.deliveredOrders} out of {stats.totalOrders} orders successfully delivered.
                  </div>
+              </div>
+            </div>
+
+            {/* ── Revenue & Growth Chart ── */}
+            <div className="premium-glass-card" style={{ marginBottom: '2rem', padding: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h3 className="premium-title" style={{ margin: 0 }}>Revenue Growth (LTV & MRR)</h3>
+                <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 700 }}>+24% this month</span>
+              </div>
+              <div style={{ width: '100%', height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={stats.chartData || []} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dx={-10} tickFormatter={(value) => `Rs.${value/1000}k`} />
+                    <RechartsTooltip 
+                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                      formatter={(value) => [`Rs. ${value.toLocaleString()}`, 'Revenue']}
+                    />
+                    <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </div>
 

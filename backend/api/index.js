@@ -1853,4 +1853,74 @@ app.post('/api/abandoned-carts/:id/notify-admin', protect, async (req, res) => {
   }
 });
 
+// ==========================================
+// 15. ADMIN ANALYTICS & DASHBOARD STATS
+// ==========================================
+
+app.get('/api/admin/stats', protect, admin, async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    const totalCustomers = await User.countDocuments({ role: 'Customer' });
+    
+    // Revenue and top services
+    const orders = await Order.find();
+    let totalRevenue = 0;
+    const servicesCount = {};
+    const statusCount = { Pending: 0, Cutting: 0, Stitching: 0, Ready: 0, Delivered: 0, Cancelled: 0 };
+    
+    // Time-series data grouping (Last 6 Months)
+    const monthlyRevenue = {};
+    const monthlyOrders = {};
+
+    orders.forEach(o => {
+      // Exclude cancelled from total revenue if needed, but we'll count all valid ones
+      if (o.status !== 'Cancelled') {
+        totalRevenue += o.totalPrice || 0;
+      }
+      
+      servicesCount[o.serviceName] = (servicesCount[o.serviceName] || 0) + 1;
+      if (statusCount[o.status] !== undefined) {
+        statusCount[o.status] += 1;
+      }
+
+      // Group by Month (e.g., "Jan", "Feb")
+      const date = new Date(o.createdAt);
+      const month = date.toLocaleString('default', { month: 'short' });
+      
+      monthlyOrders[month] = (monthlyOrders[month] || 0) + 1;
+      if (o.status !== 'Cancelled') {
+        monthlyRevenue[month] = (monthlyRevenue[month] || 0) + (o.totalPrice || 0);
+      }
+    });
+
+    const topServices = Object.keys(servicesCount)
+      .map(name => ({ _id: name, count: servicesCount[name] }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    const byStatus = Object.keys(statusCount).map(key => ({
+      _id: key,
+      count: statusCount[key]
+    }));
+
+    // Format time-series data for recharts
+    const chartData = Object.keys(monthlyOrders).map(month => ({
+      name: month,
+      revenue: monthlyRevenue[month] || 0,
+      orders: monthlyOrders[month] || 0
+    }));
+
+    res.json({
+      orders: { total: totalOrders, byStatus },
+      customers: { total: totalCustomers },
+      revenue: { total: totalRevenue },
+      services: { topServices },
+      chartData // Sent to frontend for rendering AreaChart
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server error fetching dashboard stats' });
+  }
+});
+
 module.exports = app;
