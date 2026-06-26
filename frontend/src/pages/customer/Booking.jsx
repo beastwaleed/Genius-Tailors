@@ -429,11 +429,13 @@ export default function Booking() {
         <div className="wizard-progress">
           <div className={`step ${step >= 1 ? 'active' : ''}`}>1. Fit</div>
           <div className="step-divider"></div>
-          <div className={`step ${step >= 2 ? 'active' : ''}`}>2. Style</div>
+          <div className={`step ${step >= 2 ? 'active' : ''}`}>2. Fabric</div>
           <div className="step-divider"></div>
-          <div className={`step ${step >= 3 ? 'active' : ''}`}>3. Details</div>
+          <div className={`step ${step >= 3 ? 'active' : ''}`}>3. Style</div>
           <div className="step-divider"></div>
-          <div className={`step ${step >= 4 ? 'active' : ''}`}>4. Checkout</div>
+          <div className={`step ${step >= 4 ? 'active' : ''}`}>4. Details</div>
+          <div className="step-divider"></div>
+          <div className={`step ${step >= 5 ? 'active' : ''}`}>5. Checkout</div>
         </div>
 
         {/* Step 1: Garment and Profile */}
@@ -502,14 +504,85 @@ export default function Booking() {
                 onClick={handleNext} 
                 disabled={!selectedProfileId}
               >
-                Next Step →
+                Proceed to Fabric →
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 2: Customization (Visual Style Picks) */}
+        {/* Step 2: Fabric Selection */}
         {step === 2 && (
+          <div className="wizard-step luxury-card">
+            <h2 className="step-title">Fabric Selection</h2>
+            <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>Choose your preferred fabric or provide your own.</p>
+            
+            <div className="style-section" style={{ marginBottom: '2rem' }}>
+              <div className="fabric-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+                {fabricList.map(opt => (
+                  <div 
+                    key={opt._id || opt.name} 
+                    className={`fabric-card ${selectedFabric.name === opt.name ? 'selected' : ''}`}
+                    onClick={() => { setSelectedFabric(opt); setSelectedColor(''); }}
+                    style={{ 
+                      border: selectedFabric.name === opt.name ? '2px solid var(--onyx)' : '1px solid #e2e8f0', 
+                      borderRadius: '8px', cursor: 'pointer', overflow: 'hidden', transition: 'all 0.2s',
+                      boxShadow: selectedFabric.name === opt.name ? '0 10px 15px -3px rgba(0,0,0,0.1)' : 'none'
+                    }}
+                  >
+                    <div className="fabric-img-wrapper" style={{ height: '140px', overflow: 'hidden', background: '#f1f5f9' }}>
+                      <img src={opt.imageUrl || opt.img} alt={opt.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div className="fabric-info" style={{ padding: '1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                        <h4 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--onyx)' }}>{opt.name}</h4>
+                        <span style={{ fontWeight: '600', fontSize: '0.9rem', color: opt.price === 0 ? 'var(--stone)' : 'var(--primary)' }}>
+                          {opt.price === 0 ? 'Free' : `+Rs. ${opt.price}`}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, color: 'var(--stone)', fontSize: '0.85rem', lineHeight: 1.4 }}>{opt.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {selectedFabric.name !== 'Provide my own fabric' && (
+                <div className="color-selection fade-in" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
+                  <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Select Fabric Color</h3>
+                  <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+                    {(selectedFabric.colors && selectedFabric.colors.length > 0 ? selectedFabric.colors : FABRIC_COLORS).map(color => (
+                      <label 
+                        key={color.name} 
+                        className="color-label"
+                        style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}
+                      >
+                        <input type="radio" name="color" checked={selectedColor === color.name} onChange={() => setSelectedColor(color.name)} style={{ display: 'none' }} />
+                        <div 
+                          className="color-swatch" 
+                          style={{ 
+                            width: '45px', height: '45px', borderRadius: '50%', backgroundColor: color.hex, 
+                            border: color.hex === '#ffffff' || color.hex === '#f8fafc' ? '1px solid #cbd5e1' : 'none',
+                            boxShadow: selectedColor === color.name ? '0 0 0 3px white, 0 0 0 5px var(--onyx)' : '0 2px 5px rgba(0,0,0,0.1)',
+                            transition: 'all 0.2s',
+                            transform: selectedColor === color.name ? 'scale(1.1)' : 'scale(1)'
+                          }}
+                        ></div>
+                        <span style={{ fontSize: '0.8rem', fontWeight: selectedColor === color.name ? '600' : '500', color: selectedColor === color.name ? 'var(--onyx)' : 'var(--stone)' }}>{color.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="wizard-actions split">
+              <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
+              <button className="btn btn-primary btn-lg" onClick={handleNext}>Proceed to Style →</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Customization (Visual Style Picks) */}
+        {step === 3 && (
           <div className="wizard-step luxury-card">
             <h2 className="step-title">Customize Your Style</h2>
             <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>Select the specific tailoring details for your {serviceName}.</p>
@@ -622,69 +695,10 @@ export default function Booking() {
           </div>
         )}
 
-        {/* Step 3: Details & Priority */}
-        {step === 3 && (
+        {/* Step 4: Details & Priority */}
+        {step === 4 && (
           <div className="wizard-step luxury-card">
-            <h2 className="step-title">Fabric & Order Preferences</h2>
-            
-            <div className="style-section" style={{ marginBottom: '2rem' }}>
-              <h3 style={{ marginBottom: '1rem' }}>Fabric Selection</h3>
-              <div className="fabric-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                {fabricList.map(opt => (
-                  <div 
-                    key={opt._id || opt.name} 
-                    className={`fabric-card ${selectedFabric.name === opt.name ? 'selected' : ''}`}
-                    onClick={() => { setSelectedFabric(opt); setSelectedColor(''); }}
-                    style={{ 
-                      border: selectedFabric.name === opt.name ? '2px solid var(--onyx)' : '1px solid #e2e8f0', 
-                      borderRadius: '8px', cursor: 'pointer', overflow: 'hidden', transition: 'all 0.2s',
-                      boxShadow: selectedFabric.name === opt.name ? '0 10px 15px -3px rgba(0,0,0,0.1)' : 'none'
-                    }}
-                  >
-                    <div className="fabric-img-wrapper" style={{ height: '140px', overflow: 'hidden', background: '#f1f5f9' }}>
-                      <img src={opt.imageUrl || opt.img} alt={opt.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                    <div className="fabric-info" style={{ padding: '1rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                        <h4 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--onyx)' }}>{opt.name}</h4>
-                        <span style={{ fontWeight: '600', fontSize: '0.9rem', color: opt.price === 0 ? 'var(--stone)' : 'var(--primary)' }}>
-                          {opt.price === 0 ? 'Free' : `+Rs. ${opt.price}`}
-                        </span>
-                      </div>
-                      <p style={{ margin: 0, color: 'var(--stone)', fontSize: '0.85rem', lineHeight: 1.4 }}>{opt.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {selectedFabric.name !== 'Provide my own fabric' && (
-                <div className="color-selection fade-in" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
-                  <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Select Fabric Color</h3>
-                  <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-                    {(selectedFabric.colors && selectedFabric.colors.length > 0 ? selectedFabric.colors : FABRIC_COLORS).map(color => (
-                      <label 
-                        key={color.name} 
-                        className="color-label"
-                        style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}
-                      >
-                        <input type="radio" name="color" checked={selectedColor === color.name} onChange={() => setSelectedColor(color.name)} style={{ display: 'none' }} />
-                        <div 
-                          className="color-swatch" 
-                          style={{ 
-                            width: '45px', height: '45px', borderRadius: '50%', backgroundColor: color.hex, 
-                            border: color.hex === '#ffffff' || color.hex === '#f8fafc' ? '1px solid #cbd5e1' : 'none',
-                            boxShadow: selectedColor === color.name ? '0 0 0 3px white, 0 0 0 5px var(--onyx)' : '0 2px 5px rgba(0,0,0,0.1)',
-                            transition: 'all 0.2s',
-                            transform: selectedColor === color.name ? 'scale(1.1)' : 'scale(1)'
-                          }}
-                        ></div>
-                        <span style={{ fontSize: '0.8rem', fontWeight: selectedColor === color.name ? '600' : '500', color: selectedColor === color.name ? 'var(--onyx)' : 'var(--stone)' }}>{color.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <h2 className="step-title">Order Preferences</h2>
 
             <div className="luxury-form-group" style={{ marginBottom: '1.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '12px' }}>
               <h3 style={{ marginBottom: '1rem' }}>Shipping Details (via PostEx)</h3>
@@ -749,8 +763,8 @@ export default function Booking() {
           </div>
         )}
 
-        {/* Step 4: Summary & Place Order */}
-        {step === 4 && (
+        {/* Step 5: Summary & Place Order */}
+        {step === 5 && (
           <div className="wizard-step luxury-card">
             <h2 className="step-title">Order Summary</h2>
             
