@@ -51,7 +51,8 @@ export default function AdminDashboard() {
         deliveredOrders: delivered,
         totalCustomers: data.customers.total || 0,
         revenue: data.revenue.total || 0,
-        topServices
+        topServices,
+        chartData: data.chartData
       });
 
       setRecentOrders(orders.slice(0, 8));
