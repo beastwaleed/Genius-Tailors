@@ -47,6 +47,8 @@ export default function AdminCustomers() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');
+  const [filterMembership, setFilterMembership] = useState('');
+  const [filterTag, setFilterTag] = useState('');
   const [viewCustomer, setViewCustomer] = useState(null);
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', phone: '', street: '', city: '', country: 'Pakistan',
@@ -125,26 +127,34 @@ export default function AdminCustomers() {
   };
 
   const handleExportCSV = () => {
-    const filteredCustomers = customers.filter(c => 
-      c.name.toLowerCase().includes(search.toLowerCase()) || 
-      c.email.toLowerCase().includes(search.toLowerCase()) ||
-      (c.phone && c.phone.includes(search))
-    );
+  const filteredCustomersList = customers.filter(c => {
+    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) || 
+                          c.email.toLowerCase().includes(search.toLowerCase()) ||
+                          (c.phone && c.phone.includes(search));
+    const matchesMembership = filterMembership ? c.membershipLevel === filterMembership : true;
+    const matchesTag = filterTag ? (c.tags && c.tags.includes(filterTag)) : true;
+    
+    return matchesSearch && matchesMembership && matchesTag;
+  });
 
-    if (filteredCustomers.length === 0) {
+  const handleExportCSV = () => {
+    if (filteredCustomersList.length === 0) {
       toast.error('No customers to export');
       return;
     }
 
-    const csvData = filteredCustomers.map(c => ({
+    const csvData = filteredCustomersList.map(c => ({
       'Customer ID': c._id,
       'Name': c.name,
       'Email': c.email,
       'Phone': c.phone || 'N/A',
       'Address': `${c.street || ''} ${c.city || ''} ${c.country || ''}`.trim() || 'N/A',
       'Registered Date': new Date(c.createdAt).toLocaleDateString(),
+      'Lifetime Value (Rs)': c.ltv || 0,
+      'Total Orders': c.orderCount || 0,
       'Loyalty Points': c.loyaltyPoints || 0,
-      'Membership': c.membershipLevel || 'Standard'
+      'Membership': c.membershipLevel || 'Standard',
+      'Tags': c.tags ? c.tags.join(', ') : ''
     }));
 
     const csv = Papa.unparse(csvData);
@@ -199,7 +209,21 @@ export default function AdminCustomers() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="premium-input"
-              style={{ width: '250px' }}
+              style={{ width: '220px' }}
+            />
+            <select className="premium-input" value={filterMembership} onChange={(e) => setFilterMembership(e.target.value)} style={{ width: '150px' }}>
+              <option value="">All Tiers</option>
+              <option value="Bronze">Bronze</option>
+              <option value="Silver">Silver</option>
+              <option value="Gold">Gold</option>
+            </select>
+            <input 
+              type="text" 
+              placeholder="Filter by Tag (e.g. VIP)" 
+              value={filterTag}
+              onChange={(e) => setFilterTag(e.target.value)}
+              className="premium-input"
+              style={{ width: '180px' }}
             />
             <button className="premium-btn" onClick={() => setShowModal(true)} style={{ background: '#1e293b', color: 'white', border: 'none', padding: '0.75rem 1.25rem', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>+ Add Customer</button>
             <button className="premium-btn" onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#C9A96E', color: 'white', border: 'none', padding: '0.75rem 1.25rem', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
@@ -224,33 +248,40 @@ export default function AdminCustomers() {
               </tr>
             </thead>
             <tbody>
-              {customers
-                .filter(c => 
-                  c.name.toLowerCase().includes(search.toLowerCase()) || 
-                  c.email.toLowerCase().includes(search.toLowerCase()) ||
-                  (c.phone && c.phone.includes(search))
-                )
-                .map(customer => (
-                <tr key={customer._id}>
-                  <td style={{ fontWeight: 500 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '999px', backgroundColor: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem' }}>
-                        {customer.name.charAt(0).toUpperCase()}
+              {filteredCustomersList.length > 0 ? (
+                filteredCustomersList.map(customer => (
+                  <tr key={customer._id}>
+                    <td style={{ fontWeight: 500 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '999px', backgroundColor: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem' }}>
+                          {customer.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div>{customer.name}</div>
+                          {customer.tags && customer.tags.length > 0 && (
+                            <div style={{ fontSize: '0.7rem', color: '#0284c7', background: '#e0f2fe', display: 'inline-block', padding: '0.1rem 0.4rem', borderRadius: '4px', marginTop: '0.2rem' }}>
+                              {customer.tags[0]} {customer.tags.length > 1 && `+${customer.tags.length - 1}`}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      {customer.name}
-                    </div>
-                  </td>
-                  <td>{customer.email}</td>
-                  <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
-                  <td style={{ fontWeight: 600, color: '#f59e0b' }}>{customer.loyaltyPoints || 0}</td>
-                  <td style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="premium-btn-sm" onClick={() => handleViewProfile(customer)}>View Measurements</button>
-                    <Link to={`/admin/customers/${customer._id}`} className="premium-btn-sm" style={{ background: '#0284c7', color: 'white', textDecoration: 'none' }}>
-                      360° CRM
-                    </Link>
-                  </td>
+                    </td>
+                    <td>{customer.email}</td>
+                    <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
+                    <td style={{ fontWeight: 600, color: '#f59e0b' }}>{customer.loyaltyPoints || 0}</td>
+                    <td style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button className="premium-btn-sm" onClick={() => handleViewProfile(customer)}>View Measurements</button>
+                      <Link to={`/admin/customers/${customer._id}`} className="premium-btn-sm" style={{ background: '#0284c7', color: 'white', textDecoration: 'none' }}>
+                        360° CRM
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: 'center', color: '#64748b', padding: '2rem' }}>No customers match your filters.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

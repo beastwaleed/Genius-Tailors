@@ -15,6 +15,7 @@ const Order = require('../src/models/Order');
 const LoyaltyRecord = require('../src/models/LoyaltyRecord');
 const SeasonConfig = require('../src/models/SeasonConfig');
 const Fabric = require('../src/models/Fabric');
+const Promo = require('../src/models/Promo');
 
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
@@ -1664,6 +1665,69 @@ app.put('/api/admin/crm/users/:id/notes', protect, admin, async (req, res) => {
     res.json({ message: 'Admin notes updated successfully', adminNotes: user.adminNotes });
   } catch (error) {
     res.status(500).json({ message: 'Server error updating admin notes' });
+  }
+});
+
+// ==========================================
+// 13. PROMO CODE ENGINE ROUTES
+// ==========================================
+
+app.get('/api/promos', protect, admin, async (req, res) => {
+  try {
+    const promos = await Promo.find().sort({ createdAt: -1 });
+    res.json(promos);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error fetching promos' });
+  }
+});
+
+app.post('/api/promos', protect, admin, async (req, res) => {
+  try {
+    const promo = new Promo(req.body);
+    await promo.save();
+    res.status(201).json(promo);
+  } catch (error) {
+    if (error.code === 11000) return res.status(400).json({ message: 'Promo code already exists' });
+    res.status(500).json({ message: 'Server error creating promo code' });
+  }
+});
+
+app.delete('/api/promos/:id', protect, admin, async (req, res) => {
+  try {
+    await Promo.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Promo deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error deleting promo' });
+  }
+});
+
+app.post('/api/promos/validate', protect, async (req, res) => {
+  try {
+    const { code, cartTotal } = req.body;
+    const promo = await Promo.findOne({ code: code.toUpperCase(), isActive: true });
+
+    if (!promo) return res.status(404).json({ message: 'Invalid or expired promo code' });
+    
+    if (new Date() > new Date(promo.expiryDate)) {
+      return res.status(400).json({ message: 'This promo code has expired' });
+    }
+
+    if (cartTotal < promo.minSpend) {
+      return res.status(400).json({ message: `Minimum spend of Rs. ${promo.minSpend} required` });
+    }
+
+    // Check tags if the promo is restricted
+    if (promo.requiredTags && promo.requiredTags.length > 0) {
+      const user = await User.findById(req.user.id);
+      const hasRequiredTag = promo.requiredTags.some(tag => user.tags.includes(tag));
+      if (!hasRequiredTag) {
+        return res.status(403).json({ message: 'You are not eligible for this promo code' });
+      }
+    }
+
+    res.json(promo);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error validating promo' });
   }
 });
 

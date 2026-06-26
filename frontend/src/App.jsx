@@ -35,6 +35,7 @@ import AdminSeasons from './pages/admin/AdminSeasons';
 import AdminCustomers from './pages/admin/AdminCustomers';
 import AdminCustomerDetails from './pages/admin/AdminCustomerDetails';
 import AdminFabrics from './pages/admin/AdminFabrics';
+import AdminPromos from './pages/admin/AdminPromos';
 
 export default function App() {
   const { isLoggedIn, isAdmin } = useAuth();
@@ -74,6 +75,7 @@ export default function App() {
       <Route path="/admin/customers" element={<ProtectedRoute role="Admin"><AdminCustomers /></ProtectedRoute>} />
       <Route path="/admin/customers/:id" element={<ProtectedRoute role="Admin"><AdminCustomerDetails /></ProtectedRoute>} />
       <Route path="/admin/fabrics" element={<ProtectedRoute role="Admin"><AdminFabrics /></ProtectedRoute>} />
+      <Route path="/admin/marketing" element={<ProtectedRoute role="Admin"><AdminPromos /></ProtectedRoute>} />
 
       {/* ── Catch All ─────────────────────────────── */}
       <Route path="*" element={<Navigate to="/" replace />} />
