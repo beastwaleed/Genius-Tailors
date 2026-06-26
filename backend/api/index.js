@@ -520,6 +520,13 @@ app.post('/api/orders', protect, async (req, res) => {
     }
     // ───────────────────────────────────────────────────────────────────────
 
+    // Update user location if provided
+    if (deliveryCity || deliveryAddress) {
+      if (!user.location) user.location = {};
+      if (deliveryCity) user.location.city = deliveryCity;
+      if (deliveryAddress) user.location.street = deliveryAddress;
+    }
+
     user.loyaltyPoints += pointsEarned;
     user.membershipLevel = upgradeMembership(user.loyaltyPoints);
     await user.save();

@@ -207,6 +207,8 @@ export default function Booking() {
         if (ordRes.data && ordRes.data.length === 0) setHasDiscount(true);
         if (userRes.data) {
           if (userRes.data.loyaltyPoints) setUserPoints(userRes.data.loyaltyPoints);
+          if (userRes.data.location?.city) setDeliveryCity(userRes.data.location.city);
+          if (userRes.data.location?.street) setDeliveryAddress(userRes.data.location.street);
           setUserInfo(userRes.data);
         }
         if (citiesRes.data) setOperationalCities(citiesRes.data);
