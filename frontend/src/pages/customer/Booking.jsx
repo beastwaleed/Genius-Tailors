@@ -8,6 +8,10 @@ import imgBanCollar from '../../assets/styles/ban_collar.jpg';
 import imgShirtCollar from '../../assets/styles/shirt_collar.jpg';
 import imgRoundNeck from '../../assets/styles/round_neck.png';
 
+import imgWaistcoatRound from '../../assets/round neck collar waistcoat.jpeg';
+import imgWaistcoatV from '../../assets/V collar waistcoat.jpeg';
+import imgWaistcoatSherwani from '../../assets/sherwani collar waistcoat.jpeg';
+
 import imgOpenSleeves from '../../assets/styles/round_cuff.jpg';
 import imgRoundSleeves from '../../assets/roundSleeves.jpeg';
 import imgSingleCuff from '../../assets/styles/single_cuff.jpg';
@@ -105,9 +109,9 @@ const STYLE_CONFIGS = {
   },
   'Waistcoat': {
     collarTypes: [
-      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch'] },
-      { name: 'V Collar', img: imgShirtCollar, subs: ['Standard V', 'Deep V'] },
-      { name: 'Round Neck Collar (Without Ban)', img: imgRoundNeck, subs: ['Standard Round'] }
+      { name: 'Sherwani Collar', img: imgWaistcoatSherwani, subs: ['0.9 inch', '0.75 inch', '1 inch'] },
+      { name: 'V Collar', img: imgWaistcoatV, subs: ['Standard V', 'Deep V'] },
+      { name: 'Round Neck Collar', img: imgWaistcoatRound, subs: ['Standard Round'] }
     ],
     cuffs: [],
     pockets: [],
