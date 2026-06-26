@@ -16,8 +16,12 @@ const tryImg = (heroImg, fallback) => {
 
 import HeroKameezShalwar from '../assets/HeroKameezShalwar.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
-import HeroWaistcoat from '../assets/HeroWaistcoat.jpeg'
+import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
+
+import WaistcoatV from '../assets/V collar waistcoat.jpeg';
+import WaistcoatRound from '../assets/round neck collar waistcoat.jpeg';
+import WaistcoatSherwani from '../assets/sherwani collar waistcoat.jpeg';
 
 // Close-up gallery images
 import closeupCollar from '../assets/closeup_collar.png';
@@ -26,6 +30,7 @@ import closeupFabric from '../assets/closeup_fabric.png';
 import closeupButtons from '../assets/closeup_buttons.png';
 
 const gallery = [closeupCollar, closeupCuff, closeupFabric, closeupButtons];
+const waistcoatGallery = [WaistcoatV, WaistcoatRound, WaistcoatSherwani];
 
 const ALL_SERVICES = [
   {
@@ -93,7 +98,7 @@ const ALL_SERVICES = [
     desc: 'A well-cut waistcoat instantly elevates any outfit. Pair it with your Kameez Shalwar for a formal look or over a Kurta for a smart-casual ensemble.',
     price: 'From Rs. 2,000',
     deliveryDays: '4–6 working days',
-    img: HeroWaistcoat,
+    img: WaistcoatFront,
     thumb: imgWaistcoat,
     badge: 'Best Companion',
     badgeColor: '#1A1A1A',
@@ -102,7 +107,7 @@ const ALL_SERVICES = [
     category: 'Formal',
     features: ['Single or double-breasted', 'Custom button design', 'Lining options', 'Pocket styles'],
     occasions: ['Semi-formal events', 'Office', 'Festive wear'],
-    images: gallery,
+    images: waistcoatGallery,
   }
 ];
 

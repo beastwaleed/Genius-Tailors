@@ -16,7 +16,7 @@ import imgWaistcoat from '../assets/WaistcoatMain.jpeg';
 import HeroKameezShalwar from '../assets/HeroKameezShalwar.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
-import HeroWaistcoat from '../assets/HeroWaistcoat.jpeg'
+import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
 import heroShalwarKameez from '../assets/heroShalwarKameez.jpeg'
 
@@ -79,7 +79,7 @@ const SERVICES_PREVIEW = [
     urdu: 'واسکٹ',
     desc: 'Sharp layering piece — pairs perfectly with Kameez Shalwar or Kurta.',
     price: 'From Rs. 2,000',
-    img: HeroWaistcoat,
+    img: WaistcoatFront,
     badge: 'Best Companion',
     badgeColor: '#1A1A1A',
     stars: 5,
