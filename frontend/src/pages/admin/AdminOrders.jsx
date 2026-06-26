@@ -15,6 +15,8 @@ export default function AdminOrders() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [priorityFilter, setPriorityFilter] = useState('All');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -83,9 +85,19 @@ export default function AdminOrders() {
                             (priorityFilter === 'Expedited' && order.priorityStatus === 'Expedited') ||
                             (priorityFilter === 'Standard' && order.priorityStatus !== 'Expedited');
       
-      return matchSearch && matchStatus && matchPriority;
+      let matchDate = true;
+      if (startDate) {
+        matchDate = matchDate && new Date(order.createdAt) >= new Date(startDate);
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        matchDate = matchDate && new Date(order.createdAt) <= end;
+      }
+
+      return matchSearch && matchStatus && matchPriority && matchDate;
     }).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-  }, [orders, searchTerm, statusFilter, priorityFilter]);
+  }, [orders, searchTerm, statusFilter, priorityFilter, startDate, endDate]);
 
   const activeCount = orders.filter(o => !['Delivered', 'Cancelled'].includes(o.status)).length;
   const expeditedCount = orders.filter(o => o.priorityStatus === 'Expedited' && o.status !== 'Delivered').length;
@@ -176,6 +188,12 @@ export default function AdminOrders() {
               <option value="Standard">Standard</option>
               <option value="Expedited">Expedited (Rush)</option>
             </select>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', background: '#f8fafc', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '0.8rem', color: '#64748b' }}>From:</span>
+              <input type="date" className="premium-input" style={{ padding: '0.4rem', border: 'none', background: 'transparent' }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+              <span style={{ fontSize: '0.8rem', color: '#64748b' }}>To:</span>
+              <input type="date" className="premium-input" style={{ padding: '0.4rem', border: 'none', background: 'transparent' }} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            </div>
           </div>
           <button 
             className="premium-btn" 

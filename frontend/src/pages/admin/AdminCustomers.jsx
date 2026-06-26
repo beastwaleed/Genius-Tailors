@@ -127,9 +127,11 @@ export default function AdminCustomers() {
   };
 
   const filteredCustomersList = customers.filter(c => {
-    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) || 
-                          c.email.toLowerCase().includes(search.toLowerCase()) ||
-                          (c.phone && c.phone.includes(search));
+    const searchLower = search.toLowerCase();
+    const matchesSearch = c.name.toLowerCase().includes(searchLower) || 
+                          c.email.toLowerCase().includes(searchLower) ||
+                          (c.phone && c.phone.includes(search)) ||
+                          (c.tags && c.tags.some(tag => tag.toLowerCase().includes(searchLower)));
     const matchesMembership = filterMembership ? c.membershipLevel === filterMembership : true;
     const matchesTag = filterTag ? (c.tags && c.tags.includes(filterTag)) : true;
     
