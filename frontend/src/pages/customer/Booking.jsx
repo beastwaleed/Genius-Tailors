@@ -110,10 +110,7 @@ const STYLE_CONFIGS = {
       { name: 'Round Neck Collar (Without Ban)', img: imgRoundNeck, subs: ['Standard Round'] }
     ],
     cuffs: [],
-    pockets: [
-      { name: '3 Pockets (1 Front, 2 Sides)', img: imgFrontSidePockets },
-      { name: '2 Side Pockets', img: imgSidePockets }
-    ],
+    pockets: [],
     bottomPockets: [],
     bottomDesigns: []
   }
@@ -182,6 +179,7 @@ export default function Booking() {
   const [isRush, setIsRush] = useState(false);
   const [customerNote, setCustomerNote] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isFetchingData, setIsFetchingData] = useState(true);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
   
@@ -224,6 +222,8 @@ export default function Booking() {
         }
       } catch (error) {
         console.error('Failed to fetch data', error);
+      } finally {
+        setIsFetchingData(false);
       }
     };
     fetchData();
@@ -458,7 +458,11 @@ export default function Booking() {
             </div>
 
             <h2 className="step-title" style={{ marginTop: '2rem' }}>Select Measurement Profile</h2>
-            {filteredProfiles.length > 0 ? (
+            {isFetchingData ? (
+              <div style={{ padding: '2rem', textAlign: 'center', background: '#faf9f6', borderRadius: '8px' }}>
+                <p style={{ color: 'var(--stone)' }}>Loading measurement profiles...</p>
+              </div>
+            ) : filteredProfiles.length > 0 ? (
               <div className="minimal-profiles-list">
                 {filteredProfiles.map(p => (
                   <label 
