@@ -108,6 +108,17 @@ export default function AdminCustomers() {
     }
   };
 
+  const handleDeleteCustomer = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this customer? This action cannot be undone.')) return;
+    try {
+      await api.delete(`/api/admin/customers/${id}`);
+      setCustomers(customers.filter(c => c._id !== id));
+      toast.success('Customer deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete customer');
+    }
+  };
+
   const handleViewProfile = async (customer) => {
     setViewCustomer(customer);
     setCustomerProfiles([]);
@@ -270,11 +281,18 @@ export default function AdminCustomers() {
                     <td>{customer.email}</td>
                     <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
                     <td style={{ fontWeight: 600, color: '#f59e0b' }}>{customer.loyaltyPoints || 0}</td>
-                    <td style={{ display: 'flex', gap: '0.5rem' }}>
+                    <td style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                       <button className="premium-btn-sm" onClick={() => handleViewProfile(customer)}>View Measurements</button>
                       <Link to={`/admin/customers/${customer._id}`} className="premium-btn-sm" style={{ background: '#0284c7', color: 'white', textDecoration: 'none' }}>
                         360° CRM
                       </Link>
+                      <button 
+                        onClick={() => handleDeleteCustomer(customer._id)}
+                        style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}
+                        title="Delete Customer"
+                      >
+                        🗑️
+                      </button>
                     </td>
                   </tr>
                 ))

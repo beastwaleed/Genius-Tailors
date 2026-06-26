@@ -826,6 +826,21 @@ app.get('/api/admin/customers/:id/orders', protect, admin, async (req, res) => {
   }
 });
 
+// Delete a customer (Admin Only)
+app.delete('/api/admin/customers/:id', protect, admin, async (req, res) => {
+  try {
+    const customer = await User.findById(req.params.id);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+    
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Customer deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete customer', error: error.message });
+  }
+});
+
 
 // ==========================================
 // IMAGE UPLOAD ROUTE (Cloudinary)
@@ -1857,6 +1872,21 @@ app.post('/api/abandoned-carts/:id/notify-admin', protect, async (req, res) => {
     res.json({ message: 'Admin notified' });
   } catch (error) {
     res.status(500).json({ message: 'Server error updating abandoned cart' });
+  }
+});
+
+// Delete Abandoned Cart (Admin Only)
+app.delete('/api/abandoned-carts/:id', protect, admin, async (req, res) => {
+  try {
+    const cart = await AbandonedCart.findById(req.params.id);
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+    
+    await AbandonedCart.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Cart deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete abandoned cart', error: error.message });
   }
 });
 

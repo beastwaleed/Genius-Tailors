@@ -47,6 +47,17 @@ export default function AdminAbandonedCarts() {
     }
   };
 
+  const handleDeleteCart = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this abandoned cart?')) return;
+    try {
+      await api.delete(`/api/abandoned-carts/${id}`);
+      setCarts(carts.filter(c => c._id !== id));
+      toast.success('Abandoned cart deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete abandoned cart');
+    }
+  };
+
   const pendingCount = carts.filter(c => c.recoveryStatus === 'Pending').length;
   const recoveredCount = carts.filter(c => c.recoveryStatus === 'Recovered').length;
   const lostRevenue = carts.filter(c => c.recoveryStatus === 'Pending').reduce((sum, c) => sum + c.totalPrice, 0);
@@ -140,19 +151,28 @@ export default function AdminAbandonedCarts() {
                         </button>
                       </td>
                       <td>
-                        <select 
-                          value={cart.recoveryStatus} 
-                          onChange={(e) => handleUpdateStatus(cart._id, e.target.value)}
-                          style={{
-                            background: cart.recoveryStatus === 'Recovered' ? '#dcfce7' : (cart.recoveryStatus === 'Lost' ? '#fee2e2' : '#f1f5f9'),
-                            color: cart.recoveryStatus === 'Recovered' ? '#166534' : (cart.recoveryStatus === 'Lost' ? '#991b1b' : '#475569'),
-                            border: 'none', padding: '0.4rem 0.8rem', borderRadius: '1rem', fontWeight: 700, outline: 'none', cursor: 'pointer', fontSize: '0.8rem'
-                          }}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Recovered">Recovered</option>
-                          <option value="Lost">Lost</option>
-                        </select>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                          <select 
+                            value={cart.recoveryStatus} 
+                            onChange={(e) => handleUpdateStatus(cart._id, e.target.value)}
+                            style={{
+                              background: cart.recoveryStatus === 'Recovered' ? '#dcfce7' : (cart.recoveryStatus === 'Lost' ? '#fee2e2' : '#f1f5f9'),
+                              color: cart.recoveryStatus === 'Recovered' ? '#166534' : (cart.recoveryStatus === 'Lost' ? '#991b1b' : '#475569'),
+                              border: 'none', padding: '0.4rem 0.8rem', borderRadius: '1rem', fontWeight: 700, outline: 'none', cursor: 'pointer', fontSize: '0.8rem'
+                            }}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Recovered">Recovered</option>
+                            <option value="Lost">Lost</option>
+                          </select>
+                          <button 
+                            onClick={() => handleDeleteCart(cart._id)}
+                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.2rem', fontSize: '1rem' }}
+                            title="Delete Cart"
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
