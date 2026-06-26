@@ -16,6 +16,7 @@ const LoyaltyRecord = require('../src/models/LoyaltyRecord');
 const SeasonConfig = require('../src/models/SeasonConfig');
 const Fabric = require('../src/models/Fabric');
 const Promo = require('../src/models/Promo');
+const AbandonedCart = require('../src/models/AbandonedCart');
 
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
@@ -1752,6 +1753,77 @@ app.post('/api/promos/validate', protect, async (req, res) => {
     res.json(promo);
   } catch (error) {
     res.status(500).json({ message: 'Server error validating promo' });
+  }
+});
+
+// ==========================================
+// 14. ABANDONED CART ENGINE ROUTES
+// ==========================================
+
+// Create or update an abandoned cart session
+app.post('/api/abandoned-carts', async (req, res) => {
+  try {
+    const { customerId, customerEmail, customerPhone, customerName, serviceName, totalPrice, dropoffStep, completedSteps, sessionId } = req.body;
+    
+    // If we have a sessionId (from frontend state), we update the existing record
+    // Otherwise we create a new one
+    let cart;
+    if (sessionId) {
+      cart = await AbandonedCart.findById(sessionId);
+    }
+    
+    if (cart) {
+      cart.dropoffStep = dropoffStep || cart.dropoffStep;
+      cart.completedSteps = completedSteps || cart.completedSteps;
+      if (customerEmail) cart.customerEmail = customerEmail;
+      if (customerPhone) cart.customerPhone = customerPhone;
+      if (customerName) cart.customerName = customerName;
+      if (totalPrice) cart.totalPrice = totalPrice;
+      await cart.save();
+    } else {
+      cart = new AbandonedCart({
+        customer: customerId || null,
+        customerEmail,
+        customerPhone,
+        customerName,
+        serviceName,
+        totalPrice,
+        dropoffStep,
+        completedSteps
+      });
+      await cart.save();
+    }
+    
+    res.status(201).json(cart);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error tracking abandoned cart' });
+  }
+});
+
+// Get all abandoned carts for Admin Panel
+app.get('/api/abandoned-carts', protect, admin, async (req, res) => {
+  try {
+    const carts = await AbandonedCart.find().sort({ createdAt: -1 }).populate('customer', 'name email phone tags');
+    res.json(carts);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error fetching abandoned carts' });
+  }
+});
+
+// Mark an abandoned cart as recovered or update status
+app.put('/api/abandoned-carts/:id/recover', protect, admin, async (req, res) => {
+  try {
+    const { status, messageSent } = req.body;
+    const cart = await AbandonedCart.findById(req.params.id);
+    if (!cart) return res.status(404).json({ message: 'Cart not found' });
+    
+    if (status) cart.recoveryStatus = status;
+    if (messageSent !== undefined) cart.recoveryMessageSent = messageSent;
+    
+    await cart.save();
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error updating abandoned cart' });
   }
 });
 

@@ -126,6 +126,8 @@ export default function Booking() {
   const [profiles, setProfiles] = useState([]);
   const [selectedProfileId, setSelectedProfileId] = useState('');
   const [hasDiscount, setHasDiscount] = useState(false);
+  const [abandonedCartId, setAbandonedCartId] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   
   useEffect(() => {
     setSelectedProfileId('');
@@ -187,7 +189,10 @@ export default function Booking() {
         ]);
         if (profRes.data) setProfiles(profRes.data);
         if (ordRes.data && ordRes.data.length === 0) setHasDiscount(true);
-        if (userRes.data && userRes.data.loyaltyPoints) setUserPoints(userRes.data.loyaltyPoints);
+        if (userRes.data) {
+          if (userRes.data.loyaltyPoints) setUserPoints(userRes.data.loyaltyPoints);
+          setUserInfo(userRes.data);
+        }
         if (citiesRes.data) setOperationalCities(citiesRes.data);
         
         try {
@@ -237,6 +242,32 @@ export default function Booking() {
   const subTotal = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price;
   const pointsDiscount = usePoints ? Math.min(userPoints, subTotal) : 0;
   const totalPrice = subTotal - pointsDiscount;
+
+  // Track Checkout Drop-offs
+  useEffect(() => {
+    if (!userInfo) return;
+    
+    const stepNames = ['Measurement Profile', 'Fabric Selection', 'Styling Options', 'Final Summary & Checkout'];
+    const currentStepName = stepNames[step - 1] || 'Checkout';
+    const completed = stepNames.slice(0, step - 1);
+
+    api.post('/api/abandoned-carts', {
+      sessionId: abandonedCartId,
+      customerId: userInfo._id,
+      customerEmail: userInfo.email,
+      customerPhone: userInfo.phone,
+      customerName: userInfo.name,
+      serviceName,
+      totalPrice,
+      dropoffStep: currentStepName,
+      completedSteps: completed
+    }).then(res => {
+      if (!abandonedCartId && res.data._id) {
+        setAbandonedCartId(res.data._id);
+      }
+    }).catch(err => console.error('Silent tracking error'));
+    
+  }, [step, serviceName, totalPrice, userInfo]);
 
   const handleNext = () => setStep(s => s + 1);
   const handleBack = () => setStep(s => s - 1);
@@ -317,6 +348,12 @@ export default function Booking() {
       };
 
       const { data } = await api.post('/api/orders', payload);
+      
+      // If we were tracking this checkout session, mark it as recovered
+      if (abandonedCartId) {
+        api.put(`/api/abandoned-carts/${abandonedCartId}/recover`, { status: 'Recovered' }).catch(() => {});
+      }
+
       setPaymentModalOpen(false);
       toast.success('Order placed successfully! 🎉');
       navigate(`/my-orders/${data._id || ''}`);
