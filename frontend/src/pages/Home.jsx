@@ -4,14 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
-
 // Garment images
-import imgShalwar from '../assets/shalwar-kameez.png';
-import imgSherwani from '../assets/sherwani.png';
-import imgSuit from '../assets/suit.png';
-import imgKurta from '../assets/kurta.png';
-import imgShirt from '../assets/shirt.png';
-import imgWaistcoat from '../assets/WaistcoatMain.jpeg';
 
 import HeroKameezShalwar from '../assets/HeroKameezShalwar.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
@@ -23,7 +16,7 @@ import heroShalwarKameez from '../assets/heroShalwarKameez.jpeg'
 import img1 from '../assets/portfolio_1.png';
 import img2 from '../assets/portfolio_2.png';
 import img3 from '../assets/portfolio_3.png';
-import img4 from '../assets/portfolio_4.png';
+import img4 from '../assets/portfolio_1.png';
 import img5 from '../assets/portfolio_5.png';
 
 import proc1 from '../assets/process_1.png';

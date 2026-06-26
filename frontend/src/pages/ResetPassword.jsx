@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 import toast from 'react-hot-toast';
 
-import authBg from '../assets/port_model_classic_1781781070827.png';
+import authBg from '../assets/port_model_kurta_1781781028618.png';
 
 export default function ResetPassword() {
   const { token } = useParams();

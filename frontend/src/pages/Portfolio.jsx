@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 import img1 from '../assets/portfolio_1.png';
 import img2 from '../assets/portfolio_2.png';
 import img3 from '../assets/portfolio_3.png';
-import img4 from '../assets/portfolio_4.png';
+import img4 from '../assets/portfolio_1.png';
 import img5 from '../assets/portfolio_5.png';
 
 // Since we have 5 images, we duplicate a few to fill out the 9-item grid nicely

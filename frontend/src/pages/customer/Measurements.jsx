@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import toast from 'react-hot-toast';
 
-import mannequinImg from '../../assets/tailor_mannequin.png';
+import mannequinImg from '../../assets/port_mannequin_kurta_1781781041804.png';
 import imgKameez from '../../assets/model_kameez_shalwar.png';
 import imgKurta from '../../assets/model_kurta_pajama.png';
 import imgWaistcoat from '../../assets/model_waistcoat.png';

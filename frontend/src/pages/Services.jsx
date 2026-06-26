@@ -5,9 +5,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 // Garment images
-import imgShalwar from '../assets/shalwar-kameez.png';
-import imgKurta from '../assets/kurta.png';
-import imgWaistcoat from '../assets/waistcoat.png';
 
 // --- Hero images (user's own uploads) --- use fallback if missing
 const tryImg = (heroImg, fallback) => {
@@ -42,7 +39,6 @@ const ALL_SERVICES = [
     price: 'From Rs. 2,500',
     deliveryDays: '5–7 working days',
     img: HeroKameezShalwar,
-    thumb: imgShalwar,
     badge: 'Most Popular',
     badgeColor: '#C9A96E',
     stars: 5,
@@ -61,7 +57,6 @@ const ALL_SERVICES = [
     price: 'From Rs. 2,000',
     deliveryDays: '4–6 working days',
     img: HeroKurtaShalwar,
-    thumb: imgKurta,
     badge: 'Classic Choice',
     badgeColor: '#2E86C1',
     stars: 5,
@@ -80,7 +75,6 @@ const ALL_SERVICES = [
     price: 'From Rs. 2,000',
     deliveryDays: '5–7 working days',
     img: HeroKurtaPajama,
-    thumb: imgKurta,
     badge: 'Trending',
     badgeColor: '#27AE60',
     stars: 4,
@@ -99,7 +93,6 @@ const ALL_SERVICES = [
     price: 'From Rs. 2,000',
     deliveryDays: '4–6 working days',
     img: WaistcoatFront,
-    thumb: imgWaistcoat,
     badge: 'Best Companion',
     badgeColor: '#1A1A1A',
     stars: 5,

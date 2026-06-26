@@ -1,7 +1,7 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import imgDetail from '../assets/port_detail_stitch_1781781054620.png';
-import imgModel from '../assets/port_model_classic_1781781070827.png';
+import imgModel from '../assets/port_model_kurta_1781781028618.png';
 
 export default function About() {
   return (
