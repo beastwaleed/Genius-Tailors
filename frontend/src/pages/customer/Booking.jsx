@@ -102,7 +102,6 @@ const STYLE_CONFIGS = {
       { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
       { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
     ]
-    ]
   },
   'Waistcoat': {
     collarTypes: [
@@ -234,14 +233,20 @@ export default function Booking() {
   
   // Calculate Extra Styling Charges
   let styleExtras = 0;
-  const selectedCuff = config.cuffs.find(c => c.name === styleVariations.cuff);
-  if (selectedCuff && selectedCuff.price) styleExtras += selectedCuff.price;
+  if (config.cuffs && config.cuffs.length > 0) {
+    const selectedCuff = config.cuffs.find(c => c.name === styleVariations.cuff);
+    if (selectedCuff && selectedCuff.price) styleExtras += selectedCuff.price;
+  }
   
-  const selectedBP = config.bottomPockets.find(b => b.name === styleVariations.bottomPocket);
-  if (selectedBP && selectedBP.price) styleExtras += selectedBP.price;
+  if (config.bottomPockets && config.bottomPockets.length > 0) {
+    const selectedBP = config.bottomPockets.find(b => b.name === styleVariations.bottomPocket);
+    if (selectedBP && selectedBP.price) styleExtras += selectedBP.price;
+  }
 
-  const selectedBD = config.bottomDesigns.find(b => b.name === styleVariations.bottomDesign);
-  if (selectedBD && selectedBD.price) styleExtras += selectedBD.price;
+  if (config.bottomDesigns && config.bottomDesigns.length > 0) {
+    const selectedBD = config.bottomDesigns.find(b => b.name === styleVariations.bottomDesign);
+    if (selectedBD && selectedBD.price) styleExtras += selectedBD.price;
+  }
 
   let basePrice = SERVICES_PRICES[serviceName] || 2500;
   if (dbServices && dbServices.length > 0) {
