@@ -33,6 +33,7 @@ import PriorityQueue from './pages/admin/PriorityQueue';
 import AdminServices from './pages/admin/AdminServices';
 import AdminSeasons from './pages/admin/AdminSeasons';
 import AdminCustomers from './pages/admin/AdminCustomers';
+import AdminCustomerDetails from './pages/admin/AdminCustomerDetails';
 import AdminFabrics from './pages/admin/AdminFabrics';
 
 export default function App() {
@@ -71,6 +72,7 @@ export default function App() {
       <Route path="/admin/services" element={<ProtectedRoute role="Admin"><AdminServices /></ProtectedRoute>} />
       <Route path="/admin/seasons" element={<ProtectedRoute role="Admin"><AdminSeasons /></ProtectedRoute>} />
       <Route path="/admin/customers" element={<ProtectedRoute role="Admin"><AdminCustomers /></ProtectedRoute>} />
+      <Route path="/admin/customers/:id" element={<ProtectedRoute role="Admin"><AdminCustomerDetails /></ProtectedRoute>} />
       <Route path="/admin/fabrics" element={<ProtectedRoute role="Admin"><AdminFabrics /></ProtectedRoute>} />
 
       {/* ── Catch All ─────────────────────────────── */}

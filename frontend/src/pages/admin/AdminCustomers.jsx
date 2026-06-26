@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/AdminLayout';
 import api from '../../api';
 import toast from 'react-hot-toast';
@@ -242,8 +243,11 @@ export default function AdminCustomers() {
                   <td>{customer.email}</td>
                   <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
                   <td style={{ fontWeight: 600, color: '#f59e0b' }}>{customer.loyaltyPoints || 0}</td>
-                  <td>
-                    <button className="premium-btn-sm" onClick={() => handleViewProfile(customer)}>View Profile</button>
+                  <td style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="premium-btn-sm" onClick={() => handleViewProfile(customer)}>View Measurements</button>
+                    <Link to={`/admin/customers/${customer._id}`} className="premium-btn-sm" style={{ background: '#0284c7', color: 'white', textDecoration: 'none' }}>
+                      360° CRM
+                    </Link>
                   </td>
                 </tr>
               ))}

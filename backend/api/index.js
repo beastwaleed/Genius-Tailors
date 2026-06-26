@@ -1597,4 +1597,74 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
+// ==========================================
+// 12. CRM & MARKETING ROUTES
+// ==========================================
+
+// Get 360-Degree Customer Profile (CRM)
+app.get('/api/admin/crm/users/:id', protect, admin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) return res.status(404).json({ message: 'Customer not found' });
+
+    // Calculate real-time AOV and fetch recent orders
+    const orders = await Order.find({ customer: req.params.id }).sort({ createdAt: -1 });
+    
+    // Aggregation for LTV and Order Count (Ensuring accuracy)
+    const completedOrders = orders.filter(o => !['Cancelled', 'Refunded'].includes(o.status));
+    const totalSpent = completedOrders.reduce((sum, o) => sum + o.totalPrice, 0);
+    const orderCount = completedOrders.length;
+    const aov = orderCount > 0 ? (totalSpent / orderCount).toFixed(2) : 0;
+
+    // Sync database cache if it's outdated
+    if (user.ltv !== totalSpent || user.orderCount !== orderCount) {
+      user.ltv = totalSpent;
+      user.orderCount = orderCount;
+      await user.save();
+    }
+
+    res.json({
+      profile: user,
+      analytics: {
+        totalSpent,
+        orderCount,
+        averageOrderValue: Number(aov),
+      },
+      recentOrders: orders.slice(0, 5) // Last 5 orders
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error fetching CRM profile' });
+  }
+});
+
+// Update Customer Tags
+app.put('/api/admin/crm/users/:id/tags', protect, admin, async (req, res) => {
+  try {
+    const { tags } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Customer not found' });
+
+    user.tags = tags;
+    await user.save();
+    res.json({ message: 'Tags updated successfully', tags: user.tags });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error updating tags' });
+  }
+});
+
+// Update Admin Private Notes
+app.put('/api/admin/crm/users/:id/notes', protect, admin, async (req, res) => {
+  try {
+    const { adminNotes } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'Customer not found' });
+
+    user.adminNotes = adminNotes;
+    await user.save();
+    res.json({ message: 'Admin notes updated successfully', adminNotes: user.adminNotes });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error updating admin notes' });
+  }
+});
+
 module.exports = app;

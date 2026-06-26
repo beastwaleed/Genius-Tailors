@@ -42,6 +42,27 @@ const userSchema = new mongoose.Schema({
     default: 'Bronze'
   },
 
+  // ── CRM & Marketing Modules ──────────────────────────────────────
+  ltv: {
+    type: Number,
+    default: 0,
+    index: true // Indexed for fast filtering by Lifetime Value
+  },
+  orderCount: {
+    type: Number,
+    default: 0
+  },
+  tags: [{
+    type: String,
+    trim: true,
+    index: true // Indexed for Custom Audience/Marketing segmentation
+  }],
+  adminNotes: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+
   // ── Feature 6: Password Reset ────────────────────────────────────
   // Hashed reset token stored temporarily; expires after 15 minutes.
   resetPasswordToken:   { type: String,  default: null },
