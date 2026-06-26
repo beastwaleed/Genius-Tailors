@@ -20,8 +20,8 @@ const Promo = require('../src/models/Promo');
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/cloudinary');
-const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail } = require('../src/config/email');
-const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation } = require('../src/config/whatsapp');
+const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail } = require('../src/config/email');
+const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -1685,6 +1685,30 @@ app.post('/api/promos', protect, admin, async (req, res) => {
   try {
     const promo = new Promo(req.body);
     await promo.save();
+
+    // Broadcast Campaign to Targeted Users (Non-blocking)
+    const broadcastPromo = async () => {
+      try {
+        let query = {};
+        if (promo.requiredTags && promo.requiredTags.length > 0) {
+          query = { tags: { $in: promo.requiredTags } };
+        }
+        
+        const targetUsers = await User.find(query);
+        const discountText = promo.discountType === 'Percentage' ? `${promo.discountValue}% OFF` : `Rs. ${promo.discountValue} OFF`;
+
+        for (const user of targetUsers) {
+          if (user.email) sendPromoEmail(user.email, user.name, promo.code, discountText, promo.minSpend, promo.expiryDate).catch(e => console.error('Promo email error:', e));
+          if (user.phone) sendPromoWhatsapp(user.phone, user.name, promo.code, discountText, promo.minSpend, promo.expiryDate).catch(e => console.error('Promo WhatsApp error:', e));
+        }
+      } catch (err) {
+        console.error('Failed to broadcast promo campaign:', err);
+      }
+    };
+
+    // Execute broadcast in background
+    broadcastPromo();
+
     res.status(201).json(promo);
   } catch (error) {
     if (error.code === 11000) return res.status(400).json({ message: 'Promo code already exists' });

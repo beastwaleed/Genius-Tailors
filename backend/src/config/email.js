@@ -250,4 +250,37 @@ const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword
   });
 };
 
-module.exports = { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail };
+// ── Email 7: Promo Code Campaign ─────────────────────────────────────────────
+const sendPromoEmail = async (customerEmail, customerName, promoCode, discountText, minSpend, expiryDate) => {
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background: #1a1a2e; padding: 24px; text-align: center;">
+        <h1 style="color: #ffd700; margin: 0; font-size: 22px;">✂️ Exclusive Offer for You!</h1>
+      </div>
+      <div style="padding: 32px;">
+        <h2 style="color: #1a1a2e;">A Special Gift from Genius Tailors 🎉</h2>
+        <p style="color: #333;">Dear <strong>${customerName}</strong>,</p>
+        <p style="color: #555;">We have generated a special discount code just for you! Use the code below during your next order to claim your discount.</p>
+        <div style="background: #f9f9f9; border-left: 4px solid #ffd700; padding: 16px; margin: 20px 0; border-radius: 4px; text-align: center;">
+          <p style="margin: 0; color: #1a1a2e; font-size: 24px; font-weight: 900; letter-spacing: 2px;">${promoCode}</p>
+          <p style="margin: 8px 0 0 0; color: #27ae60; font-weight: bold;">${discountText}</p>
+          ${minSpend > 0 ? `<p style="margin: 4px 0 0 0; color: #777; font-size: 13px;">Minimum Spend: Rs. ${minSpend}</p>` : ''}
+          ${expiryDate ? `<p style="margin: 4px 0 0 0; color: #e74c3c; font-size: 13px;">Valid until: ${new Date(expiryDate).toLocaleDateString()}</p>` : ''}
+        </div>
+        <p style="color: #999; font-size: 13px;">You can apply this code at checkout. Don't wait, book your custom tailored fit today!</p>
+      </div>
+      <div style="background: #f0f0f0; padding: 16px; text-align: center;">
+        <p style="color: #999; font-size: 12px; margin: 0;">© ${new Date().getFullYear()} Genius Tailors, Hyderabad. All rights reserved.</p>
+      </div>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
+    to: customerEmail,
+    subject: `🎁 A Special Gift Just For You! (${discountText})`,
+    html
+  });
+};
+
+module.exports = { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail };

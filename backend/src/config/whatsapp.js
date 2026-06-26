@@ -99,4 +99,13 @@ const sendWhatsappAccountCreation = async (customerPhone, customerName, email, r
   await sendWhatsappMessage(customerPhone, message);
 };
 
-module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation };
+const sendPromoWhatsapp = async (customerPhone, customerName, promoCode, discountText, minSpend, expiryDate) => {
+  let message = `*Exclusive Offer from Genius Tailors!* ✂️🎉\n\nHi ${customerName},\n\nWe have a special discount just for you! Use the promo code *${promoCode}* to get *${discountText}* on your next order.\n\n`;
+  if (minSpend > 0) message += `*Minimum Spend:* Rs. ${minSpend}\n`;
+  if (expiryDate) message += `*Valid Until:* ${new Date(expiryDate).toLocaleDateString('en-PK', { weekday: 'short', month: 'short', day: 'numeric' })}\n\n`;
+  message += `Book your tailored fit today!`;
+  
+  await sendWhatsappMessage(customerPhone, message);
+};
+
+module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp };
