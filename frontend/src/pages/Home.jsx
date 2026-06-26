@@ -6,12 +6,11 @@ import api from '../api';
 import { useAuth } from '../context/AuthContext';
 // Garment images
 
-import HeroKameezShalwar from '../assets/HeroKameezShalwar.jpeg'
+import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
-import heroShalwarKameez from '../assets/heroShalwarKameez.jpeg'
 
 import img1 from '../assets/portfolio_1.png';
 import img2 from '../assets/portfolio_2.png';
@@ -39,7 +38,7 @@ const SERVICES_PREVIEW = [
     urdu: 'قمیض شلوار',
     desc: 'Our most popular garment — the timeless Pakistani classic, stitched to your exact measurements.',
     price: 'From Rs. 2,500',
-    img: HeroKameezShalwar,
+    img: ShalwarKameezFeaturedImage,
     badge: 'Most Popular',
     badgeColor: '#C9A96E',
     stars: 5,
@@ -282,7 +281,7 @@ export default function Home() {
   };
 
   const GARMENTS = [
-    { name: 'Kameez Shalwar', label: 'Traditional Classic', img: heroShalwarKameez },
+    { name: 'Kameez Shalwar', label: 'Traditional Classic', img: ShalwarKameezFeaturedImage },
     { name: 'Kurta Shalwar', label: 'Casual Refined', img: HeroKurtaShalwar },
     { name: 'Kurta Pajama', label: 'Evening Elegance', img: HeroKurtaPajama },
     { name: 'Waistcoat', label: 'Perfect Companion', img: WaistcoatFront },

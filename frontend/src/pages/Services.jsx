@@ -11,7 +11,7 @@ const tryImg = (heroImg, fallback) => {
   try { return heroImg; } catch { return fallback; }
 };
 
-import HeroKameezShalwar from '../assets/HeroKameezShalwar.jpeg'
+import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 import HeroKurtaShalwar from '../assets/HeroKurtaShalwar.jpeg'
@@ -29,6 +29,11 @@ import closeupButtons from '../assets/closeup_buttons.png';
 const gallery = [closeupCollar, closeupCuff, closeupFabric, closeupButtons];
 const waistcoatGallery = [WaistcoatV, WaistcoatRound, WaistcoatSherwani];
 
+import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
+import ShalwarKameezGallery1 from '../assets/ShalwarKameezGallery1.jpeg';
+import ShalwarKameezGallery2 from '../assets/ShalwarKameezGallery2.jpeg';
+const shalwarKameezGallery = [ShalwarKameezGallery0, ShalwarKameezGallery1, ShalwarKameezGallery2];
+
 const ALL_SERVICES = [
   {
     id: 'kameez-shalwar',
@@ -38,7 +43,7 @@ const ALL_SERVICES = [
     desc: 'Our most-ordered garment. A perfectly fitted Kameez Shalwar is the foundation of every Pakistani wardrobe — comfortable for daily wear, sharp enough for formal events.',
     price: 'From Rs. 2,500',
     deliveryDays: '5–7 working days',
-    img: HeroKameezShalwar,
+    img: ShalwarKameezFeaturedImage,
     badge: 'Most Popular',
     badgeColor: '#C9A96E',
     stars: 5,
@@ -46,7 +51,7 @@ const ALL_SERVICES = [
     category: 'Traditional',
     features: ['Custom collar styles', 'Choice of sleeve length', 'Front & pocket designs', 'Fitted or relaxed cut'],
     occasions: ['Daily wear', 'Office', 'Eid', 'Casual events'],
-    images: gallery,
+    images: shalwarKameezGallery,
   },
   {
     id: 'kurta-shalwar',
