@@ -34,19 +34,16 @@ export default function AdminAbandonedCarts() {
 
   const handleSendRecovery = async (id, phone) => {
     try {
-      // In a real system, this would call an API endpoint to send a WhatsApp/Email template.
-      // For now, we will mark it as sent in the DB and open a WhatsApp wa.me link for manual sending.
-      await api.put(`/api/abandoned-carts/${id}/recover`, { messageSent: true });
+      await api.put(`/api/abandoned-carts/${id}/recover`, { messageSent: true, sendAutoMessage: true });
       setCarts(carts.map(c => c._id === id ? { ...c, recoveryMessageSent: true } : c));
       
       if (phone) {
-        const msg = encodeURIComponent("Hi! We noticed you left something behind at Genius Tailors. Can we help you complete your order?");
-        window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${msg}`, '_blank');
+        toast.success("Recovery message auto-sent via WhatsApp API!");
       } else {
-        toast.success("Recovery marked as sent! (No phone number available for auto-open)");
+        toast.error("Cart marked as sent, but no phone number was found to deliver it.");
       }
     } catch (error) {
-      toast.error('Failed to log recovery message');
+      toast.error('Failed to auto-send recovery message');
     }
   };
 

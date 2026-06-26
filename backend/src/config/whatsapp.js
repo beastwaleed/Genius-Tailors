@@ -108,4 +108,15 @@ const sendPromoWhatsapp = async (customerPhone, customerName, promoCode, discoun
   await sendWhatsappMessage(customerPhone, message);
 };
 
-module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp };
+const sendRecoveryWhatsapp = async (customerPhone, customerName) => {
+  const message = `*Genius Tailors* ✂️\n\nHi ${customerName}! 👋\n\nWe noticed you left something behind during your recent visit to our website. Can we help you complete your tailored fit?\n\nIf you have any questions about measurements or fabric, feel free to ask us here!`;
+  await sendWhatsappMessage(customerPhone, message);
+};
+
+const sendAdminAbandonedCartWhatsapp = async (customerName, serviceName, totalPrice, dropoffStep) => {
+  const adminPhone = '+923332662110';
+  const message = `🚨 *Abandoned Cart Alert* 🚨\n\nA customer just abandoned their checkout process!\n\n*Customer:* ${customerName}\n*Garment:* ${serviceName}\n*Value:* Rs. ${totalPrice.toLocaleString()}\n*Dropped Off At:* ${dropoffStep}\n\nCheck your Admin Panel to recover this cart!`;
+  await sendWhatsappMessage(adminPhone, message);
+};
+
+module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp };

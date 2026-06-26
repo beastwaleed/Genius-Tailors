@@ -21,8 +21,8 @@ const AbandonedCart = require('../src/models/AbandonedCart');
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/cloudinary');
-const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail } = require('../src/config/email');
-const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp } = require('../src/config/whatsapp');
+const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
+const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -1818,10 +1818,36 @@ app.put('/api/abandoned-carts/:id/recover', protect, admin, async (req, res) => 
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
     
     if (status) cart.recoveryStatus = status;
-    if (messageSent !== undefined) cart.recoveryMessageSent = messageSent;
+    if (messageSent !== undefined) {
+      cart.recoveryMessageSent = messageSent;
+      
+      // Feature: Auto-Send Recovery WhatsApp Message
+      if (messageSent && req.body.sendAutoMessage && cart.customerPhone) {
+        sendRecoveryWhatsapp(cart.customerPhone, cart.customerName || 'Valued Customer').catch(err => console.error('Failed to send auto-recovery whatsapp:', err));
+      }
+    }
     
     await cart.save();
     res.json(cart);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error updating abandoned cart' });
+  }
+});
+
+// Notify Admin about Abandoned Cart
+app.post('/api/abandoned-carts/:id/notify-admin', protect, async (req, res) => {
+  try {
+    const cart = await AbandonedCart.findById(req.params.id);
+    if (!cart) return res.status(404).json({ message: 'Cart not found' });
+    
+    // Prevent spamming if already recovered or marked lost
+    if (cart.recoveryStatus !== 'Pending') return res.json({ message: 'Cart no longer pending' });
+    
+    // Notify admin via Email & WhatsApp
+    sendAdminAbandonedCartEmail(cart.customerName || 'Guest', cart.serviceName, cart.totalPrice, cart.dropoffStep).catch(e => console.error(e));
+    sendAdminAbandonedCartWhatsapp(cart.customerName || 'Guest', cart.serviceName, cart.totalPrice, cart.dropoffStep).catch(e => console.error(e));
+    
+    res.json({ message: 'Admin notified' });
   } catch (error) {
     res.status(500).json({ message: 'Server error updating abandoned cart' });
   }

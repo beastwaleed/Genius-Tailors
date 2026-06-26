@@ -283,4 +283,37 @@ const sendPromoEmail = async (customerEmail, customerName, promoCode, discountTe
   });
 };
 
-module.exports = { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail };
+// ── Email 8: Admin Abandoned Cart Alert ───────────────────────────────────────
+const sendAdminAbandonedCartEmail = async (customerName, serviceName, totalPrice, dropoffStep) => {
+  const adminEmail = 'geniustailors110@gmail.com';
+  
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background: #e74c3c; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 22px;">🚨 Abandoned Cart Alert</h1>
+      </div>
+      <div style="padding: 32px;">
+        <p style="color: #333;">Hello Admin,</p>
+        <p style="color: #555;">A customer just left the checkout process without completing their order. Don't lose this sale!</p>
+        <div style="background: #fdf2f2; border-left: 4px solid #c0392b; padding: 16px; margin: 20px 0; border-radius: 4px;">
+          <p style="margin: 0; color: #333;"><strong>Customer:</strong> ${customerName}</p>
+          <p style="margin: 8px 0 0 0; color: #333;"><strong>Garment:</strong> ${serviceName}</p>
+          <p style="margin: 8px 0 0 0; color: #333;"><strong>Lost Value:</strong> Rs. ${totalPrice.toLocaleString()}</p>
+          <p style="margin: 8px 0 0 0; color: #e74c3c; font-weight: bold;"><strong>Dropped Off At:</strong> ${dropoffStep}</p>
+        </div>
+        <div style="text-align: center; margin: 32px 0;">
+          <p style="font-size: 14px; color: #666;">Check your Admin Panel to send a quick WhatsApp recovery message.</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"GT System" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: `🚨 Abandoned Cart Alert: ${customerName} (Rs. ${totalPrice})`,
+    html
+  });
+};
+
+module.exports = { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail };

@@ -269,6 +269,13 @@ export default function Booking() {
     
   }, [step, serviceName, totalPrice, userInfo]);
 
+  // Alert Admin when user reaches the final step (highest drop-off risk)
+  useEffect(() => {
+    if (step === 4 && abandonedCartId) {
+      api.post(`/api/abandoned-carts/${abandonedCartId}/notify-admin`).catch(() => {});
+    }
+  }, [step, abandonedCartId]);
+
   const handleNext = () => setStep(s => s + 1);
   const handleBack = () => setStep(s => s - 1);
 
