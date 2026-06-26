@@ -126,7 +126,6 @@ export default function AdminCustomers() {
     }
   };
 
-  const handleExportCSV = () => {
   const filteredCustomersList = customers.filter(c => {
     const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) || 
                           c.email.toLowerCase().includes(search.toLowerCase()) ||
