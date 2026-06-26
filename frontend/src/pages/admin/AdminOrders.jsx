@@ -79,7 +79,8 @@ export default function AdminOrders() {
     return orders.filter(order => {
       const matchSearch = (order.orderNumber || order._id).toLowerCase().includes(searchTerm.toLowerCase()) || 
                           (order.customer?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          order.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
+                          order.serviceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (order.customer?.tags && order.customer.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase())));
       const matchStatus = statusFilter === 'All' || order.status === statusFilter;
       const matchPriority = priorityFilter === 'All' || 
                             (priorityFilter === 'Expedited' && order.priorityStatus === 'Expedited') ||
@@ -266,6 +267,15 @@ export default function AdminOrders() {
                     <td style={{ fontFamily: 'monospace', color: '#94a3b8', fontWeight: 600 }}>{order.orderNumber || `...${order._id.slice(-6)}`}</td>
                     <td style={{ fontWeight: 600, color: '#1e293b' }}>
                        {order.customer?.name || 'Unknown'}
+                       {order.customer?.tags && order.customer.tags.length > 0 && (
+                         <div style={{ display: 'flex', gap: '0.2rem', marginTop: '0.2rem', flexWrap: 'wrap' }}>
+                           {order.customer.tags.map((tag, idx) => (
+                             <span key={idx} style={{ fontSize: '0.65rem', color: '#0284c7', background: '#e0f2fe', padding: '0.1rem 0.3rem', borderRadius: '4px' }}>
+                               {tag}
+                             </span>
+                           ))}
+                         </div>
+                       )}
                        <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 400, marginTop: '0.2rem' }}>
                          {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                        </div>

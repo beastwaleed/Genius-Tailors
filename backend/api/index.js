@@ -645,7 +645,7 @@ app.get('/api/admin/orders/labels', protect, admin, async (req, res) => {
 app.get('/api/orders', protect, admin, async (req, res) => {
   try {
     const orders = await Order.find({})
-      .populate('customer', 'name email membershipLevel loyaltyPoints')
+      .populate('customer', 'name email membershipLevel loyaltyPoints tags')
       .sort({ createdAt: -1 });
 
     // Optional filter by customer membership level for VIP priority view

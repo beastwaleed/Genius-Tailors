@@ -133,7 +133,7 @@ export default function AdminCustomers() {
                           (c.phone && c.phone.includes(search)) ||
                           (c.tags && c.tags.some(tag => tag.toLowerCase().includes(searchLower)));
     const matchesMembership = filterMembership ? c.membershipLevel === filterMembership : true;
-    const matchesTag = filterTag ? (c.tags && c.tags.includes(filterTag)) : true;
+    const matchesTag = filterTag ? (c.tags && c.tags.some(tag => tag.toLowerCase().includes(filterTag.toLowerCase()))) : true;
     
     return matchesSearch && matchesMembership && matchesTag;
   });
