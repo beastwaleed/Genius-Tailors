@@ -109,9 +109,9 @@ const STYLE_CONFIGS = {
   },
   'Waistcoat': {
     collarTypes: [
-      { name: 'Sherwani Collar', img: imgWaistcoatSherwani, subs: ['0.9 inch', '0.75 inch', '1 inch'] },
-      { name: 'V Collar', img: imgWaistcoatV, subs: ['Standard V', 'Deep V'] },
-      { name: 'Round Neck Collar', img: imgWaistcoatRound, subs: ['Standard Round'] }
+      { name: 'Sherwani Collar', img: imgWaistcoatSherwani, subs: [] },
+      { name: 'V Collar', img: imgWaistcoatV, subs: [] },
+      { name: 'Round Neck Collar', img: imgWaistcoatRound, subs: [] }
     ],
     cuffs: [],
     pockets: [],
@@ -163,7 +163,7 @@ export default function Booking() {
     const config = STYLE_CONFIGS[serviceName] || STYLE_CONFIGS['Kameez Shalwar'];
     setStyleVariations({
       collar: config.collarTypes[0].name,
-      collarSub: config.collarTypes[0].subs[0],
+      collarSub: config.collarTypes[0].subs?.length > 0 ? config.collarTypes[0].subs[0] : '',
       cuff: config.cuffs?.length > 0 ? config.cuffs[0].name : '',
       pockets: config.pockets?.length > 0 ? config.pockets[0].name : '',
       bottomPocket: config.bottomPockets?.length > 0 ? config.bottomPockets[0].name : '',
@@ -520,7 +520,7 @@ export default function Booking() {
               <div className="style-grid" style={{ marginBottom: '1rem' }}>
                 {config.collarTypes.map(opt => (
                   <div key={opt.name} className={`style-card ${styleVariations.collar === opt.name ? 'selected' : ''}`} 
-                    onClick={() => setStyleVariations({...styleVariations, collar: opt.name, collarSub: opt.subs[0]})}
+                    onClick={() => setStyleVariations({...styleVariations, collar: opt.name, collarSub: opt.subs?.length > 0 ? opt.subs[0] : ''})}
                   >
                     <img src={opt.img} alt={opt.name} className="style-img" />
                     <span>{opt.name}</span>
@@ -529,7 +529,7 @@ export default function Booking() {
               </div>
               
               {/* Collar Sub-option Dropdown */}
-              {config.collarTypes.find(c => c.name === styleVariations.collar) && (
+              {config.collarTypes.find(c => c.name === styleVariations.collar)?.subs?.length > 0 && (
                 <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                   <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, color: 'var(--onyx)', marginBottom: '0.5rem' }}>
                     Select specific {styleVariations.collar} size/style:
@@ -772,11 +772,11 @@ export default function Booking() {
               <div style={{ padding: '0.5rem 0', color: 'var(--stone)' }}>
                 <strong style={{ color: 'var(--onyx)', display: 'block', marginBottom: '0.5rem' }}>Style Preferences:</strong>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
-                  <span>Collar: {styleVariations.collar} ({styleVariations.collarSub})</span>
-                  <span>Cuffs: {styleVariations.cuff}</span>
-                  <span>{serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}: {styleVariations.pockets}</span>
-                  <span>Bottom Pocket: {styleVariations.bottomPocket}</span>
-                  <span>Bottom Design: {styleVariations.bottomDesign}</span>
+                  <span>Collar: {styleVariations.collar} {styleVariations.collarSub ? `(${styleVariations.collarSub})` : ''}</span>
+                  {styleVariations.cuff && <span>Cuffs: {styleVariations.cuff}</span>}
+                  {styleVariations.pockets && <span>{serviceName === 'Waistcoat' ? 'Waistcoat Pockets' : serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}: {styleVariations.pockets}</span>}
+                  {styleVariations.bottomPocket && <span>Bottom Pocket: {styleVariations.bottomPocket}</span>}
+                  {styleVariations.bottomDesign && <span>Bottom Design: {styleVariations.bottomDesign}</span>}
                 </div>
               </div>
               <div className="receipt-divider"></div>
