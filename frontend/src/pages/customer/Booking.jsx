@@ -39,6 +39,11 @@ import shalwarKameezDesign from '../../assets/shalwarKameezDesign.jpeg';
 import shalwarKameezDesign01 from '../../assets/shalwarKameezDesign01.jpeg';
 import shalwarKameezDesign02 from '../../assets/shalwarKameezDesign02.jpeg';
 
+import eliteAuraMain from '../../assets/EliteAuraMain.jpeg';
+import eliteAura01 from '../../assets/EliteAura01.jpeg';
+import eliteAura02 from '../../assets/EliteAura02.jpeg';
+import eliteAura03 from '../../assets/EliteAura03.jpeg';
+
 const SERVICES_PRICES = {
   'Kameez Shalwar': 2500,
   'Kurta Shalwar': 2000,
@@ -98,7 +103,7 @@ const STYLE_CONFIGS = {
   'Kameez Shalwar Design': {
     designs: [
       { name: "'X-Stitch' Classic", img: shalwarKameezDesign, price: 3500, gallery: [shalwarKameezDesign, shalwarKameezDesign01, shalwarKameezDesign02] },
-      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 4000, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
+      { name: 'Elite Aura Premium', img: eliteAuraMain, price: 4000, gallery: [eliteAuraMain, eliteAura01, eliteAura02, eliteAura03] },
       { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 4500, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
