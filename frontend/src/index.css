@@ -1552,7 +1552,7 @@ select {
   }
 
   .svc-card {
-    flex: 0 0 85%;
+    flex: 0 0 100%;
     scroll-snap-align: center;
   }
 

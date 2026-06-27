@@ -179,7 +179,7 @@ export default function Services() {
   const scrollGrid = (direction, id) => {
     const el = document.getElementById(id);
     if (el) {
-      const scrollAmount = el.clientWidth * 0.85;
+      const scrollAmount = el.clientWidth;
       el.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
   };
@@ -752,7 +752,7 @@ export default function Services() {
             display: none;
           }
           .sp-card {
-            flex: 0 0 85%;
+            flex: 0 0 100%;
             scroll-snap-align: center;
           }
           .sp-why-grid { grid-template-columns: 1fr; }

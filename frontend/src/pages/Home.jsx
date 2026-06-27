@@ -294,7 +294,7 @@ export default function Home() {
   const scrollGrid = (direction, id) => {
     const el = document.getElementById(id);
     if (el) {
-      const scrollAmount = el.clientWidth * 0.85;
+      const scrollAmount = el.clientWidth;
       el.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
   };
