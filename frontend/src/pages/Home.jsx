@@ -291,6 +291,14 @@ export default function Home() {
   });
   const [servicesData, setServicesData] = useState(SERVICES_PREVIEW);
 
+  const scrollGrid = (direction, id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const scrollAmount = el.clientWidth * 0.85;
+      el.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+  };
+
   useEffect(() => {
     if (!isLoggedIn && !sessionStorage.getItem('gt_promo_dismissed') && !showIntro) {
       const timer = setTimeout(() => setShowPromo(true), 3500);
@@ -503,9 +511,13 @@ export default function Home() {
                   Every garment is made fresh — just for you. Tap any card to place your order.
                 </p>
               </div>
-              <div className="services-grid animate-children">
-                {servicesData.map((svc) => (
-                  <Link to={`/book?service=${encodeURIComponent(svc.name)}`} key={svc.name} className="svc-card animate-fade-in">
+              <div className="services-carousel-wrapper" style={{ position: 'relative' }}>
+                <button className="carousel-btn prev-btn" onClick={() => scrollGrid(-1, 'services-grid-home')} aria-label="Previous">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <div id="services-grid-home" className="services-grid animate-children">
+                  {servicesData.map((svc) => (
+                    <Link to={`/book?service=${encodeURIComponent(svc.name)}`} key={svc.name} className="svc-card animate-fade-in">
 
                     {/* Image */}
                     <div className="svc-card-img-wrap">
@@ -546,7 +558,11 @@ export default function Home() {
                     </div>
 
                   </Link>
-                ))}
+                  ))}
+                </div>
+                <button className="carousel-btn next-btn" onClick={() => scrollGrid(1, 'services-grid-home')} aria-label="Next">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
               </div>
             </div>
           </section>

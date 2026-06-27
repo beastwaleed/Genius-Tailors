@@ -176,6 +176,14 @@ export default function Services() {
   const [activeImage, setActiveImage] = useState(null);
   const [servicesData, setServicesData] = useState(ALL_SERVICES);
 
+  const scrollGrid = (direction, id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const scrollAmount = el.clientWidth * 0.85;
+      el.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+  };
+
   useEffect(() => {
     api.get('/api/services')
       .then(res => {
@@ -226,9 +234,13 @@ export default function Services() {
       {/* ── Services Grid ── */}
       <section className="section" style={{ background: 'var(--ivory-dark)' }}>
         <div className="container">
-          <div className="sp-grid">
-            {displayed.map(svc => (
-              <div
+          <div className="services-carousel-wrapper" style={{ position: 'relative' }}>
+            <button className="carousel-btn prev-btn" onClick={() => scrollGrid(-1, 'services-grid-page')} aria-label="Previous">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div id="services-grid-page" className="sp-grid">
+              {displayed.map(svc => (
+                <div
                 key={svc.id}
                 className="sp-card"
                 onClick={() => handleOpenModal(svc)}
@@ -271,6 +283,10 @@ export default function Services() {
                 </div>
               </div>
             ))}
+            </div>
+            <button className="carousel-btn next-btn" onClick={() => scrollGrid(1, 'services-grid-page')} aria-label="Next">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
           </div>
         </div>
       </section>
@@ -719,14 +735,29 @@ export default function Services() {
         /* Responsive */
         @media (max-width: 1024px) {
           .sp-grid { grid-template-columns: repeat(2, 1fr); }
-          .sp-why-grid { grid-template-columns: repeat(2, 1fr); }
-          .sp-modal-inner { grid-template-columns: 1fr; }
-          .sp-modal-img-wrap { min-height: 280px; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+          .sp-why-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
         }
 
         @media (max-width: 640px) {
-          .sp-grid { grid-template-columns: 1fr; }
+          .sp-grid { 
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+          .sp-grid::-webkit-scrollbar {
+            display: none;
+          }
+          .sp-card {
+            flex: 0 0 85%;
+            scroll-snap-align: center;
+          }
           .sp-why-grid { grid-template-columns: 1fr; }
+          .sp-modal-inner { grid-template-columns: 1fr; }
+          .sp-modal-img-wrap { min-height: 280px; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
           .sp-cta-inner { flex-direction: column; text-align: center; }
           .sp-modal-info { padding: 1.5rem; }
         }
