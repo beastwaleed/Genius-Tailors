@@ -15,6 +15,7 @@ import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpe
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 import zardariStyle from '../assets/ZardariStyle.jpeg'
+import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 
 import WaistcoatV from '../assets/V collar waistcoat.jpeg';
@@ -121,7 +122,7 @@ const ALL_SERVICES = [
     desc: 'Take your Kameez Shalwar to the next level with our premium design options. Select from a range of exclusive patterns and cuts.',
     price: 'From Rs. 3,500',
     deliveryDays: '7–10 working days',
-    img: ShalwarKameezFeaturedImage,
+    img: eliteAuraMain,
     badge: 'Premium',
     badgeColor: '#8E44AD',
     stars: 5,

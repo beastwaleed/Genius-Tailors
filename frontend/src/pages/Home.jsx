@@ -11,6 +11,7 @@ import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 import zardariStyle from '../assets/ZardariStyle.jpeg'
+import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
 
 import img1 from '../assets/portfolio_1.png';
@@ -83,7 +84,7 @@ const SERVICES_PREVIEW = [
     urdu: 'قمیض شلوار ڈیزائن',
     desc: 'Custom designer patterns and exclusive stitching for a truly unique look.',
     price: 'From Rs. 3,500',
-    img: ShalwarKameezFeaturedImage,
+    img: eliteAuraMain,
     badge: 'Premium',
     badgeColor: '#8E44AD',
     stars: 5,
@@ -215,7 +216,7 @@ export default function Home() {
     { name: 'Kurta Shalwar', label: 'Casual Refined', img: kurtaShalwarFeatured },
     { name: 'Kurta Pajama', label: 'Evening Elegance', img: HeroKurtaPajama },
     { name: 'Waistcoat', label: 'Perfect Companion', img: WaistcoatFront },
-    { name: 'Kameez Shalwar Design', label: 'Premium Look', img: ShalwarKameezFeaturedImage },
+    { name: 'Kameez Shalwar Design', label: 'Premium Look', img: eliteAuraMain },
     { name: 'Kurta Shalwar Design', label: 'Modern Aesthetic', img: kurtaShalwarFeatured },
     { name: 'Zardari Waistcoat', label: '3-Piece Suit', img: WaistcoatFront },
   ];
