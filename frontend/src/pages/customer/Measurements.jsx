@@ -32,7 +32,7 @@ const SERVICE_FIELDS = {
     bottom: { label: 'Pajama', fields: ['Length', 'Bottom', 'Crotch Depth', 'Hips'] }
   },
   'Waistcoat': {
-    top: { label: 'Waistcoat', fields: ['Length', 'Chest', 'Abdomen', 'Shoulder'] },
+    top: { label: 'Waistcoat', fields: ['Length', 'Shoulder', 'Collar', 'Chest', 'Abdomen', 'Hip'] },
     bottom: { label: null, fields: [] }
   }
 };
@@ -93,10 +93,10 @@ const STANDARD_SIZES = {
     }
   },
   'Waistcoat': {
-    'S': { 'Waistcoat Length': '26', 'Waistcoat Chest': '20', 'Waistcoat Abdomen': '19', 'Waistcoat Shoulder': '15' },
-    'M': { 'Waistcoat Length': '27.5', 'Waistcoat Chest': '22', 'Waistcoat Abdomen': '21', 'Waistcoat Shoulder': '16' },
-    'L': { 'Waistcoat Length': '29', 'Waistcoat Chest': '24', 'Waistcoat Abdomen': '23', 'Waistcoat Shoulder': '17' },
-    'XL': { 'Waistcoat Length': '30.5', 'Waistcoat Chest': '26', 'Waistcoat Abdomen': '25', 'Waistcoat Shoulder': '18' }
+    'S': { 'Waistcoat Length': '26', 'Waistcoat Shoulder': '15', 'Waistcoat Collar': '15', 'Waistcoat Chest': '20', 'Waistcoat Abdomen': '19', 'Waistcoat Hip': '21' },
+    'M': { 'Waistcoat Length': '27.5', 'Waistcoat Shoulder': '16', 'Waistcoat Collar': '16', 'Waistcoat Chest': '22', 'Waistcoat Abdomen': '21', 'Waistcoat Hip': '23' },
+    'L': { 'Waistcoat Length': '29', 'Waistcoat Shoulder': '17', 'Waistcoat Collar': '17', 'Waistcoat Chest': '24', 'Waistcoat Abdomen': '23', 'Waistcoat Hip': '25' },
+    'XL': { 'Waistcoat Length': '30.5', 'Waistcoat Shoulder': '18', 'Waistcoat Collar': '18', 'Waistcoat Chest': '26', 'Waistcoat Abdomen': '25', 'Waistcoat Hip': '27' }
   }
 };
 

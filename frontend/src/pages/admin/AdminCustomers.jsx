@@ -39,7 +39,7 @@ const MEASUREMENT_TEMPLATES = {
   'Shalwar Kameez': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
   'Kurta Shalwar': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
   'Kurta Pajama': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', pajamaLength: '', bottomPanja: '' },
-  'Waistcoat': { length: '', shoulder: '', chest: '', waist: '', hip: '' }
+  'Waistcoat': { length: '', shoulder: '', collar: '', chest: '', abdomen: '', hip: '' }
 };
 
 export default function AdminCustomers() {
