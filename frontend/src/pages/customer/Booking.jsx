@@ -48,16 +48,16 @@ const SERVICES_PRICES = {
 const STYLE_CONFIGS = {
   'Kameez Shalwar': {
     designs: [
-      { name: 'Classic Design', img: imgShalwarNoDesign, price: 0 },
-      { name: 'Modern Pattern', img: imgBanCollar, price: 500 },
-      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1000 }
+      { name: 'Classic Design', img: imgShalwarNoDesign, price: 0, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
+      { name: 'Modern Pattern', img: imgBanCollar, price: 500, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
+      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1000, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Kurta Shalwar': {
     designs: [
-      { name: 'Classic Design', img: imgShalwarNoDesign, price: 0 },
-      { name: 'Modern Pattern', img: imgBanCollar, price: 500 },
-      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1000 }
+      { name: 'Classic Design', img: imgShalwarNoDesign, price: 0, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
+      { name: 'Modern Pattern', img: imgBanCollar, price: 500, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
+      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1000, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Kurta Pajama': {
@@ -93,16 +93,16 @@ const STYLE_CONFIGS = {
   },
   'Kameez Shalwar Design': {
     designs: [
-      { name: 'Exclusive Design 1', img: imgBanCollar, price: 0 },
-      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 0 },
-      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 500 }
+      { name: 'Exclusive Design 1', img: imgBanCollar, price: 0, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
+      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 0, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
+      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 500, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Kurta Shalwar Design': {
     designs: [
-      { name: 'Exclusive Design 1', img: imgBanCollar, price: 0 },
-      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 0 },
-      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 500 }
+      { name: 'Exclusive Design 1', img: imgBanCollar, price: 0, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
+      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 0, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
+      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 500, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Zardari Waistcoat': {
@@ -186,6 +186,9 @@ export default function Booking() {
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
+  
+  const [selectedDesignModal, setSelectedDesignModal] = useState(null);
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
   
   const [userPoints, setUserPoints] = useState(0);
   const [usePoints, setUsePoints] = useState(false);
@@ -599,13 +602,24 @@ export default function Booking() {
             {config.designs ? (
               <div className="style-section">
                 <h3>Design Options</h3>
-                <div className="style-grid" style={{ marginBottom: '1rem' }}>
+                <div className="style-grid" style={{ marginBottom: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
                   {config.designs.map(opt => (
                     <div key={opt.name} className={`style-card ${styleVariations.design === opt.name ? 'selected' : ''}`} 
-                      onClick={() => setStyleVariations({...styleVariations, design: opt.name})}
+                      onClick={() => { setSelectedDesignModal(opt); setActiveGalleryIndex(0); }}
+                      style={{ height: '340px', display: 'flex', flexDirection: 'column', padding: '0', overflow: 'hidden' }}
                     >
-                      <img src={opt.img} alt={opt.name} className="style-img" />
-                      <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                      <div style={{ height: '260px', width: '100%', position: 'relative' }}>
+                        <img src={opt.img} alt={opt.name} className="style-img" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px 8px 0 0', borderBottom: 'none' }} />
+                        {styleVariations.design === opt.name && (
+                          <div style={{ position: 'absolute', top: '10px', right: '10px', background: '#16a34a', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: 2 }}>✓</div>
+                        )}
+                      </div>
+                      <div style={{ padding: '0.75rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: '#fff' }}>
+                        <span style={{ fontWeight: '600', fontSize: '0.95rem', marginBottom: '0.25rem', padding: 0 }}>{opt.name}</span>
+                        <span style={{ fontSize: '0.85rem', color: 'var(--stone)', padding: 0 }}>
+                          {opt.price > 0 ? `+Rs. ${opt.price}` : 'Included'}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -938,6 +952,53 @@ export default function Booking() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Design Modal Popup */}
+        {selectedDesignModal && (
+          <div className="modal-overlay" onClick={() => setSelectedDesignModal(null)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+            <div className="modal-content" onClick={e => e.stopPropagation()} style={{ background: '#fff', borderRadius: '12px', width: '100%', maxWidth: '800px', overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}>
+              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem' }}>{selectedDesignModal.name}</h3>
+                <button onClick={() => setSelectedDesignModal(null)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>×</button>
+              </div>
+              
+              <div style={{ display: 'flex', flex: 1, overflow: 'hidden', background: '#f8fafc', flexDirection: 'column' }}>
+                <div style={{ flex: 1, padding: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
+                  <img src={selectedDesignModal.gallery && selectedDesignModal.gallery.length > 0 ? selectedDesignModal.gallery[activeGalleryIndex] : selectedDesignModal.img} alt="Gallery preview" style={{ maxHeight: '400px', maxWidth: '100%', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                </div>
+                {selectedDesignModal.gallery && selectedDesignModal.gallery.length > 0 && (
+                  <div style={{ padding: '1rem', borderTop: '1px solid #e2e8f0', display: 'flex', gap: '1rem', overflowX: 'auto', background: '#fff', justifyContent: 'center' }}>
+                    {selectedDesignModal.gallery.map((img, idx) => (
+                      <img 
+                        key={idx} 
+                        src={img} 
+                        alt={`Thumbnail ${idx}`} 
+                        onClick={() => setActiveGalleryIndex(idx)}
+                        style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '6px', cursor: 'pointer', border: activeGalleryIndex === idx ? '2px solid var(--primary)' : '2px solid transparent', transition: 'all 0.2s', opacity: activeGalleryIndex === idx ? 1 : 0.7 }} 
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ padding: '1.5rem', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>
+                <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--primary)' }}>
+                  {selectedDesignModal.price > 0 ? `+ Rs. ${selectedDesignModal.price.toLocaleString()}` : 'Included in Base Price'}
+                </span>
+                <button 
+                  className="btn btn-primary"
+                  style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
+                  onClick={() => {
+                    setStyleVariations({...styleVariations, design: selectedDesignModal.name});
+                    setSelectedDesignModal(null);
+                  }}
+                >
+                  {styleVariations.design === selectedDesignModal.name ? 'Already Selected' : 'Select This Design'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
