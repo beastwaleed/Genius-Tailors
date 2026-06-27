@@ -69,13 +69,46 @@ const SERVICES_PREVIEW = [
   {
     name: 'Waistcoat',
     urdu: 'واسکٹ',
-    desc: 'Sharp layering piece — pairs perfectly with Kameez Shalwar or Kurta.',
+    desc: 'The perfect layering piece to complete your formal or smart-casual look.',
     price: 'From Rs. 2,000',
     img: WaistcoatFront,
     badge: 'Best Companion',
     badgeColor: '#1A1A1A',
     stars: 5,
     reviews: 73,
+  },
+  {
+    name: 'Kameez Shalwar Design',
+    urdu: 'قمیض شلوار ڈیزائن',
+    desc: 'Custom designer patterns and exclusive stitching for a truly unique look.',
+    price: 'From Rs. 3,500',
+    img: ShalwarKameezFeaturedImage,
+    badge: 'Premium',
+    badgeColor: '#8E44AD',
+    stars: 5,
+    reviews: 42,
+  },
+  {
+    name: 'Kurta Shalwar Design',
+    urdu: 'کرتا شلوار ڈیزائن',
+    desc: 'A modern, designer take on the classic Kurta Shalwar with unique details.',
+    price: 'From Rs. 3,000',
+    img: kurtaShalwarFeatured,
+    badge: 'Trendy',
+    badgeColor: '#E67E22',
+    stars: 5,
+    reviews: 38,
+  },
+  {
+    name: 'Zardari Waistcoat',
+    urdu: 'زرداری واسکٹ',
+    desc: 'A complete 3-piece suit with perfectly matching kurta, shalwar, and waistcoat.',
+    price: 'From Rs. 5,000',
+    img: WaistcoatFront,
+    badge: 'Signature',
+    badgeColor: '#C0392B',
+    stars: 5,
+    reviews: 87,
   }
 ];
 
@@ -285,6 +318,9 @@ export default function Home() {
     { name: 'Kurta Shalwar', label: 'Casual Refined', img: kurtaShalwarFeatured },
     { name: 'Kurta Pajama', label: 'Evening Elegance', img: HeroKurtaPajama },
     { name: 'Waistcoat', label: 'Perfect Companion', img: WaistcoatFront },
+    { name: 'Kameez Shalwar Design', label: 'Premium Look', img: ShalwarKameezFeaturedImage },
+    { name: 'Kurta Shalwar Design', label: 'Modern Aesthetic', img: kurtaShalwarFeatured },
+    { name: 'Zardari Waistcoat', label: '3-Piece Suit', img: WaistcoatFront },
   ];
 
   useEffect(() => {

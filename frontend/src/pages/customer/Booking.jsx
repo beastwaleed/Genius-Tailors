@@ -39,52 +39,25 @@ const SERVICES_PRICES = {
   'Kameez Shalwar': 2500,
   'Kurta Shalwar': 2000,
   'Kurta Pajama': 2000,
-  'Waistcoat': 2000
+  'Waistcoat': 2000,
+  'Kameez Shalwar Design': 3500,
+  'Kurta Shalwar Design': 3000,
+  'Zardari Waistcoat': 5000
 };
 
 const STYLE_CONFIGS = {
   'Kameez Shalwar': {
-    collarTypes: [
-      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] },
-      { name: 'Shirt Collar', img: imgShirtCollar, subs: ['2 inch notch', '2.25 inch notch', 'Arrow Collar'] }
-    ],
-    cuffs: [
-      { name: 'Round Cuff', img: imgOpenSleeves, price: 0 },
-      { name: 'Square Cuff', img: imgSingleCuff, price: 0 },
-      { name: 'Double Cuff', img: imgDoubleCuff, price: 100 }
-    ],
-    pockets: [
-      { name: '2 Side Pockets', img: imgSidePockets },
-      { name: '1 Front and 2 Sides', img: imgFrontSidePockets }
-    ],
-    bottomPockets: [
-      { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
-      { name: '1 Pocket', img: imgShalwarOnePocket, price: 100 }
-    ],
-    bottomDesigns: [
-      { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
-      { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
+    designs: [
+      { name: 'Classic Design', img: imgShalwarNoDesign, price: 0 },
+      { name: 'Modern Pattern', img: imgBanCollar, price: 500 },
+      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1000 }
     ]
   },
   'Kurta Shalwar': {
-    collarTypes: [
-      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
-    ],
-    cuffs: [
-      { name: 'Round Sleeves', img: imgRoundSleeves, price: 0 },
-      { name: 'Square Cuff', img: imgSingleCuff, price: 0 }
-    ],
-    pockets: [
-      { name: '2 Side Pockets', img: imgSidePockets },
-      { name: '1 Front and 2 Sides', img: imgFrontSidePockets }
-    ],
-    bottomPockets: [
-      { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
-      { name: '1 Pocket', img: imgShalwarOnePocket, price: 100 }
-    ],
-    bottomDesigns: [
-      { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
-      { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
+    designs: [
+      { name: 'Classic Design', img: imgShalwarNoDesign, price: 0 },
+      { name: 'Modern Pattern', img: imgBanCollar, price: 500 },
+      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1000 }
     ]
   },
   'Kurta Pajama': {
@@ -108,6 +81,31 @@ const STYLE_CONFIGS = {
     ]
   },
   'Waistcoat': {
+    collarTypes: [
+      { name: 'Sherwani Collar', img: imgWaistcoatSherwani, subs: [] },
+      { name: 'V Collar', img: imgWaistcoatV, subs: [] },
+      { name: 'Round Neck Collar', img: imgWaistcoatRound, subs: [] }
+    ],
+    cuffs: [],
+    pockets: [],
+    bottomPockets: [],
+    bottomDesigns: []
+  },
+  'Kameez Shalwar Design': {
+    designs: [
+      { name: 'Exclusive Design 1', img: imgBanCollar, price: 0 },
+      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 0 },
+      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 500 }
+    ]
+  },
+  'Kurta Shalwar Design': {
+    designs: [
+      { name: 'Exclusive Design 1', img: imgBanCollar, price: 0 },
+      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 0 },
+      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 500 }
+    ]
+  },
+  'Zardari Waistcoat': {
     collarTypes: [
       { name: 'Sherwani Collar', img: imgWaistcoatSherwani, subs: [] },
       { name: 'V Collar', img: imgWaistcoatV, subs: [] },
@@ -155,19 +153,21 @@ export default function Booking() {
     cuff: 'Round Cuff',
     pockets: '2 Side Pockets',
     bottomPocket: 'No Pocket',
-    bottomDesign: 'No Design'
+    bottomDesign: 'No Design',
+    design: 'Classic Design'
   });
 
   // When service changes, reset variations to the new service's defaults
   useEffect(() => {
     const config = STYLE_CONFIGS[serviceName] || STYLE_CONFIGS['Kameez Shalwar'];
     setStyleVariations({
-      collar: config.collarTypes[0].name,
-      collarSub: config.collarTypes[0].subs?.length > 0 ? config.collarTypes[0].subs[0] : '',
+      collar: config.collarTypes?.length > 0 ? config.collarTypes[0].name : '',
+      collarSub: config.collarTypes?.length > 0 && config.collarTypes[0].subs?.length > 0 ? config.collarTypes[0].subs[0] : '',
       cuff: config.cuffs?.length > 0 ? config.cuffs[0].name : '',
       pockets: config.pockets?.length > 0 ? config.pockets[0].name : '',
       bottomPocket: config.bottomPockets?.length > 0 ? config.bottomPockets[0].name : '',
-      bottomDesign: config.bottomDesigns?.length > 0 ? config.bottomDesigns[0].name : ''
+      bottomDesign: config.bottomDesigns?.length > 0 ? config.bottomDesigns[0].name : '',
+      design: config.designs?.length > 0 ? config.designs[0].name : ''
     });
   }, [serviceName]);
   
@@ -239,19 +239,24 @@ export default function Booking() {
   
   // Calculate Extra Styling Charges
   let styleExtras = 0;
-  if (config.cuffs && config.cuffs.length > 0) {
-    const selectedCuff = config.cuffs.find(c => c.name === styleVariations.cuff);
-    if (selectedCuff && selectedCuff.price) styleExtras += selectedCuff.price;
-  }
-  
-  if (config.bottomPockets && config.bottomPockets.length > 0) {
-    const selectedBP = config.bottomPockets.find(b => b.name === styleVariations.bottomPocket);
-    if (selectedBP && selectedBP.price) styleExtras += selectedBP.price;
-  }
+  if (config.designs && config.designs.length > 0) {
+    const selectedDesign = config.designs.find(d => d.name === styleVariations.design);
+    if (selectedDesign && selectedDesign.price) styleExtras += selectedDesign.price;
+  } else {
+    if (config.cuffs && config.cuffs.length > 0) {
+      const selectedCuff = config.cuffs.find(c => c.name === styleVariations.cuff);
+      if (selectedCuff && selectedCuff.price) styleExtras += selectedCuff.price;
+    }
+    
+    if (config.bottomPockets && config.bottomPockets.length > 0) {
+      const selectedBP = config.bottomPockets.find(b => b.name === styleVariations.bottomPocket);
+      if (selectedBP && selectedBP.price) styleExtras += selectedBP.price;
+    }
 
-  if (config.bottomDesigns && config.bottomDesigns.length > 0) {
-    const selectedBD = config.bottomDesigns.find(b => b.name === styleVariations.bottomDesign);
-    if (selectedBD && selectedBD.price) styleExtras += selectedBD.price;
+    if (config.bottomDesigns && config.bottomDesigns.length > 0) {
+      const selectedBD = config.bottomDesigns.find(b => b.name === styleVariations.bottomDesign);
+      if (selectedBD && selectedBD.price) styleExtras += selectedBD.price;
+    }
   }
 
   let basePrice = SERVICES_PRICES[serviceName] || 2500;
@@ -586,50 +591,18 @@ export default function Booking() {
         {/* Step 3: Customization (Visual Style Picks) */}
         {step === 3 && (
           <div className="wizard-step luxury-card">
-            <h2 className="step-title">Customize Your Style</h2>
-            <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>Select the specific tailoring details for your {serviceName}.</p>
+            <h2 className="step-title">{config.designs ? 'Select Your Design' : 'Customize Your Style'}</h2>
+            <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>
+              {config.designs ? `Select the exclusive design pattern for your ${serviceName}.` : `Select the specific tailoring details for your ${serviceName}.`}
+            </p>
 
-            {/* Collar Options */}
-            <div className="style-section">
-              <h3>Collar Style</h3>
-              <div className="style-grid" style={{ marginBottom: '1rem' }}>
-                {config.collarTypes.map(opt => (
-                  <div key={opt.name} className={`style-card ${styleVariations.collar === opt.name ? 'selected' : ''}`} 
-                    onClick={() => setStyleVariations({...styleVariations, collar: opt.name, collarSub: opt.subs?.length > 0 ? opt.subs[0] : ''})}
-                  >
-                    <img src={opt.img} alt={opt.name} className="style-img" />
-                    <span>{opt.name}</span>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Collar Sub-option Dropdown */}
-              {config.collarTypes.find(c => c.name === styleVariations.collar)?.subs?.length > 0 && (
-                <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, color: 'var(--onyx)', marginBottom: '0.5rem' }}>
-                    Select specific {styleVariations.collar} size/style:
-                  </label>
-                  <select 
-                    value={styleVariations.collarSub} 
-                    onChange={e => setStyleVariations({...styleVariations, collarSub: e.target.value})}
-                    className="luxury-select"
-                  >
-                    {config.collarTypes.find(c => c.name === styleVariations.collar).subs.map(sub => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </div>
-
-            {/* Cuff Options */}
-            {config.cuffs && config.cuffs.length > 0 && (
+            {config.designs ? (
               <div className="style-section">
-                <h3>Sleeve Cuffs</h3>
-                <div className="style-grid">
-                  {config.cuffs.map(opt => (
-                    <div key={opt.name} className={`style-card ${styleVariations.cuff === opt.name ? 'selected' : ''}`} 
-                      onClick={() => setStyleVariations({...styleVariations, cuff: opt.name})}
+                <h3>Design Options</h3>
+                <div className="style-grid" style={{ marginBottom: '1rem' }}>
+                  {config.designs.map(opt => (
+                    <div key={opt.name} className={`style-card ${styleVariations.design === opt.name ? 'selected' : ''}`} 
+                      onClick={() => setStyleVariations({...styleVariations, design: opt.name})}
                     >
                       <img src={opt.img} alt={opt.name} className="style-img" />
                       <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
@@ -637,48 +610,49 @@ export default function Booking() {
                   ))}
                 </div>
               </div>
-            )}
-
-            {/* Pockets */}
-            {config.pockets && config.pockets.length > 0 && (
-              <div className="style-section">
-                <h3>{serviceName === 'Waistcoat' ? 'Waistcoat Pockets' : serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}</h3>
-                <div className="style-grid">
-                  {config.pockets.map(opt => (
-                    <div key={opt.name} className={`style-card ${styleVariations.pockets === opt.name ? 'selected' : ''}`} 
-                      onClick={() => setStyleVariations({...styleVariations, pockets: opt.name})}
-                    >
-                      <img src={opt.img} alt={opt.name} className="style-img" />
-                      <span>{opt.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Bottoms Options (Pockets and Design) */}
-            {config.bottomPockets && config.bottomPockets.length > 0 && (
-              <div className="style-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
-                  <h3 style={{ marginTop: 0 }}>Bottom Pockets</h3>
-                  <div className="style-grid">
-                    {config.bottomPockets.map(opt => (
-                      <div key={opt.name} className={`style-card ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`} 
-                        onClick={() => setStyleVariations({...styleVariations, bottomPocket: opt.name})}
+            ) : (
+              <>
+                {/* Collar Options */}
+                <div className="style-section">
+                  <h3>Collar Style</h3>
+                  <div className="style-grid" style={{ marginBottom: '1rem' }}>
+                    {config.collarTypes.map(opt => (
+                      <div key={opt.name} className={`style-card ${styleVariations.collar === opt.name ? 'selected' : ''}`} 
+                        onClick={() => setStyleVariations({...styleVariations, collar: opt.name, collarSub: opt.subs?.length > 0 ? opt.subs[0] : ''})}
                       >
                         <img src={opt.img} alt={opt.name} className="style-img" />
-                        <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                        <span>{opt.name}</span>
                       </div>
                     ))}
                   </div>
+                  
+                  {/* Collar Sub-option Dropdown */}
+                  {config.collarTypes.find(c => c.name === styleVariations.collar)?.subs?.length > 0 && (
+                    <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 500, color: 'var(--onyx)', marginBottom: '0.5rem' }}>
+                        Select specific {styleVariations.collar} size/style:
+                      </label>
+                      <select 
+                        value={styleVariations.collarSub} 
+                        onChange={e => setStyleVariations({...styleVariations, collarSub: e.target.value})}
+                        className="luxury-select"
+                      >
+                        {config.collarTypes.find(c => c.name === styleVariations.collar).subs.map(sub => (
+                          <option key={sub} value={sub}>{sub}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
-                {config.bottomDesigns && config.bottomDesigns.length > 0 && (
-                  <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
-                    <h3 style={{ marginTop: 0 }}>Bottom Design</h3>
+
+                {/* Cuff Options */}
+                {config.cuffs && config.cuffs.length > 0 && (
+                  <div className="style-section">
+                    <h3>Sleeve Cuffs</h3>
                     <div className="style-grid">
-                      {config.bottomDesigns.map(opt => (
-                        <div key={opt.name} className={`style-card ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`} 
-                          onClick={() => setStyleVariations({...styleVariations, bottomDesign: opt.name})}
+                      {config.cuffs.map(opt => (
+                        <div key={opt.name} className={`style-card ${styleVariations.cuff === opt.name ? 'selected' : ''}`} 
+                          onClick={() => setStyleVariations({...styleVariations, cuff: opt.name})}
                         >
                           <img src={opt.img} alt={opt.name} className="style-img" />
                           <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
@@ -687,7 +661,58 @@ export default function Booking() {
                     </div>
                   </div>
                 )}
-              </div>
+
+                {/* Pockets */}
+                {config.pockets && config.pockets.length > 0 && (
+                  <div className="style-section">
+                    <h3>{serviceName === 'Waistcoat' ? 'Waistcoat Pockets' : serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}</h3>
+                    <div className="style-grid">
+                      {config.pockets.map(opt => (
+                        <div key={opt.name} className={`style-card ${styleVariations.pockets === opt.name ? 'selected' : ''}`} 
+                          onClick={() => setStyleVariations({...styleVariations, pockets: opt.name})}
+                        >
+                          <img src={opt.img} alt={opt.name} className="style-img" />
+                          <span>{opt.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Bottoms Options (Pockets and Design) */}
+                {config.bottomPockets && config.bottomPockets.length > 0 && (
+                  <div className="style-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                    <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
+                      <h3 style={{ marginTop: 0 }}>Bottom Pockets</h3>
+                      <div className="style-grid">
+                        {config.bottomPockets.map(opt => (
+                          <div key={opt.name} className={`style-card ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`} 
+                            onClick={() => setStyleVariations({...styleVariations, bottomPocket: opt.name})}
+                          >
+                            <img src={opt.img} alt={opt.name} className="style-img" />
+                            <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    {config.bottomDesigns && config.bottomDesigns.length > 0 && (
+                      <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
+                        <h3 style={{ marginTop: 0 }}>Bottom Design</h3>
+                        <div className="style-grid">
+                          {config.bottomDesigns.map(opt => (
+                            <div key={opt.name} className={`style-card ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`} 
+                              onClick={() => setStyleVariations({...styleVariations, bottomDesign: opt.name})}
+                            >
+                              <img src={opt.img} alt={opt.name} className="style-img" />
+                              <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
             )}
 
             <div className="wizard-actions split">
@@ -786,13 +811,21 @@ export default function Booking() {
               
               <div className="receipt-divider"></div>
               <div style={{ padding: '0.5rem 0', color: 'var(--stone)' }}>
-                <strong style={{ color: 'var(--onyx)', display: 'block', marginBottom: '0.5rem' }}>Style Preferences:</strong>
+                <strong style={{ color: 'var(--onyx)', display: 'block', marginBottom: '0.5rem' }}>
+                  {config.designs ? 'Design Selection:' : 'Style Preferences:'}
+                </strong>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
-                  <span>Collar: {styleVariations.collar} {styleVariations.collarSub ? `(${styleVariations.collarSub})` : ''}</span>
-                  {styleVariations.cuff && <span>Cuffs: {styleVariations.cuff}</span>}
-                  {styleVariations.pockets && <span>{serviceName === 'Waistcoat' ? 'Waistcoat Pockets' : serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}: {styleVariations.pockets}</span>}
-                  {styleVariations.bottomPocket && <span>Bottom Pocket: {styleVariations.bottomPocket}</span>}
-                  {styleVariations.bottomDesign && <span>Bottom Design: {styleVariations.bottomDesign}</span>}
+                  {config.designs ? (
+                    <span>Design: {styleVariations.design}</span>
+                  ) : (
+                    <>
+                      <span>Collar: {styleVariations.collar} {styleVariations.collarSub ? `(${styleVariations.collarSub})` : ''}</span>
+                      {styleVariations.cuff && <span>Cuffs: {styleVariations.cuff}</span>}
+                      {styleVariations.pockets && <span>{serviceName === 'Waistcoat' ? 'Waistcoat Pockets' : serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}: {styleVariations.pockets}</span>}
+                      {styleVariations.bottomPocket && <span>Bottom Pocket: {styleVariations.bottomPocket}</span>}
+                      {styleVariations.bottomDesign && <span>Bottom Design: {styleVariations.bottomDesign}</span>}
+                    </>
+                  )}
                 </div>
               </div>
               <div className="receipt-divider"></div>
