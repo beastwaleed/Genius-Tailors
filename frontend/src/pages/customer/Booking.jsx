@@ -1271,6 +1271,53 @@ export default function Booking() {
         .wizard-actions.split {
           justify-content: space-between;
         }
+
+        @media (max-width: 768px) {
+          .wizard-progress {
+            padding: 1rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            /* Hide scrollbar for a cleaner look */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .wizard-progress::-webkit-scrollbar {
+            display: none;
+          }
+          .step {
+            font-size: 0.9rem;
+            flex-shrink: 0;
+          }
+          .step-divider {
+            min-width: 15px;
+            margin: 0 0.5rem;
+          }
+          
+          .wizard-actions {
+            flex-direction: column-reverse;
+            gap: 1rem;
+          }
+          
+          .wizard-actions button {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+          }
+          
+          .style-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          
+          .fabric-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .style-grid {
+            grid-template-columns: 1fr;
+          }
+        }
       `}</style>
     </CustomerLayout>
   );
