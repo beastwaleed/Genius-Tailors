@@ -25,12 +25,6 @@ import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
 import angularEdge01 from '../assets/AngularEdge01.jpeg'
 import angularEdge02 from '../assets/AngularEdge02.jpeg'
-import deltaFitMain from '../assets/DeltaFitMain.jpeg'
-import deltaFit01 from '../assets/DeltaFit01.jpeg'
-import deltaFit02 from '../assets/DeltaFit02.jpeg'
-import royalHeritageMain from '../assets/RoyalHeritageMain.jpeg'
-import royalHeritage01 from '../assets/RoyalHeritage01.jpeg'
-import royalHeritage02 from '../assets/RoyalHeritage02.jpeg'
 
 import WaistcoatV from '../assets/V collar waistcoat.jpeg';
 import WaistcoatRound from '../assets/round neck collar waistcoat.jpeg';
@@ -166,7 +160,7 @@ export const ALL_SERVICES = [
     category: 'Designer',
     features: ['Modern design cuts', 'Designer detailing', 'Breathable premium fabrics', 'Statement look'],
     occasions: ['Festivals', 'Parties', 'Evening events'],
-    images: [angularEdgeMain, angularEdge01, angularEdge02, deltaFitMain, deltaFit01, deltaFit02, royalHeritageMain, royalHeritage01, royalHeritage02],
+    images: [angularEdgeMain, angularEdge01, angularEdge02],
   },
   {
     id: 'zardari-suit',
