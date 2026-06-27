@@ -35,9 +35,9 @@ import imgFabricWashWear from '../../assets/fabrics/fabric_wash_wear.png';
 import imgFabricEgyptian from '../../assets/fabrics/fabric_egyptian.png';
 import imgFabricSilk from '../../assets/fabrics/fabric_silk.png';
 
-import shalwarKameezDesign from '../../assets/shalwarKameezDesign.jpeg';
-import shalwarKameezDesign01 from '../../assets/shalwarKameezDesign01.jpeg';
-import shalwarKameezDesign02 from '../../assets/shalwarKameezDesign02.jpeg';
+import xStitchMain from '../../assets/XStitchMain.jpeg';
+import xStitch01 from '../../assets/XStitch01.jpeg';
+import xStitch02 from '../../assets/XStitch02.jpeg';
 
 import eliteAuraMain from '../../assets/EliteAuraMain.jpeg';
 import eliteAura01 from '../../assets/EliteAura01.jpeg';
@@ -45,7 +45,7 @@ import eliteAura02 from '../../assets/EliteAura02.jpeg';
 import eliteAura03 from '../../assets/EliteAura03.jpeg';
 
 import tripleEdgeStitchMain from '../../assets/TripleEdgeStitchMain.jpeg';
-import tripleEdgeStitch01 from '../../assets/TripleEdgeStitch01.jpeg';
+import tripleEdgeStitch01 from '../../assets/TripleEdgeStitch01.jpg';
 import tripleEdgeStitch02 from '../../assets/TripleEdgeStitch02.jpeg';
 
 const SERVICES_PRICES = {
@@ -106,7 +106,7 @@ const STYLE_CONFIGS = {
   },
   'Kameez Shalwar Design': {
     designs: [
-      { name: "'X-Stitch' Classic", img: shalwarKameezDesign, price: 3500, gallery: [shalwarKameezDesign, shalwarKameezDesign01, shalwarKameezDesign02] },
+      { name: "'X-Stitch' Classic", img: xStitchMain, price: 3500, gallery: [xStitchMain, xStitch01, xStitch02] },
       { name: 'Elite Aura Premium', img: eliteAuraMain, price: 4000, gallery: [eliteAuraMain, eliteAura01, eliteAura02, eliteAura03] },
       { name: 'Triple Edge Stitch', img: tripleEdgeStitchMain, price: 4500, gallery: [tripleEdgeStitchMain, tripleEdgeStitch01, tripleEdgeStitch02] }
     ]
