@@ -167,11 +167,11 @@ export default function Home() {
 
     if (Math.abs(diff) > 40) { // Threshold for swipe
       if (diff > 0) {
-        // Swiped left, go to next card
-        setActiveCard(prev => Math.min(GARMENTS.length - 1, prev + 1));
+        // Swiped left, go to next card (loop)
+        setActiveCard(prev => (prev + 1) % GARMENTS.length);
       } else {
-        // Swiped right, go to previous card
-        setActiveCard(prev => Math.max(0, prev - 1));
+        // Swiped right, go to previous card (loop)
+        setActiveCard(prev => (prev - 1 + GARMENTS.length) % GARMENTS.length);
       }
     }
     setTouchStartX(null);
@@ -310,7 +310,15 @@ export default function Home() {
                   >
                     {GARMENTS.map((g, i) => {
                       const isActive = i === activeCard;
-                      const offset = i - activeCard; // negative = was before active
+                      
+                      // Calculate circular offset so cards scatter evenly left and right
+                      const n = GARMENTS.length;
+                      const half = Math.floor(n / 2);
+                      let offset = i - activeCard;
+                      
+                      if (offset > half) offset -= n;
+                      if (offset < -half) offset += n;
+                      
                       return (
                         <div
                           key={g.name}
