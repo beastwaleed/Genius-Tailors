@@ -1513,7 +1513,22 @@ select {
   }
 
   .services-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .services-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .svc-card {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
   }
 
   .process-grid {
@@ -1723,10 +1738,6 @@ select {
 }
 
 @media (max-width: 640px) {
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
-
   .svc-card-img-wrap {
     height: 380px;
   }
