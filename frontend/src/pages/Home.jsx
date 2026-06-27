@@ -10,6 +10,7 @@ import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpe
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
+import zardariStyle from '../assets/ZardariStyle.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
 
 import img1 from '../assets/portfolio_1.png';
@@ -104,7 +105,7 @@ const SERVICES_PREVIEW = [
     urdu: 'زرداری سوٹ',
     desc: 'A complete 3-piece suit with perfectly matching kurta, shalwar, and waistcoat.',
     price: 'From Rs. 5,000',
-    img: WaistcoatFront,
+    img: zardariStyle,
     badge: 'Signature',
     badgeColor: '#C0392B',
     stars: 5,
