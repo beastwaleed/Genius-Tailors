@@ -35,6 +35,10 @@ import imgFabricWashWear from '../../assets/fabrics/fabric_wash_wear.png';
 import imgFabricEgyptian from '../../assets/fabrics/fabric_egyptian.png';
 import imgFabricSilk from '../../assets/fabrics/fabric_silk.png';
 
+import shalwarKameezDesign from '../../assets/shalwarKameezDesign.jpeg';
+import shalwarKameezDesign01 from '../../assets/shalwarKameezDesign01.jpeg';
+import shalwarKameezDesign02 from '../../assets/shalwarKameezDesign02.jpeg';
+
 const SERVICES_PRICES = {
   'Kameez Shalwar': 2500,
   'Kurta Shalwar': 2000,
@@ -93,7 +97,7 @@ const STYLE_CONFIGS = {
   },
   'Kameez Shalwar Design': {
     designs: [
-      { name: 'Exclusive Design 1', img: imgBanCollar, price: 3500, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
+      { name: "'X-Stitch' Classic", img: shalwarKameezDesign, price: 3500, gallery: [shalwarKameezDesign, shalwarKameezDesign01, shalwarKameezDesign02] },
       { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 4000, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
       { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 4500, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
     ]
