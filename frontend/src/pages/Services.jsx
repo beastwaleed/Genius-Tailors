@@ -42,6 +42,10 @@ import kurtaShalwar1 from '../assets/kurtaShalwar1.jpeg';
 import kurtaShalwar2 from '../assets/kurtaShalwar2.jpeg';
 const kurtaShalwarGallery = [kurtaShalwar0, kurtaShalwar1, kurtaShalwar2];
 
+import kurtaPajama1 from '../assets/KurtaPajama1.jpeg';
+import kurtaPajama2 from '../assets/KurtaPajama2.jpeg';
+const kurtaPajamaGallery = [kurtaPajama1, kurtaPajama2];
+
 const ALL_SERVICES = [
   {
     id: 'kameez-shalwar',
@@ -95,7 +99,7 @@ const ALL_SERVICES = [
     category: 'Formal',
     features: ['Slim fit pajama options', 'Embroidered collar choices', 'Premium fabric selection', 'Button detailing'],
     occasions: ['Events', 'Evenings', 'Festive wear', 'Family Gatherings'],
-    images: gallery,
+    images: kurtaPajamaGallery,
   },
   {
     id: 'waistcoat',
