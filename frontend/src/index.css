@@ -2575,6 +2575,7 @@ select {
 
 .text-danger {
   color: var(--status-cancelled) !important;
+}
 .design-img-container {
   overflow: hidden;
   border-radius: 8px 8px 0 0;
