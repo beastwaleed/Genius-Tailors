@@ -164,20 +164,24 @@ function MobileIntro({ services, onComplete }) {
 
   const handleMove = (clientX, clientY) => {
     if (!isDragging) return;
-    setDragX(clientX - startX);
-    setDragY(clientY - startY);
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+    
+    // If user swipes up/down significantly, skip intro immediately
+    if (Math.abs(dy) > 50) {
+      setIsDragging(false);
+      onComplete();
+      return;
+    }
+    
+    setDragX(dx);
+    setDragY(dy);
   };
 
   const handleEnd = () => {
     setIsDragging(false);
     
-    // If user scrolled/swiped up or down significantly, dismiss the intro
-    if (Math.abs(dragY) > 80) {
-      onComplete();
-      return;
-    }
-
-    if (Math.abs(dragX) > 70) {
+    if (Math.abs(dragX) > 60) {
       const topCard = cards[cards.length - 1];
       setSwipedCards([...swipedCards, { name: topCard.name, dir: dragX > 0 ? 1 : -1 }]);
 
@@ -214,7 +218,17 @@ function MobileIntro({ services, onComplete }) {
   if (cards.length === 0) return null;
 
   return (
-    <div className="mobile-intro-overlay" onWheel={handleWheel}>
+    <div 
+      className="mobile-intro-overlay" 
+      onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleEnd}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="mobile-intro-header">
         <h2 className="text-heading-2">Genius Tailors</h2>
         <p>Swipe left/right to browse. Scroll down to skip.</p>
@@ -228,20 +242,20 @@ function MobileIntro({ services, onComplete }) {
           if (swiped) {
             style = {
               transform: `translate(${swiped.dir * 500}px, ${dragY}px) rotate(${swiped.dir * 45}deg)`,
-              transition: 'transform 0.15s ease-out',
+              transition: 'transform 0.25s ease-out',
               zIndex: 20
             };
           } else if (isTop) {
             style = {
-              transform: isDragging ? `translate(${dragX}px, ${dragY}px) rotate(${dragX * 0.05}deg)` : 'translate(0px, 0px) rotate(0deg)',
-              transition: isDragging ? 'none' : 'transform 0.15s ease',
+              transform: isDragging ? `translate(${dragX}px, ${dragY}px) rotate(${dragX * 0.05 - 2}deg) scale(1.05)` : 'translate(0px, 0px) rotate(-2deg) scale(1.05)',
+              transition: isDragging ? 'none' : 'transform 0.2s ease',
               zIndex: 10
             };
           } else {
             const offset = cards.length - 1 - index;
             style = {
-              transform: `scale(${1 - offset * 0.05}) translateY(${offset * -20}px)`,
-              transition: 'transform 0.3s ease',
+              transform: `translate(${offset * -24}px, ${offset * 8}px) rotate(${offset * -3}deg) scale(${1 - offset * 0.02})`,
+              transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
               zIndex: index
             };
           }
@@ -251,13 +265,6 @@ function MobileIntro({ services, onComplete }) {
               key={svc.name}
               className="mobile-intro-card"
               style={style}
-              onTouchStart={isTop && !swiped ? handleTouchStart : undefined}
-              onTouchMove={isTop && !swiped ? handleTouchMove : undefined}
-              onTouchEnd={isTop && !swiped ? handleEnd : undefined}
-              onMouseDown={isTop && !swiped ? handleMouseDown : undefined}
-              onMouseMove={isTop && !swiped ? handleMouseMove : undefined}
-              onMouseUp={isTop && !swiped ? handleMouseUp : undefined}
-              onMouseLeave={isTop && !swiped ? handleMouseLeave : undefined}
             >
               <img src={svc.img} className="mobile-intro-card-img-full" alt={svc.name} />
               <div className="garment-card-label">
