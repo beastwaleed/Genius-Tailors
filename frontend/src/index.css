@@ -2575,4 +2575,37 @@ select {
 
 .text-danger {
   color: var(--status-cancelled) !important;
+.design-img-container {
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+}
+.design-img-container .style-img {
+  transition: transform var(--transition-medium);
+}
+.design-img-container:hover .style-img {
+  transform: scale(1.05);
+}
+.design-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+  z-index: 1;
+}
+.design-img-container:hover .design-img-overlay {
+  opacity: 1;
+}
+.design-img-overlay-text {
+  color: white;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid white;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(2px);
 }

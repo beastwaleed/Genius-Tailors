@@ -637,8 +637,11 @@ export default function Booking() {
                       onClick={() => { setSelectedDesignModal(opt); setActiveGalleryIndex(0); }}
                       style={{ height: '340px', display: 'flex', flexDirection: 'column', padding: '0', overflow: 'hidden' }}
                     >
-                      <div style={{ height: '260px', width: '100%', position: 'relative' }}>
+                      <div className="design-img-container" style={{ height: '260px', width: '100%', position: 'relative' }}>
                         <img src={opt.img} alt={opt.name} className="style-img" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px 8px 0 0', borderBottom: 'none' }} />
+                        <div className="design-img-overlay">
+                          <span className="design-img-overlay-text">View More</span>
+                        </div>
                         {styleVariations.design === opt.name && (
                           <div style={{ position: 'absolute', top: '10px', right: '10px', background: '#16a34a', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: 2 }}>✓</div>
                         )}
