@@ -135,9 +135,6 @@ export default function Navbar() {
 
           {isLoggedIn && !isAdmin && (
             <>
-              <div style={{ padding: '0.75rem 1rem', fontSize: '0.875rem', color: 'var(--stone)', background: 'var(--ivory-border)', fontWeight: '600', marginTop: '0.5rem' }}>
-                Customer Menu
-              </div>
               <Link to="/dashboard" className="mobile-link">Dashboard</Link>
               <Link to="/my-orders" className="mobile-link">My Orders</Link>
               <Link to="/loyalty" className="mobile-link">Loyalty Points</Link>
