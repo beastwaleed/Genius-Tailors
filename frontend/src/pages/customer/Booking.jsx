@@ -48,16 +48,16 @@ const SERVICES_PRICES = {
 const STYLE_CONFIGS = {
   'Kameez Shalwar': {
     designs: [
-      { name: 'Classic Design', img: imgShalwarNoDesign, price: 0, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
-      { name: 'Modern Pattern', img: imgBanCollar, price: 500, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
-      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1000, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
+      { name: 'Classic Design', img: imgShalwarNoDesign, price: 2500, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
+      { name: 'Modern Pattern', img: imgBanCollar, price: 3000, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
+      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 3500, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Kurta Shalwar': {
     designs: [
-      { name: 'Classic Design', img: imgShalwarNoDesign, price: 0, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
-      { name: 'Modern Pattern', img: imgBanCollar, price: 500, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
-      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1000, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
+      { name: 'Classic Design', img: imgShalwarNoDesign, price: 2000, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
+      { name: 'Modern Pattern', img: imgBanCollar, price: 2500, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
+      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 3000, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Kurta Pajama': {
@@ -93,16 +93,16 @@ const STYLE_CONFIGS = {
   },
   'Kameez Shalwar Design': {
     designs: [
-      { name: 'Exclusive Design 1', img: imgBanCollar, price: 0, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
-      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 0, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
-      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 500, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
+      { name: 'Exclusive Design 1', img: imgBanCollar, price: 3500, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
+      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 4000, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
+      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 4500, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Kurta Shalwar Design': {
     designs: [
-      { name: 'Exclusive Design 1', img: imgBanCollar, price: 0, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
-      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 0, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
-      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 500, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
+      { name: 'Exclusive Design 1', img: imgBanCollar, price: 3000, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
+      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 3500, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
+      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 4000, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Zardari Waistcoat': {
@@ -154,7 +154,7 @@ export default function Booking() {
     pockets: '2 Side Pockets',
     bottomPocket: 'No Pocket',
     bottomDesign: 'No Design',
-    design: 'Classic Design'
+    design: ''
   });
 
   // When service changes, reset variations to the new service's defaults
@@ -167,7 +167,7 @@ export default function Booking() {
       pockets: config.pockets?.length > 0 ? config.pockets[0].name : '',
       bottomPocket: config.bottomPockets?.length > 0 ? config.bottomPockets[0].name : '',
       bottomDesign: config.bottomDesigns?.length > 0 ? config.bottomDesigns[0].name : '',
-      design: config.designs?.length > 0 ? config.designs[0].name : ''
+      design: ''
     });
   }, [serviceName]);
   
@@ -240,11 +240,23 @@ export default function Booking() {
 
   const config = STYLE_CONFIGS[serviceName] || STYLE_CONFIGS['Kameez Shalwar'];
   
+  let basePrice = SERVICES_PRICES[serviceName] || 2500;
+  if (dbServices && dbServices.length > 0) {
+    const activeService = dbServices.find(s => 
+      s.name && serviceName && s.name.toLowerCase().trim() === serviceName.toLowerCase().trim()
+    );
+    if (activeService && activeService.basePrice) {
+      basePrice = activeService.basePrice;
+    }
+  }
+
   // Calculate Extra Styling Charges
   let styleExtras = 0;
   if (config.designs && config.designs.length > 0) {
     const selectedDesign = config.designs.find(d => d.name === styleVariations.design);
-    if (selectedDesign && selectedDesign.price) styleExtras += selectedDesign.price;
+    if (selectedDesign && selectedDesign.price) {
+      basePrice = selectedDesign.price;
+    }
   } else {
     if (config.cuffs && config.cuffs.length > 0) {
       const selectedCuff = config.cuffs.find(c => c.name === styleVariations.cuff);
@@ -259,16 +271,6 @@ export default function Booking() {
     if (config.bottomDesigns && config.bottomDesigns.length > 0) {
       const selectedBD = config.bottomDesigns.find(b => b.name === styleVariations.bottomDesign);
       if (selectedBD && selectedBD.price) styleExtras += selectedBD.price;
-    }
-  }
-
-  let basePrice = SERVICES_PRICES[serviceName] || 2500;
-  if (dbServices && dbServices.length > 0) {
-    const activeService = dbServices.find(s => 
-      s.name && serviceName && s.name.toLowerCase().trim() === serviceName.toLowerCase().trim()
-    );
-    if (activeService && activeService.basePrice) {
-      basePrice = activeService.basePrice;
     }
   }
 
@@ -617,7 +619,7 @@ export default function Booking() {
                       <div style={{ padding: '0.75rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: '#fff' }}>
                         <span style={{ fontWeight: '600', fontSize: '0.95rem', marginBottom: '0.25rem', padding: 0 }}>{opt.name}</span>
                         <span style={{ fontSize: '0.85rem', color: 'var(--stone)', padding: 0 }}>
-                          {opt.price > 0 ? `+Rs. ${opt.price}` : 'Included'}
+                          Rs. {opt.price.toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -731,7 +733,13 @@ export default function Booking() {
 
             <div className="wizard-actions split">
               <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
-              <button className="btn btn-primary btn-lg" onClick={handleNext}>Proceed to Details →</button>
+              <button 
+                className="btn btn-primary btn-lg" 
+                onClick={handleNext}
+                disabled={config.designs && !styleVariations.design}
+              >
+                Proceed to Details →
+              </button>
             </div>
           </div>
         )}
@@ -985,7 +993,7 @@ export default function Booking() {
               
               <div style={{ padding: '1.5rem', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>
                 <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--primary)' }}>
-                  {selectedDesignModal.price > 0 ? `+ Rs. ${selectedDesignModal.price.toLocaleString()}` : 'Included in Base Price'}
+                  Total: Rs. {selectedDesignModal.price.toLocaleString()}
                 </span>
                 <button 
                   className="btn btn-primary"
