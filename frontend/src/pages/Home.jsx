@@ -170,6 +170,13 @@ function MobileIntro({ services, onComplete }) {
 
   const handleEnd = () => {
     setIsDragging(false);
+    
+    // If user scrolled/swiped up or down significantly, dismiss the intro
+    if (Math.abs(dragY) > 80) {
+      onComplete();
+      return;
+    }
+
     if (Math.abs(dragX) > 70) {
       const topCard = cards[cards.length - 1];
       setSwipedCards([...swipedCards, { name: topCard.name, dir: dragX > 0 ? 1 : -1 }]);
@@ -198,13 +205,19 @@ function MobileIntro({ services, onComplete }) {
     if (isDragging) handleEnd();
   };
 
+  const handleWheel = (e) => {
+    if (Math.abs(e.deltaY) > 30) {
+      onComplete();
+    }
+  };
+
   if (cards.length === 0) return null;
 
   return (
-    <div className="mobile-intro-overlay">
+    <div className="mobile-intro-overlay" onWheel={handleWheel}>
       <div className="mobile-intro-header">
         <h2 className="text-heading-2">Genius Tailors</h2>
-        <p>Swipe to explore our signature garments</p>
+        <p>Swipe left/right to browse. Scroll down to skip.</p>
       </div>
       <div className="mobile-intro-stack">
         {cards.map((svc, index) => {
@@ -246,34 +259,15 @@ function MobileIntro({ services, onComplete }) {
               onMouseUp={isTop && !swiped ? handleMouseUp : undefined}
               onMouseLeave={isTop && !swiped ? handleMouseLeave : undefined}
             >
-              <img src={svc.img} className="mobile-intro-card-img" alt={svc.name} />
-              <div className="mobile-intro-card-body">
-                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--ivory)' }}>{svc.name}</h3>
-                <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.2rem' }}>{svc.urdu}</p>
+              <img src={svc.img} className="mobile-intro-card-img-full" alt={svc.name} />
+              <div className="garment-card-label">
+                <span className="garment-card-sublabel">{svc.urdu}</span>
+                <h3 className="garment-card-name">{svc.name}</h3>
               </div>
             </div>
           )
         })}
       </div>
-      <button 
-        onClick={onComplete} 
-        style={{
-          position: 'absolute', 
-          bottom: '40px', 
-          background: 'var(--onyx)', 
-          color: 'var(--ivory)', 
-          border: 'none',
-          padding: '0.75rem 2.5rem', 
-          borderRadius: '999px', 
-          zIndex: 100,
-          fontWeight: 600,
-          letterSpacing: '0.5px',
-          cursor: 'pointer',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
-        }}
-      >
-        Skip Intro
-      </button>
     </div>
   );
 }
