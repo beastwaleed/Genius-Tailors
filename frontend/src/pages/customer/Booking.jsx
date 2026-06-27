@@ -56,6 +56,18 @@ import urbanCoreMain from '../../assets/UrbanCoreMain.jpeg';
 import urbanCore01 from '../../assets/UrbanCore01.jpeg';
 import urbanCore02 from '../../assets/UrbanCore02.jpeg';
 
+import royalHeritageMain from '../../assets/RoyalHeritageMain.jpeg';
+import royalHeritage01 from '../../assets/RoyalHeritage01.jpeg';
+import royalHeritage02 from '../../assets/RoyalHeritage02.jpeg';
+
+import deltaFitMain from '../../assets/DeltaFitMain.jpeg';
+import deltaFit01 from '../../assets/DeltaFit01.jpeg';
+import deltaFit02 from '../../assets/DeltaFit02.jpeg';
+
+import angularEdgeMain from '../../assets/AngularEdgeMain.jpeg';
+import angularEdge01 from '../../assets/AngularEdge01.jpeg';
+import angularEdge02 from '../../assets/AngularEdge02.jpeg';
+
 const SERVICES_PRICES = {
   'Kameez Shalwar': 2500,
   'Kurta Shalwar': 2000,
@@ -121,9 +133,9 @@ const STYLE_CONFIGS = {
   },
   'Kurta Shalwar Design': {
     designs: [
-      { name: 'Exclusive Design 1', img: imgBanCollar, price: 3000, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
-      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 3500, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
-      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 4000, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
+      { name: 'Royal Heritage', img: royalHeritageMain, price: 3000, gallery: [royalHeritageMain, royalHeritage01, royalHeritage02] },
+      { name: 'Delta Fit', img: deltaFitMain, price: 3500, gallery: [deltaFitMain, deltaFit01, deltaFit02] },
+      { name: 'Angular Edge', img: angularEdgeMain, price: 4000, gallery: [angularEdgeMain, angularEdge01, angularEdge02] }
     ]
   },
   'Zardari Suit': {
