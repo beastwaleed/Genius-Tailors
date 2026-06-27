@@ -1851,8 +1851,9 @@ app.put('/api/abandoned-carts/:id/recover', protect, admin, async (req, res) => 
       cart.recoveryMessageSent = messageSent;
       
       // Feature: Auto-Send Recovery WhatsApp Message
-      if (messageSent && req.body.sendAutoMessage && cart.customerPhone) {
-        sendRecoveryWhatsapp(cart.customerPhone, cart.customerName || 'Valued Customer').catch(err => console.error('Failed to send auto-recovery whatsapp:', err));
+      const targetPhone = req.body.phone || cart.customerPhone;
+      if (messageSent && req.body.sendAutoMessage && targetPhone) {
+        sendRecoveryWhatsapp(targetPhone, cart.customerName || 'Valued Customer').catch(err => console.error('Failed to send auto-recovery whatsapp:', err));
       }
     }
     

@@ -34,7 +34,7 @@ export default function AdminAbandonedCarts() {
 
   const handleSendRecovery = async (id, phone) => {
     try {
-      await api.put(`/api/abandoned-carts/${id}/recover`, { messageSent: true, sendAutoMessage: true });
+      await api.put(`/api/abandoned-carts/${id}/recover`, { messageSent: true, sendAutoMessage: true, phone });
       setCarts(carts.map(c => c._id === id ? { ...c, recoveryMessageSent: true } : c));
       
       if (phone) {
