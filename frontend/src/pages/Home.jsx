@@ -147,137 +147,7 @@ const TESTIMONIALS = [
   }
 ];
 
-function MobileIntro({ services, onComplete }) {
-  const [cards, setCards] = useState([...services].reverse());
-  const [dragX, setDragX] = useState(0);
-  const [dragY, setDragY] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [startY, setStartY] = useState(0);
-  const [swipedCards, setSwipedCards] = useState([]);
 
-  const handleStart = (clientX, clientY) => {
-    setStartX(clientX);
-    setStartY(clientY);
-    setIsDragging(true);
-  };
-
-  const handleMove = (clientX, clientY) => {
-    if (!isDragging) return;
-    const dx = clientX - startX;
-    const dy = clientY - startY;
-    
-    // If user swipes up/down significantly, skip intro immediately
-    if (Math.abs(dy) > 50) {
-      setIsDragging(false);
-      onComplete();
-      return;
-    }
-    
-    setDragX(dx);
-    setDragY(dy);
-  };
-
-  const handleEnd = () => {
-    setIsDragging(false);
-    
-    if (Math.abs(dragX) > 60) {
-      const topCard = cards[cards.length - 1];
-      setSwipedCards([...swipedCards, { name: topCard.name, dir: dragX > 0 ? 1 : -1 }]);
-
-      setTimeout(() => {
-        const newCards = [...cards];
-        newCards.pop();
-        setCards(newCards);
-        if (newCards.length === 0) {
-          setTimeout(onComplete, 100);
-        }
-      }, 150);
-    } else {
-      setDragX(0);
-      setDragY(0);
-    }
-  };
-
-  const handleTouchStart = (e) => handleStart(e.touches[0].clientX, e.touches[0].clientY);
-  const handleTouchMove = (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY);
-
-  const handleMouseDown = (e) => handleStart(e.clientX, e.clientY);
-  const handleMouseMove = (e) => handleMove(e.clientX, e.clientY);
-  const handleMouseUp = () => handleEnd();
-  const handleMouseLeave = () => {
-    if (isDragging) handleEnd();
-  };
-
-  const handleWheel = (e) => {
-    if (Math.abs(e.deltaY) > 30) {
-      onComplete();
-    }
-  };
-
-  if (cards.length === 0) return null;
-
-  return (
-    <div 
-      className="mobile-intro-overlay" 
-      onWheel={handleWheel}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleEnd}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div className="mobile-intro-header">
-        <h2 className="text-heading-2">Genius Tailors</h2>
-        <p>Swipe left/right to browse. Scroll down to skip.</p>
-      </div>
-      <div className="mobile-intro-stack">
-        {cards.map((svc, index) => {
-          const isTop = index === cards.length - 1;
-          const swiped = swipedCards.find(s => s.name === svc.name);
-
-          let style = {};
-          if (swiped) {
-            style = {
-              transform: `translate(${swiped.dir * 500}px, ${dragY}px) rotate(${swiped.dir * 45}deg)`,
-              transition: 'transform 0.25s ease-out',
-              zIndex: 20
-            };
-          } else if (isTop) {
-            style = {
-              transform: isDragging ? `translate(${dragX}px, ${dragY}px) rotate(${dragX * 0.05 - 2}deg) scale(1.05)` : 'translate(0px, 0px) rotate(-2deg) scale(1.05)',
-              transition: isDragging ? 'none' : 'transform 0.2s ease',
-              zIndex: 10
-            };
-          } else {
-            const offset = cards.length - 1 - index;
-            style = {
-              transform: `translate(${offset * -24}px, ${offset * 8}px) rotate(${offset * -3}deg) scale(${1 - offset * 0.02})`,
-              transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-              zIndex: index
-            };
-          }
-
-          return (
-            <div
-              key={svc.name}
-              className="mobile-intro-card"
-              style={style}
-            >
-              <img src={svc.img} className="mobile-intro-card-img-full" alt={svc.name} />
-              <div className="garment-card-label">
-                <span className="garment-card-sublabel">{svc.urdu}</span>
-                <h3 className="garment-card-name">{svc.name}</h3>
-              </div>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  );
-}
 
 export default function Home() {
   const { isLoggedIn } = useAuth();
@@ -286,9 +156,6 @@ export default function Home() {
   const [showPromo, setShowPromo] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(() => {
     return !sessionStorage.getItem('gt_banner_dismissed');
-  });
-  const [showIntro, setShowIntro] = useState(() => {
-    return window.innerWidth <= 768 && !sessionStorage.getItem('introSeen');
   });
   const [servicesData, setServicesData] = useState(SERVICES_PREVIEW);
 
@@ -301,21 +168,18 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (!isLoggedIn && !sessionStorage.getItem('gt_promo_dismissed') && !showIntro) {
+    if (!isLoggedIn && !sessionStorage.getItem('gt_promo_dismissed')) {
       const timer = setTimeout(() => setShowPromo(true), 3500);
       return () => clearTimeout(timer);
     }
-  }, [isLoggedIn, showIntro]);
+  }, [isLoggedIn]);
 
   const handlePromoClose = () => {
     sessionStorage.setItem('gt_promo_dismissed', 'true');
     setShowPromo(false);
   };
 
-  const handleIntroComplete = () => {
-    sessionStorage.setItem('introSeen', 'true');
-    setShowIntro(false);
-  };
+
 
   const handleBannerClose = () => {
     sessionStorage.setItem('gt_banner_dismissed', 'true');
@@ -359,11 +223,8 @@ export default function Home() {
 
   return (
     <>
-      {showIntro ? (
-        <MobileIntro services={servicesData} onComplete={handleIntroComplete} />
-      ) : (
-        <div className="home">
-          <Navbar />
+      <div className="home">
+        <Navbar />
 
           {/* ── Season Banner ──────────────────────────────── */}
           {(activeSeason && isBannerVisible) && (
@@ -741,8 +602,7 @@ export default function Home() {
           </section>
 
           <Footer />
-        </div>
-      )}
+      </div>
 
       {/* Promotional Modal */}
       {showPromo && (

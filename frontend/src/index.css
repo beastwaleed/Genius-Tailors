@@ -1513,7 +1513,7 @@ select {
   }
 
   .hero-visual {
-    display: none;
+    margin-top: 2rem;
   }
 
 
