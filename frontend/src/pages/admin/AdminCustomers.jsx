@@ -37,7 +37,34 @@ const ADMIN_STYLE_CONFIGS = {
     collarTypes: ['Round Neck', 'Sherwani Collar', 'V Collar'],
     collarSubs: { 'Round Neck': [], 'Sherwani Collar': [], 'V Collar': [] },
     cuffs: [],
-    pockets: ['3 Pockets', '2 Pockets'],
+    pockets: [],
+    bottomPockets: [],
+    bottomDesigns: []
+  },
+  'Kameez Shalwar Design': {
+    collarTypes: ['Ban Collar', 'Shirt Collar'],
+    collarSubs: {
+      'Ban Collar': ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'],
+      'Shirt Collar': ['2 inch notch', '2.25 inch notch', 'Arrow Collar']
+    },
+    cuffs: ['Round Cuff', 'Square Cuff', 'Double Cuff'],
+    pockets: ['2 Side Pockets', '1 Front and 2 Sides'],
+    bottomPockets: ['No Pocket', '1 Pocket'],
+    bottomDesigns: ['No Design', 'Zigzag Stitch']
+  },
+  'Kurta Shalwar Design': {
+    collarTypes: ['Ban Collar'],
+    collarSubs: { 'Ban Collar': ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] },
+    cuffs: ['Round Sleeves', 'Square Cuff'],
+    pockets: ['2 Side Pockets', '1 Front and 2 Sides'],
+    bottomPockets: ['No Pocket', '1 Pocket'],
+    bottomDesigns: ['No Design', 'Zigzag Stitch']
+  },
+  'Zardari Suit': {
+    collarTypes: ['Round Neck', 'Sherwani Collar', 'V Collar'],
+    collarSubs: { 'Round Neck': [], 'Sherwani Collar': [], 'V Collar': [] },
+    cuffs: [],
+    pockets: [],
     bottomPockets: [],
     bottomDesigns: []
   }
@@ -47,7 +74,10 @@ const MEASUREMENT_TEMPLATES = {
   'Kameez Shalwar': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
   'Kurta Shalwar': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
   'Kurta Pajama': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', pajamaLength: '', bottomPanja: '' },
-  'Waistcoat': { length: '', shoulder: '', collar: '', chest: '', abdomen: '', hip: '' }
+  'Waistcoat': { length: '', shoulder: '', collar: '', chest: '', abdomen: '', hip: '' },
+  'Kameez Shalwar Design': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
+  'Kurta Shalwar Design': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
+  'Zardari Suit': { length: '', shoulder: '', collar: '', chest: '', abdomen: '', hip: '' }
 };
 
 export default function AdminCustomers() {
