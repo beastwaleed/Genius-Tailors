@@ -788,7 +788,11 @@ export default function Home() {
               transition: color 0.2s;
             }
             .promo-login-link:hover { color: var(--onyx); text-decoration: underline; }
+          `}</style>
+        </div>
+      )}
 
+      <style>{`
             /* Modal CSS */
             .sp-modal-backdrop {
               position: fixed;
@@ -911,8 +915,6 @@ export default function Home() {
               .sp-modal-info { padding: 1.5rem; }
             }
           `}</style>
-        </div>
-      )}
     </>
   );
 }
