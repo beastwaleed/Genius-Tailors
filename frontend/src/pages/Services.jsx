@@ -195,8 +195,8 @@ export default function Services() {
           if (dbSvc) {
             return {
               ...staticSvc,
-              img: dbSvc.featuredImage || staticSvc.img,
-              images: (dbSvc.images && dbSvc.images.length > 0) ? dbSvc.images : staticSvc.images,
+              img: staticSvc.img,
+              images: staticSvc.images,
               price: `From Rs. ${dbSvc.basePrice.toLocaleString()}`,
               desc: dbSvc.description || staticSvc.desc,
             };

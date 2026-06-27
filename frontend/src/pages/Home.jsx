@@ -234,7 +234,7 @@ export default function Home() {
           if (dbSvc) {
             return {
               ...staticSvc,
-              img: dbSvc.featuredImage || staticSvc.img,
+              img: staticSvc.img,
               price: `From Rs. ${dbSvc.basePrice.toLocaleString()}`,
               desc: dbSvc.description || staticSvc.desc,
             };
