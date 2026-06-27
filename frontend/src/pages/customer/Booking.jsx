@@ -48,6 +48,9 @@ import tripleEdgeStitchMain from '../../assets/TripleEdgeStitchMain.jpeg';
 import tripleEdgeStitch01 from '../../assets/TripleEdgeStitch01.jpg';
 import tripleEdgeStitch02 from '../../assets/TripleEdgeStitch02.jpeg';
 
+import zardariStyleMain from '../../assets/ZardariStyleMain.jpeg';
+import zardariStyle01 from '../../assets/ZardariStyle01.jpeg';
+
 const SERVICES_PRICES = {
   'Kameez Shalwar': 2500,
   'Kurta Shalwar': 2000,
@@ -120,7 +123,7 @@ const STYLE_CONFIGS = {
   },
   'Zardari Suit': {
     designs: [
-      { name: 'Exclusive Design 1', img: imgBanCollar, price: 5000, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
+      { name: 'Signature Zardari', img: zardariStyleMain, price: 5000, gallery: [zardariStyleMain, zardariStyle01] },
       { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 5500, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
       { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 6000, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
     ]

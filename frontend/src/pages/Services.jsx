@@ -14,7 +14,8 @@ const tryImg = (heroImg, fallback) => {
 import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
-import zardariStyle from '../assets/ZardariStyle.jpeg'
+import zardariStyleMain from '../assets/ZardariStyleMain.jpeg'
+import zardariStyle01 from '../assets/ZardariStyle01.jpeg'
 import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 
@@ -158,7 +159,7 @@ const ALL_SERVICES = [
     desc: 'The ultimate statement of power and elegance. A complete Kurta Shalwar and Waistcoat suit crafted from the exact same premium fabric.',
     price: 'From Rs. 5,000',
     deliveryDays: '8–12 working days',
-    img: zardariStyle,
+    img: zardariStyleMain,
     badge: 'Signature',
     badgeColor: '#C0392B',
     stars: 5,
@@ -166,7 +167,7 @@ const ALL_SERVICES = [
     category: 'Formal',
     features: ['Matching fabric 3-piece', 'Perfectly coordinated look', 'Zardari style cut', 'Premium inner lining'],
     occasions: ['Weddings', 'Political events', 'High-profile gatherings'],
-    images: waistcoatGallery,
+    images: [zardariStyleMain, zardariStyle01],
   }
 ];
 
