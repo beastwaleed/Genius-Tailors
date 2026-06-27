@@ -32,7 +32,7 @@ const SERVICE_FIELDS = {
     bottom: { label: 'Pajama', fields: ['Length', 'Bottom', 'Crotch Depth', 'Hips'] }
   },
   'Waistcoat': {
-    top: { label: 'Waistcoat', fields: ['Length', 'Shoulder', 'Collar', 'Chest', 'Abdomen', 'Hip'] },
+    top: { label: 'Waistcoat', fields: ['Length', 'Shoulder', 'Collar', 'Chest', 'Abdomen', 'Hips'] },
     bottom: { label: null, fields: [] }
   }
 };
@@ -148,7 +148,7 @@ export default function Measurements() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingProfileId, setEditingProfileId] = useState(null);
-  
+
   // Height/Weight Estimator State
   const [showHWModal, setShowHWModal] = useState(false);
   const [hwHeight, setHwHeight] = useState('');
@@ -363,7 +363,7 @@ export default function Measurements() {
   const handleHWEstimate = (e) => {
     e.preventDefault();
     if (!hwHeight || !hwWeight) return;
-    
+
     const h = parseFloat(hwHeight);
     const w = parseFloat(hwWeight);
 
@@ -515,7 +515,7 @@ export default function Measurements() {
                       <strong style={{ display: 'block', color: 'var(--onyx)', marginBottom: '0.25rem' }}>✨ Smart Auto-Measure</strong>
                       <span style={{ fontSize: '0.85rem', color: 'var(--stone)' }}>Use your camera or input vitals to estimate.</span>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div className="ai-scanner-btns">
                       <button type="button" className="btn btn-outline" style={{ borderColor: '#C9A96E', color: '#C9A96E' }} onClick={() => setShowHWModal(true)}>Height/Weight 📐</button>
                       <button type="button" className="btn btn-gold" onClick={() => setIsAiCameraOpen(true)}>AI Camera 📸</button>
                     </div>
@@ -527,7 +527,7 @@ export default function Measurements() {
                       <div style={{ background: 'white', padding: '2rem', borderRadius: '1rem', width: '90%', maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
                         <h3 style={{ marginTop: 0, color: 'var(--onyx)', fontFamily: 'var(--font-serif)' }}>Estimate by Vitals</h3>
                         <p style={{ color: 'var(--stone)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>Enter your exact height and weight. We will mathematically approximate your tailoring measurements.</p>
-                        
+
                         <div style={{ marginBottom: '1rem' }}>
                           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Height (Inches)</label>
                           <input type="number" required placeholder="e.g. 70" value={hwHeight} onChange={e => setHwHeight(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #d1d5db' }} />
@@ -536,7 +536,7 @@ export default function Measurements() {
                           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Weight (KG)</label>
                           <input type="number" required placeholder="e.g. 75" value={hwWeight} onChange={e => setHwWeight(e.target.value)} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #d1d5db' }} />
                         </div>
-                        
+
                         <div style={{ display: 'flex', gap: '1rem' }}>
                           <button type="button" onClick={() => setShowHWModal(false)} style={{ flex: 1, padding: '0.75rem', background: '#f1f5f9', border: 'none', borderRadius: '0.5rem', cursor: 'pointer' }}>Cancel</button>
                           <button type="button" onClick={handleHWEstimate} className="btn-gold" style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', border: 'none', color: 'white', fontWeight: 600, cursor: 'pointer' }}>Estimate</button>
@@ -899,12 +899,26 @@ export default function Measurements() {
           border-color: #0f172a;
         }
 
+          .ai-scanner-btns {
+            display: flex;
+            gap: 0.5rem;
+          }
+
         @media (max-width: 768px) {
           .interactive-body { display: block; overflow-y: auto; }
           .interactive-form-side { 
             padding: 1.25rem 1rem; 
             max-height: none;
             overflow: visible;
+          }
+          
+          .ai-scanner-btns {
+            width: 100%;
+            flex-direction: column;
+          }
+          
+          .ai-scanner-btns button {
+            width: 100%;
           }
           
           /* Visual model floats above as a temporary popup on mobile */
@@ -1064,10 +1078,21 @@ export default function Measurements() {
           .modal-content {
             height: 100%;
             max-height: 100vh;
+            width: 100%;
             border-radius: 0;
+            margin: 0;
           }
           .modal-overlay {
             padding: 0;
+          }
+          .modal-footer {
+            flex-direction: column-reverse;
+            gap: 0.75rem;
+            align-items: stretch;
+          }
+          .btn-save, .btn-cancel {
+            width: 100%;
+            text-align: center;
           }
         }
       `}</style>
