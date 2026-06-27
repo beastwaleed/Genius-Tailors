@@ -35,85 +35,7 @@ const PORTFOLIO_IMAGES = [
   { id: 6, src: img1, title: 'Tailoring Details' },
 ];
 
-const SERVICES_PREVIEW = [
-  {
-    name: 'Kameez Shalwar',
-    urdu: 'قمیض شلوار',
-    desc: 'Our most popular garment — the timeless Pakistani classic, stitched to your exact measurements.',
-    price: 'From Rs. 2,500',
-    img: ShalwarKameezFeaturedImage,
-    badge: 'Most Popular',
-    badgeColor: '#C9A96E',
-    stars: 5,
-    reviews: 184,
-  },
-  {
-    name: 'Kurta Shalwar',
-    urdu: 'کرتا شلوار',
-    desc: 'Relaxed, comfortable, and refined. Perfect for everyday and casual occasions.',
-    price: 'From Rs. 2,000',
-    img: kurtaShalwarFeatured,
-    badge: 'Classic Choice',
-    badgeColor: '#2E86C1',
-    stars: 5,
-    reviews: 96,
-  },
-  {
-    name: 'Kurta Pajama',
-    urdu: 'کرتا پاجامہ',
-    desc: 'An elegant ethnic option perfect for events, evenings, and festive wear.',
-    price: 'From Rs. 2,000',
-    img: HeroKurtaPajama,
-    badge: 'Trending',
-    badgeColor: '#27AE60',
-    stars: 4,
-    reviews: 112,
-  },
-  {
-    name: 'Waistcoat',
-    urdu: 'واسکٹ',
-    desc: 'The perfect layering piece to complete your formal or smart-casual look.',
-    price: 'From Rs. 2,000',
-    img: WaistcoatFront,
-    badge: 'Best Companion',
-    badgeColor: '#1A1A1A',
-    stars: 5,
-    reviews: 73,
-  },
-  {
-    name: 'Kameez Shalwar Design',
-    urdu: 'قمیض شلوار ڈیزائن',
-    desc: 'Custom designer patterns and exclusive stitching for a truly unique look.',
-    price: 'From Rs. 3,500',
-    img: eliteAuraMain,
-    badge: 'Premium',
-    badgeColor: '#8E44AD',
-    stars: 5,
-    reviews: 42,
-  },
-  {
-    name: 'Kurta Shalwar Design',
-    urdu: 'کرتا شلوار ڈیزائن',
-    desc: 'A modern, designer take on the classic Kurta Shalwar with unique details.',
-    price: 'From Rs. 3,000',
-    img: kurtaShalwarFeatured,
-    badge: 'Trendy',
-    badgeColor: '#E67E22',
-    stars: 5,
-    reviews: 38,
-  },
-  {
-    name: 'Zardari Suit',
-    urdu: 'زرداری سوٹ',
-    desc: 'A complete 3-piece suit with perfectly matching kurta, shalwar, and waistcoat.',
-    price: 'From Rs. 5,000',
-    img: zardariStyleMain,
-    badge: 'Signature',
-    badgeColor: '#C0392B',
-    stars: 5,
-    reviews: 87,
-  }
-];
+import { ALL_SERVICES as SERVICES_PREVIEW } from './Services';
 
 const PROCESS_STEPS = [
   { num: '01', title: 'Choose Your Garment', desc: 'Browse our catalog and select the style that speaks to you.', bgImg: proc1 },
@@ -184,6 +106,13 @@ export default function Home() {
     return !sessionStorage.getItem('gt_banner_dismissed');
   });
   const [servicesData, setServicesData] = useState(SERVICES_PREVIEW);
+  const [selected, setSelected] = useState(null);
+  const [activeImage, setActiveImage] = useState(null);
+
+  const handleOpenModal = (svc) => {
+    setSelected(svc);
+    setActiveImage(svc.img);
+  };
 
   const scrollGrid = (direction, id) => {
     const el = document.getElementById(id);
@@ -417,7 +346,12 @@ export default function Home() {
                 </button>
                 <div id="services-grid-home" className="services-grid animate-children">
                   {servicesData.map((svc) => (
-                    <Link to={`/book?service=${encodeURIComponent(svc.name)}`} key={svc.name} className="svc-card animate-fade-in">
+                    <div 
+                      key={svc.name} 
+                      className="svc-card animate-fade-in"
+                      onClick={() => handleOpenModal(svc)}
+                      style={{ cursor: 'pointer' }}
+                    >
 
                     {/* Image */}
                     <div className="svc-card-img-wrap">
@@ -429,6 +363,9 @@ export default function Home() {
                       >
                         {svc.badge}
                       </span>
+                      <div className="svc-card-overlay">
+                        <span className="svc-view-btn">View Details →</span>
+                      </div>
                     </div>
 
                     {/* Body */}
@@ -453,11 +390,17 @@ export default function Home() {
                       {/* Footer */}
                       <div className="svc-card-footer">
                         <span className="svc-card-price">{svc.price}</span>
-                        <span className="svc-order-btn">Order Now →</span>
+                        <Link 
+                          to={`/book?service=${encodeURIComponent(svc.name)}`}
+                          className="svc-order-btn"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          Order Now →
+                        </Link>
                       </div>
                     </div>
 
-                  </Link>
+                  </div>
                   ))}
                 </div>
                 <button className="carousel-btn next-btn" onClick={() => scrollGrid(1, 'services-grid-home')} aria-label="Next">
@@ -639,6 +582,120 @@ export default function Home() {
             `}</style>
           </section>
 
+          {/* ── Detail Modal ── */}
+          {selected && (
+            <div className="sp-modal-backdrop" onClick={() => setSelected(null)}>
+              <div className="sp-modal" onClick={e => e.stopPropagation()}>
+                <button className="sp-modal-close" onClick={() => setSelected(null)} aria-label="Close">✕</button>
+
+                <div className="sp-modal-inner">
+                  {/* Left: image */}
+                  <div className="sp-modal-img-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', borderRadius: '12px', overflow: 'hidden' }}>
+                      <img src={activeImage} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.3s' }} />
+                      <span className="svc-badge" style={{ background: selected.badgeColor, position: 'absolute', top: 16, left: 16 }}>
+                        {selected.badge}
+                      </span>
+                    </div>
+                    
+                    {/* Image Gallery Row */}
+                    {selected.images && selected.images.length > 0 && (
+                      <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                        <div 
+                          onClick={() => setActiveImage(selected.img)}
+                          style={{ 
+                            width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', flexShrink: 0,
+                            border: activeImage === selected.img ? '2px solid var(--gold)' : '2px solid transparent'
+                          }}
+                        >
+                          <img src={selected.img} alt="Main" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                        {selected.images.map((imgUrl, idx) => (
+                          <div 
+                            key={idx}
+                            onClick={() => setActiveImage(imgUrl)}
+                            style={{ 
+                              width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', flexShrink: 0,
+                              border: activeImage === imgUrl ? '2px solid var(--gold)' : '2px solid transparent'
+                            }}
+                          >
+                            <img src={imgUrl} alt={`Gallery ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right: info */}
+                  <div className="sp-modal-info">
+                    <p className="text-label" style={{ marginBottom: '0.5rem' }}>{selected.category || 'Garment'}</p>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      <h2 className="text-heading-2">{selected.name}</h2>
+                      <span style={{ fontFamily: 'var(--font-sans)', fontSize: '1.1rem', color: 'var(--stone)', direction: 'rtl' }}>{selected.urdu}</span>
+                    </div>
+
+                    <div className="svc-stars-row" style={{ marginTop: '0.5rem' }}>
+                      <span className="svc-stars">{'★'.repeat(selected.stars)}{'☆'.repeat(5 - selected.stars)}</span>
+                      <span className="svc-reviews">({selected.reviews} verified reviews)</span>
+                    </div>
+
+                    <p style={{ marginTop: '1rem', color: 'var(--stone)', lineHeight: 1.7, fontSize: '0.9375rem' }}>
+                      {selected.desc}
+                    </p>
+
+                    {/* Features */}
+                    {selected.features && (
+                      <div className="sp-features">
+                        <p className="text-label" style={{ marginBottom: '0.625rem' }}>What's Included</p>
+                        <div className="sp-features-list">
+                          {selected.features.map(f => (
+                            <span key={f} className="sp-feature-chip">✓ {f}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Occasions */}
+                    {selected.occasions && (
+                      <div className="sp-occasions">
+                        <p className="text-label" style={{ marginBottom: '0.625rem' }}>Best For</p>
+                        <div className="sp-features-list">
+                          {selected.occasions.map(o => (
+                            <span key={o} className="sp-occasion-chip">{o}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Delivery + Price */}
+                    <div className="sp-modal-meta">
+                      <div className="sp-meta-item">
+                        <span className="sp-meta-label">Starting Price</span>
+                        <span className="sp-meta-value">{selected.price}</span>
+                      </div>
+                      <div className="sp-meta-divider" />
+                      <div className="sp-meta-item">
+                        <span className="sp-meta-label">Delivery Time</span>
+                        <span className="sp-meta-value">{selected.deliveryDays || '5-7 working days'}</span>
+                      </div>
+                    </div>
+
+                    {/* CTA */}
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
+                      <Link to={`/book?service=${encodeURIComponent(selected.name)}`} className="btn btn-primary btn-lg" style={{ flex: 1, justifyContent: 'center' }}>
+                        Order This Garment
+                      </Link>
+                    </div>
+
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--stone-light)', marginTop: '0.875rem', textAlign: 'center' }}>
+                      ✓ 100% custom fit &nbsp;·&nbsp; ✓ No standard sizes &nbsp;·&nbsp; ✓ Delivery to your doorstep
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <Footer />
       </div>
 
@@ -731,6 +788,128 @@ export default function Home() {
               transition: color 0.2s;
             }
             .promo-login-link:hover { color: var(--onyx); text-decoration: underline; }
+
+            /* Modal CSS */
+            .sp-modal-backdrop {
+              position: fixed;
+              inset: 0;
+              background: rgba(10,10,10,0.6);
+              z-index: 200;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 1rem;
+              backdrop-filter: blur(4px);
+              animation: fadeIn 200ms ease;
+            }
+            .sp-modal {
+              background: var(--ivory);
+              border-radius: var(--radius-xl);
+              width: 100%;
+              max-width: 900px;
+              max-height: 92vh;
+              overflow-y: auto;
+              position: relative;
+              box-shadow: var(--shadow-2xl);
+            }
+            .sp-modal-close {
+              position: absolute;
+              top: 1.25rem;
+              right: 1.25rem;
+              background: rgba(0,0,0,0.05);
+              border: none;
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              font-size: 1.2rem;
+              color: var(--charcoal);
+              z-index: 10;
+              transition: background 200ms ease;
+            }
+            .sp-modal-close:hover { background: rgba(0,0,0,0.1); }
+            .sp-modal-inner {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 0;
+            }
+            .sp-modal-img-wrap {
+              padding: 1.5rem;
+              background: var(--ivory-dark);
+              border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .sp-modal-info {
+              padding: 2.5rem;
+              display: flex;
+              flex-direction: column;
+            }
+            .sp-features, .sp-occasions { margin-top: 1.5rem; }
+            .sp-features-list {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.5rem;
+            }
+            .sp-feature-chip, .sp-occasion-chip {
+              font-size: 0.8125rem;
+              padding: 0.35rem 0.875rem;
+              border-radius: var(--radius-full);
+              font-weight: 500;
+            }
+            .sp-feature-chip { background: rgba(39, 174, 96, 0.1); color: #1e8449; }
+            .sp-occasion-chip { background: var(--ivory-border); color: var(--onyx); }
+            .sp-modal-meta {
+              display: flex;
+              align-items: center;
+              gap: 1.5rem;
+              margin-top: 1.5rem;
+              padding: 1.25rem;
+              background: var(--ivory-dark);
+              border-radius: var(--radius-lg);
+            }
+            .sp-meta-item {
+              display: flex;
+              flex-direction: column;
+              gap: 0.25rem;
+            }
+            .sp-meta-label { font-size: 0.75rem; color: var(--stone); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+            .sp-meta-value { font-size: 1.1rem; color: var(--onyx); font-weight: 600; }
+            .sp-meta-divider { width: 1px; height: 30px; background: var(--ivory-border); }
+
+            /* Overlay CSS */
+            .svc-card-overlay {
+              position: absolute;
+              inset: 0;
+              background: rgba(10,10,10,0.4);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              opacity: 0;
+              transition: opacity 300ms ease;
+            }
+            .svc-card:hover .svc-card-overlay { opacity: 1; }
+            .svc-view-btn {
+              color: white;
+              font-family: var(--font-sans);
+              font-size: 0.9rem;
+              font-weight: 600;
+              letter-spacing: 0.04em;
+              background: rgba(255,255,255,0.15);
+              padding: 0.625rem 1.5rem;
+              border-radius: var(--radius-full);
+              border: 1.5px solid rgba(255,255,255,0.4);
+              backdrop-filter: blur(4px);
+            }
+            @media (max-width: 640px) {
+              .sp-modal-inner { grid-template-columns: 1fr; }
+              .sp-modal-img-wrap { border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+              .sp-modal-info { padding: 1.5rem; }
+            }
           `}</style>
         </div>
       )}

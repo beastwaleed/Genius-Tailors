@@ -46,7 +46,7 @@ import kurtaPajama1 from '../assets/KurtaPajama1.jpeg';
 import kurtaPajama2 from '../assets/KurtaPajama2.jpeg';
 const kurtaPajamaGallery = [kurtaPajama1, kurtaPajama2];
 
-const ALL_SERVICES = [
+export const ALL_SERVICES = [
   {
     id: 'kameez-shalwar',
     name: 'Kameez Shalwar',
