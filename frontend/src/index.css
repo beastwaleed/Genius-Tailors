@@ -1101,6 +1101,7 @@ select {
   position: relative;
   width: 280px;
   height: 370px;
+  touch-action: pan-y;
 }
 
 .garment-card {

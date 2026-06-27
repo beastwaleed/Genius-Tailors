@@ -154,6 +154,29 @@ export default function Home() {
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeCard, setActiveCard] = useState(0);
   const [showPromo, setShowPromo] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(null);
+
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+
+    if (Math.abs(diff) > 40) { // Threshold for swipe
+      if (diff > 0) {
+        // Swiped left, go to next card
+        setActiveCard(prev => Math.min(GARMENTS.length - 1, prev + 1));
+      } else {
+        // Swiped right, go to previous card
+        setActiveCard(prev => Math.max(0, prev - 1));
+      }
+    }
+    setTouchStartX(null);
+  };
+
   const [isBannerVisible, setIsBannerVisible] = useState(() => {
     return !sessionStorage.getItem('gt_banner_dismissed');
   });
@@ -280,7 +303,11 @@ export default function Home() {
                 </div>
 
                 <div className="hero-visual animate-fade-in" style={{ animationDelay: '200ms' }}>
-                  <div className="garment-stack">
+                  <div 
+                    className="garment-stack"
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={handleTouchEnd}
+                  >
                     {GARMENTS.map((g, i) => {
                       const isActive = i === activeCard;
                       const offset = i - activeCard; // negative = was before active
@@ -292,7 +319,7 @@ export default function Home() {
                             zIndex: isActive ? 10 : -2 - Math.abs(offset),
                             transform: isActive
                               ? 'translate(0, 0) rotate(-2deg) scale(1.05)'
-                              : `translate(${offset * 24}px, ${Math.abs(offset) * 8}px) rotate(${offset * 3}deg) scale(${1 - Math.abs(offset) * 0.008})`,
+                              : `translate(${offset * 35}px, ${Math.abs(offset) * 12}px) rotate(${offset * 4}deg) scale(${1 - Math.abs(offset) * 0.04})`,
                           }}
                           onMouseEnter={() => setActiveCard(i)}
                         >
