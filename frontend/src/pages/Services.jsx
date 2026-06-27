@@ -149,9 +149,9 @@ const ALL_SERVICES = [
     images: kurtaShalwarGallery,
   },
   {
-    id: 'zardari-waistcoat',
-    name: 'Zardari Waistcoat',
-    urdu: 'زرداری واسکٹ',
+    id: 'zardari-suit',
+    name: 'Zardari Suit',
+    urdu: 'زرداری سوٹ',
     tagline: 'Complete 3-Piece Suit',
     desc: 'The ultimate statement of power and elegance. A complete Kurta Shalwar and Waistcoat suit crafted from the exact same premium fabric.',
     price: 'From Rs. 5,000',

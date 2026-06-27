@@ -42,7 +42,7 @@ const SERVICES_PRICES = {
   'Waistcoat': 2000,
   'Kameez Shalwar Design': 3500,
   'Kurta Shalwar Design': 3000,
-  'Zardari Waistcoat': 5000
+  'Zardari Suit': 5000
 };
 
 const STYLE_CONFIGS = {
@@ -105,16 +105,12 @@ const STYLE_CONFIGS = {
       { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 4000, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
-  'Zardari Waistcoat': {
-    collarTypes: [
-      { name: 'Sherwani Collar', img: imgWaistcoatSherwani, subs: [] },
-      { name: 'V Collar', img: imgWaistcoatV, subs: [] },
-      { name: 'Round Neck Collar', img: imgWaistcoatRound, subs: [] }
-    ],
-    cuffs: [],
-    pockets: [],
-    bottomPockets: [],
-    bottomDesigns: []
+  'Zardari Suit': {
+    designs: [
+      { name: 'Exclusive Design 1', img: imgBanCollar, price: 5000, gallery: [imgBanCollar, imgSingleCuff, imgSidePockets] },
+      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 5500, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
+      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 6000, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
+    ]
   }
 };
 
