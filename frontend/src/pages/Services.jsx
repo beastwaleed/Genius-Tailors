@@ -14,8 +14,8 @@ const tryImg = (heroImg, fallback) => {
 import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
-import zardariStyleMain from '../assets/ZardariStyleMain.jpeg'
-import zardariStyle01 from '../assets/ZardariStyle01.jpeg'
+import zardariStyleMain from '../assets/ZardariStyle.jpeg'
+import zardariStyle01 from '../assets/ZardariStyle.jpeg'
 import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 

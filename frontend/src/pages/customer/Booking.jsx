@@ -48,8 +48,15 @@ import tripleEdgeStitchMain from '../../assets/TripleEdgeStitchMain.jpeg';
 import tripleEdgeStitch01 from '../../assets/TripleEdgeStitch01.jpg';
 import tripleEdgeStitch02 from '../../assets/TripleEdgeStitch02.jpeg';
 
-import zardariStyleMain from '../../assets/ZardariStyleMain.jpeg';
-import zardariStyle01 from '../../assets/ZardariStyle01.jpeg';
+import zardariStyleMain from '../../assets/ZardariStyle.jpeg';
+import zardariStyle01 from '../../assets/ZardariStyle.jpeg';
+
+import royalSlateClassicMain from '../../assets/RoyalSlateClassicMain.jpeg';
+import royalSlateClassic01 from '../../assets/RoyalSlateClassic01.jpeg';
+
+import urbanCoreMain from '../../assets/UrbanCoreMain.jpeg';
+import urbanCore01 from '../../assets/UrbanCore01.jpeg';
+import urbanCore02 from '../../assets/UrbanCore02.jpeg';
 
 const SERVICES_PRICES = {
   'Kameez Shalwar': 2500,
@@ -123,9 +130,9 @@ const STYLE_CONFIGS = {
   },
   'Zardari Suit': {
     designs: [
-      { name: 'Signature Zardari', img: zardariStyleMain, price: 5000, gallery: [zardariStyleMain, zardariStyle01] },
-      { name: 'Exclusive Design 2', img: imgFrontSidePockets, price: 5500, gallery: [imgFrontSidePockets, imgDoubleCuff, imgShalwarOnePocket] },
-      { name: 'Exclusive Design 3', img: imgDoubleCuff, price: 6000, gallery: [imgDoubleCuff, imgOpenSleeves, imgShalwarZigzag] }
+      { name: 'Royal Slate Classic', img: royalSlateClassicMain, price: 5000, gallery: [royalSlateClassicMain, royalSlateClassic01] },
+      { name: 'Urban Core', img: urbanCoreMain, price: 5500, gallery: [urbanCoreMain, urbanCore01, urbanCore02] },
+      { name: 'Signature Zardari', img: zardariStyleMain, price: 6000, gallery: [zardariStyleMain, zardariStyle01] }
     ]
   }
 };
