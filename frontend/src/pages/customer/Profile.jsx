@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import toast from 'react-hot-toast';
@@ -15,15 +15,38 @@ export default function Profile() {
     password: '' 
   });
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data } = await api.get('/api/profile');
+        setFormData({
+          name: data.name || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          address: data.location?.street || '',
+          password: ''
+        });
+      } catch (error) {
+        console.error('Failed to fetch profile', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const { data } = await api.put('/api/auth/profile', formData);
+      const { data } = await api.put('/api/profile', formData);
       login(data, data.token); 
       toast.success('Profile updated successfully');
       setFormData({ ...formData, password: '' }); 
+
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update profile');
     } finally {
@@ -38,6 +61,9 @@ export default function Profile() {
         <div className="luxury-section">
           <h2 className="luxury-section-title">Personal Information</h2>
           <div className="luxury-card profile-card-inner">
+            {loading ? (
+              <p style={{ textAlign: 'center', padding: '2rem 0', color: 'var(--stone)' }}>Loading profile data...</p>
+            ) : (
             <form onSubmit={handleProfileUpdate} className="luxury-form">
               
               <div className="form-row">
@@ -100,7 +126,9 @@ export default function Profile() {
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
+              </div>
             </form>
+            )}
           </div>
         </div>
 

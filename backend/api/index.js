@@ -179,6 +179,11 @@ app.put('/api/profile', protect, async (req, res) => {
     // Only update fields that were actually sent in the request
     if (req.body.name) user.name = req.body.name;
     if (req.body.email) user.email = req.body.email;
+    if (req.body.phone !== undefined) user.phone = req.body.phone;
+    if (req.body.address !== undefined) {
+      if (!user.location) user.location = {};
+      user.location.street = req.body.address;
+    }
 
     // If the user wants to change their password, hash the new one
     if (req.body.password) {
@@ -192,6 +197,8 @@ app.put('/api/profile', protect, async (req, res) => {
       _id: updatedUser.id,
       name: updatedUser.name,
       email: updatedUser.email,
+      phone: updatedUser.phone,
+      location: updatedUser.location,
       role: updatedUser.role,
       loyaltyPoints: updatedUser.loyaltyPoints,
       membershipLevel: updatedUser.membershipLevel,
