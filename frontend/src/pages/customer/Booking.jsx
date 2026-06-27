@@ -435,15 +435,30 @@ export default function Booking() {
         
         {/* Progress Bar */}
         <div className="wizard-progress">
-          <div className={`step ${step >= 1 ? 'active' : ''}`}>1. Fit</div>
+          <div className={`step ${step >= 1 ? 'active' : ''}`}>
+            <span className="step-num">1</span>
+            <span className="step-label">Fit</span>
+          </div>
           <div className="step-divider"></div>
-          <div className={`step ${step >= 2 ? 'active' : ''}`}>2. Fabric</div>
+          <div className={`step ${step >= 2 ? 'active' : ''}`}>
+            <span className="step-num">2</span>
+            <span className="step-label">Fabric</span>
+          </div>
           <div className="step-divider"></div>
-          <div className={`step ${step >= 3 ? 'active' : ''}`}>3. Style</div>
+          <div className={`step ${step >= 3 ? 'active' : ''}`}>
+            <span className="step-num">3</span>
+            <span className="step-label">Style</span>
+          </div>
           <div className="step-divider"></div>
-          <div className={`step ${step >= 4 ? 'active' : ''}`}>4. Details</div>
+          <div className={`step ${step >= 4 ? 'active' : ''}`}>
+            <span className="step-num">4</span>
+            <span className="step-label">Details</span>
+          </div>
           <div className="step-divider"></div>
-          <div className={`step ${step >= 5 ? 'active' : ''}`}>5. Checkout</div>
+          <div className={`step ${step >= 5 ? 'active' : ''}`}>
+            <span className="step-num">5</span>
+            <span className="step-label">Checkout</span>
+          </div>
         </div>
 
         {/* Step 1: Garment and Profile */}
@@ -1026,17 +1041,56 @@ export default function Booking() {
         }
 
         .step {
-          font-weight: 500;
-          color: var(--stone-light);
           display: flex;
+          flex-direction: column;
           align-items: center;
           gap: 0.5rem;
+          color: var(--stone-light);
+          position: relative;
+        }
+
+        .step-num {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: #f1f5f9;
+          font-weight: 600;
+          font-size: 0.9rem;
+          color: var(--stone);
           transition: all 0.3s ease;
+        }
+
+        .step-label {
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          transition: all 0.3s ease;
+          background: #f8fafc;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .step.active {
           color: var(--onyx);
-          font-weight: 600;
+        }
+
+        .step.active .step-num {
+          background: var(--onyx);
+          color: white;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .step.active .step-label {
+          background: var(--onyx);
+          color: white;
+          border-color: var(--onyx);
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .step-divider {
@@ -1044,6 +1098,7 @@ export default function Booking() {
           height: 2px;
           background: var(--ivory-border);
           margin: 0 1rem;
+          transform: translateY(-14px); /* Align with the circles */
         }
 
         .step-title {
@@ -1274,7 +1329,7 @@ export default function Booking() {
 
         @media (max-width: 768px) {
           .wizard-progress {
-            padding: 1rem;
+            padding: 1.5rem 1rem 1rem;
             overflow-x: auto;
             white-space: nowrap;
             /* Hide scrollbar for a cleaner look */
@@ -1285,12 +1340,12 @@ export default function Booking() {
             display: none;
           }
           .step {
-            font-size: 0.9rem;
             flex-shrink: 0;
           }
           .step-divider {
             min-width: 15px;
             margin: 0 0.5rem;
+            transform: translateY(-12px);
           }
           
           .wizard-actions {
