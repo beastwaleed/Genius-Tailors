@@ -13,6 +13,7 @@ import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 
 import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
+import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
 
 import img1 from '../assets/portfolio_1.png';
 import img2 from '../assets/portfolio_2.png';
@@ -146,7 +147,7 @@ export default function Home() {
     { name: 'Kurta Pajama', label: 'Evening Elegance', img: HeroKurtaPajama },
     { name: 'Waistcoat', label: 'Perfect Companion', img: WaistcoatFront },
     { name: 'Kameez Shalwar Design', label: 'Premium Look', img: eliteAuraMain },
-    { name: 'Kurta Shalwar Design', label: 'Modern Aesthetic', img: kurtaShalwarFeatured },
+    { name: 'Kurta Shalwar Design', label: 'Modern Aesthetic', img: angularEdgeMain },
     { name: 'Zardari Waistcoat', label: '3-Piece Suit', img: WaistcoatFront },
   ];
 

@@ -22,6 +22,16 @@ import royalSlateClassic01 from '../assets/RoyalSlateClassic01.jpeg'
 import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 
+import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
+import angularEdge01 from '../assets/AngularEdge01.jpeg'
+import angularEdge02 from '../assets/AngularEdge02.jpeg'
+import deltaFitMain from '../assets/DeltaFitMain.jpeg'
+import deltaFit01 from '../assets/DeltaFit01.jpeg'
+import deltaFit02 from '../assets/DeltaFit02.jpeg'
+import royalHeritageMain from '../assets/RoyalHeritageMain.jpeg'
+import royalHeritage01 from '../assets/RoyalHeritage01.jpeg'
+import royalHeritage02 from '../assets/RoyalHeritage02.jpeg'
+
 import WaistcoatV from '../assets/V collar waistcoat.jpeg';
 import WaistcoatRound from '../assets/round neck collar waistcoat.jpeg';
 import WaistcoatSherwani from '../assets/sherwani collar waistcoat.jpeg';
@@ -148,7 +158,7 @@ export const ALL_SERVICES = [
     desc: 'A designer take on the classic Kurta Shalwar. Featuring unique cuts, elegant details, and a flawless finish for standing out.',
     price: 'From Rs. 3,000',
     deliveryDays: '7–10 working days',
-    img: kurtaShalwarFeatured,
+    img: angularEdgeMain,
     badge: 'Trendy',
     badgeColor: '#E67E22',
     stars: 5,
@@ -156,7 +166,7 @@ export const ALL_SERVICES = [
     category: 'Designer',
     features: ['Modern design cuts', 'Designer detailing', 'Breathable premium fabrics', 'Statement look'],
     occasions: ['Festivals', 'Parties', 'Evening events'],
-    images: kurtaShalwarGallery,
+    images: [angularEdgeMain, angularEdge01, angularEdge02, deltaFitMain, deltaFit01, deltaFit02, royalHeritageMain, royalHeritage01, royalHeritage02],
   },
   {
     id: 'zardari-suit',
