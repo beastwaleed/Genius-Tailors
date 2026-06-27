@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 
 export default function AdminAbandonedCarts() {
   const [carts, setCarts] = useState([]);
+  const [selectedCarts, setSelectedCarts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,9 +53,38 @@ export default function AdminAbandonedCarts() {
     try {
       await api.delete(`/api/abandoned-carts/${id}`);
       setCarts(carts.filter(c => c._id !== id));
+      setSelectedCarts(selectedCarts.filter(cId => cId !== id));
       toast.success('Abandoned cart deleted successfully');
     } catch (error) {
       toast.error('Failed to delete abandoned cart');
+    }
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedCarts(carts.map(c => c._id));
+    } else {
+      setSelectedCarts([]);
+    }
+  };
+
+  const handleSelectOne = (id) => {
+    if (selectedCarts.includes(id)) {
+      setSelectedCarts(selectedCarts.filter(cId => cId !== id));
+    } else {
+      setSelectedCarts([...selectedCarts, id]);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete ${selectedCarts.length} selected carts?`)) return;
+    try {
+      await api.post('/api/abandoned-carts/bulk-delete', { ids: selectedCarts });
+      setCarts(carts.filter(c => !selectedCarts.includes(c._id)));
+      setSelectedCarts([]);
+      toast.success('Selected carts deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete selected carts');
     }
   };
 
@@ -70,6 +100,14 @@ export default function AdminAbandonedCarts() {
             <h2 className="premium-title" style={{ margin: 0, fontSize: '1.8rem', color: '#1e293b' }}>Cart Recovery Engine</h2>
             <p style={{ color: '#64748b', margin: '0.2rem 0 0 0' }}>Track incomplete checkouts and recapture lost sales.</p>
           </div>
+          {selectedCarts.length > 0 && (
+            <button 
+              onClick={handleBulkDelete}
+              style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              🗑️ Delete Selected ({selectedCarts.length})
+            </button>
+          )}
         </div>
 
         <div className="admin-stats-grid" style={{ marginBottom: '2rem' }}>
@@ -103,6 +141,14 @@ export default function AdminAbandonedCarts() {
             <table className="premium-table">
               <thead>
                 <tr>
+                  <th style={{ width: '40px', textAlign: 'center' }}>
+                    <input 
+                      type="checkbox" 
+                      onChange={handleSelectAll} 
+                      checked={carts.length > 0 && selectedCarts.length === carts.length}
+                      style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                    />
+                  </th>
                   <th>Date & Time</th>
                   <th>Customer Info</th>
                   <th>Garment & Value</th>
@@ -113,10 +159,18 @@ export default function AdminAbandonedCarts() {
               </thead>
               <tbody>
                 {carts.length === 0 ? (
-                  <tr><td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>No abandoned carts found.</td></tr>
+                  <tr><td colSpan="7" style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>No abandoned carts found.</td></tr>
                 ) : (
                   carts.map(cart => (
-                    <tr key={cart._id} style={{ opacity: cart.recoveryStatus === 'Lost' ? 0.6 : 1 }}>
+                    <tr key={cart._id} style={{ opacity: cart.recoveryStatus === 'Lost' ? 0.6 : 1, background: selectedCarts.includes(cart._id) ? '#f8fafc' : 'white' }}>
+                      <td style={{ textAlign: 'center' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={selectedCarts.includes(cart._id)}
+                          onChange={() => handleSelectOne(cart._id)}
+                          style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                        />
+                      </td>
                       <td style={{ color: '#475569', fontWeight: 500 }}>
                         {new Date(cart.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}<br/>
                         <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{new Date(cart.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>

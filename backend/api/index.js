@@ -1898,6 +1898,20 @@ app.delete('/api/abandoned-carts/:id', protect, admin, async (req, res) => {
   }
 });
 
+// Bulk Delete Abandoned Carts (Admin Only)
+app.post('/api/abandoned-carts/bulk-delete', protect, admin, async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'No IDs provided' });
+    }
+    await AbandonedCart.deleteMany({ _id: { $in: ids } });
+    res.json({ message: 'Carts deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete abandoned carts', error: error.message });
+  }
+});
+
 // ==========================================
 // 15. ADMIN ANALYTICS & DASHBOARD STATS
 // ==========================================
