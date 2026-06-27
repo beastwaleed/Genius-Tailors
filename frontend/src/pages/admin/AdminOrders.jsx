@@ -242,9 +242,9 @@ export default function AdminOrders() {
         </div>
 
         {selectedOrders.length > 0 && (
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem', padding: '1rem', background: '#e0f2fe', borderRadius: '0.75rem', border: '1px solid #bae6fd' }}>
+          <div className="bulk-actions-container">
             <span style={{ fontWeight: 'bold', color: '#0369a1' }}>Bulk Actions:</span>
-            <select className="premium-input" value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)} style={{ padding: '0.5rem', width: '200px' }}>
+            <select className="premium-input bulk-select" value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)}>
               <option value="">Select new status...</option>
               <option value="Pending">Pending</option>
               <option value="Cutting">Cutting</option>
@@ -254,10 +254,10 @@ export default function AdminOrders() {
               <option value="Cancelled">Cancelled</option>
             </select>
             <button 
-              className="premium-btn" 
+              className="premium-btn bulk-btn" 
               onClick={handleBulkUpdate}
               disabled={!bulkStatus}
-              style={{ padding: '0.5rem 1.25rem', background: bulkStatus ? '#0284c7' : '#94a3b8', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: bulkStatus ? 'pointer' : 'not-allowed' }}
+              style={{ background: bulkStatus ? '#0284c7' : '#94a3b8', cursor: bulkStatus ? 'pointer' : 'not-allowed' }}
             >
               Apply to {selectedOrders.length} Orders
             </button>
@@ -405,6 +405,26 @@ export default function AdminOrders() {
           background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
         }
         .premium-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+
+        .bulk-actions-container {
+          display: flex; gap: 1rem; align-items: center; margin-top: 1rem; padding: 1rem; background: #e0f2fe; border-radius: 0.75rem; border: 1px solid #bae6fd;
+        }
+        .bulk-select { width: 200px; padding: 0.5rem; }
+        .bulk-btn { padding: 0.5rem 1.25rem; color: white; border: none; border-radius: 6px; font-weight: bold; }
+
+        @media (max-width: 768px) {
+          .filter-controls { flex-direction: column; align-items: stretch; }
+          .select-group { flex-direction: column; align-items: stretch; }
+          .premium-btn { justify-content: center; }
+          
+          .bulk-actions-container {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+          }
+          .bulk-select { width: 100%; }
+          .bulk-btn { width: 100%; text-align: center; }
+        }
 
         /* Floating Table */
         .premium-table { width: 100%; min-width: 800px; border-collapse: separate; border-spacing: 0 0.75rem; font-size: 0.95rem; }

@@ -125,7 +125,7 @@ export default function AdminCustomerDetails() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+        <div className="crm-grid">
           
           {/* Left Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -226,6 +226,22 @@ export default function AdminCustomerDetails() {
         </div>
 
       </div>
+      <style>{`
+        .crm-grid {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: 2rem;
+        }
+        @media (max-width: 768px) {
+          .crm-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+          }
+          .premium-stat-card {
+            padding: 1rem;
+          }
+        }
+      `}</style>
     </AdminLayout>
   );
 }
