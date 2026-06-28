@@ -250,8 +250,7 @@ export default function Booking() {
   const [customerNote, setCustomerNote] = useState('');
   const [loading, setLoading] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
-  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [cardNumber, setCardNumber] = useState('');
+  const [bankTransferModalOpen, setBankTransferModalOpen] = useState(false);
   
   const [selectedDesignModal, setSelectedDesignModal] = useState(null);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
@@ -448,23 +447,13 @@ export default function Booking() {
     if (!deliveryCity) return toast.error('Please select a delivery city');
     if (!deliveryAddress || deliveryAddress.trim().length < 5) return toast.error('Please provide a complete delivery address');
 
-    // Stop here and open the Payment Modal first
-    setPaymentModalOpen(true);
+    // Stop here and open the Bank Transfer Modal first
+    setBankTransferModalOpen(true);
   };
 
-  const executePostExPaymentAndOrder = async () => {
-    if (cardNumber.length < 16) {
-      toast.error('Please enter a valid 16-digit card number');
-      return;
-    }
-
+  const executeBankTransferOrder = async () => {
     setLoading(true);
-    const toastId = toast.loading('Processing secure PostEx payment...');
-    
-    // Simulate secure gateway delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    toast.success('Payment Successful! Confirming order...', { id: toastId });
+    const toastId = toast.loading('Confirming your order...');
 
     try {
       const profile = profiles.find(p => p._id === selectedProfileId);
@@ -485,7 +474,7 @@ export default function Booking() {
         isRush,
         customerNote,
         advancePaid: advanceAmount,
-        advancePaymentStatus: 'Paid'
+        advancePaymentStatus: 'Pending'
       };
 
       const { data } = await api.post('/api/orders', payload);
@@ -496,11 +485,11 @@ export default function Booking() {
         api.put(`/api/abandoned-carts/${abandonedCartId}/recover`, { status: 'Recovered' }).catch(() => {});
       }
 
-      setPaymentModalOpen(false);
-      toast.success('Order placed successfully! 🎉');
+      setBankTransferModalOpen(false);
+      toast.success('Order placed successfully! Please complete your transfer.', { id: toastId });
       navigate(`/my-orders/${data._id || ''}`);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to place order');
+      toast.error(error.response?.data?.message || 'Failed to place order', { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -1130,61 +1119,58 @@ export default function Booking() {
             </div>
 
             <div style={{ marginTop: '2rem', padding: '1.25rem', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', fontSize: '0.9rem', color: '#0369a1' }}>
-              <strong>Secure Digital Payment:</strong> An advance payment {isOwnFabric ? 'of 50%' : 'for the fabric'} is required to confirm your custom tailoring order. The remaining balance will be collected by PostEx upon delivery.
+              <strong>Bank Transfer Required:</strong> An advance payment {isOwnFabric ? 'of 50%' : 'for the fabric'} is required to confirm your custom tailoring order. Our admin will verify your transfer and begin processing. The remaining balance will be collected by PostEx upon delivery.
             </div>
 
             <div className="wizard-actions split">
-              <button className="btn btn-outline btn-lg" onClick={handleBack} disabled={loading}>← Edit Order</button>
+              <button className="btn btn-outline btn-lg" onClick={handleBack} disabled={loading}>&larr; Edit Order</button>
               <button className="btn btn-primary btn-lg" onClick={handlePlaceOrder} disabled={loading} style={{ background: '#0f172a', border: 'none' }}>
-                {loading ? 'Processing...' : 'Pay Advance & Place Order'}
+                {loading ? 'Processing...' : 'Place Order & View Bank Details'}
               </button>
             </div>
 
-            {paymentModalOpen && (
+            {bankTransferModalOpen && (
               <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-                <div className="luxury-card" style={{ maxWidth: '400px', width: '100%', padding: '2rem', position: 'relative' }}>
-                  <button onClick={() => setPaymentModalOpen(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>×</button>
+                <div className="luxury-card" style={{ maxWidth: '450px', width: '100%', padding: '2rem', position: 'relative' }}>
+                  <button onClick={() => setBankTransferModalOpen(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>&times;</button>
                   <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '60px', height: '60px', borderRadius: '50%', background: '#f0f9ff', color: '#0284c7', marginBottom: '1rem' }}>
-                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                     </div>
-                    <h3 style={{ margin: 0, color: '#0f172a', fontFamily: 'var(--font-serif)', fontSize: '1.5rem' }}>Secure Checkout</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.5rem' }}>Powered by PostEx XPay</p>
+                    <h3 style={{ margin: 0, color: '#0f172a', fontFamily: 'var(--font-serif)', fontSize: '1.5rem' }}>Bank Transfer Details</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.5rem' }}>Please transfer the advance amount to confirm your order.</p>
                   </div>
 
                   <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', textAlign: 'center' }}>
-                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Advance Amount</p>
+                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Advance Amount Required</p>
                     <p style={{ margin: 0, color: '#0f172a', fontSize: '2rem', fontWeight: 'bold' }}>Rs. {advanceAmount.toLocaleString()}</p>
                   </div>
 
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem', fontWeight: 600 }}>Card Number</label>
-                    <input 
-                      type="text" 
-                      placeholder="XXXX XXXX XXXX XXXX" 
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, '').slice(0, 16))}
-                      style={{ width: '100%', padding: '0.875rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '1rem', letterSpacing: '2px', outline: 'none' }}
-                    />
+                  <div style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '8px', background: '#fff' }}>
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bank Name</span>
+                      <strong style={{ color: '#0f172a', fontSize: '1rem' }}>Meezan Bank Limited</strong>
+                    </div>
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account Title</span>
+                      <strong style={{ color: '#0f172a', fontSize: '1rem' }}>Genius Tailors</strong>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account / IBAN Number</span>
+                      <strong style={{ color: '#0f172a', fontSize: '1rem', letterSpacing: '1px' }}>PK22 MEZN 0123 4567 8901</strong>
+                    </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem', fontWeight: 600 }}>Expiry</label>
-                      <input type="text" placeholder="MM/YY" style={{ width: '100%', padding: '0.875rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem', fontWeight: 600 }}>CVC</label>
-                      <input type="password" placeholder="•••" style={{ width: '100%', padding: '0.875rem', borderRadius: '6px', border: '1px solid #cbd5e1', outline: 'none' }} />
-                    </div>
-                  </div>
+                  <p style={{ fontSize: '0.85rem', color: '#64748b', textAlign: 'center', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+                    After placing the order, please transfer the amount and send a screenshot to our WhatsApp support number. Our admin will verify and process your order immediately.
+                  </p>
 
                   <button 
-                    onClick={executePostExPaymentAndOrder}
+                    onClick={executeBankTransferOrder}
                     disabled={loading}
                     style={{ width: '100%', padding: '1rem', background: '#0284c7', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.2s' }}
                   >
-                    {loading ? 'Processing...' : `Pay Rs. ${advanceAmount.toLocaleString()}`}
+                    {loading ? 'Confirming...' : 'I Understand, Place Order'}
                   </button>
                 </div>
               </div>
