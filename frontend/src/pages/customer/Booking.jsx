@@ -344,6 +344,12 @@ export default function Booking() {
   const pointsDiscount = usePoints ? Math.min(userPoints, subTotal) : 0;
   const totalPrice = subTotal - pointsDiscount;
 
+  const isOwnFabric = selectedFabric.name === 'Provide my own fabric';
+  const calculatedAdvance = isOwnFabric 
+    ? Math.ceil(totalPrice / 2) 
+    : Math.max(selectedFabric.price, Math.ceil(totalPrice / 2));
+  const advanceAmount = Math.min(calculatedAdvance, Math.max(totalPrice, 0));
+
   // Track Checkout Drop-offs
   useEffect(() => {
     if (!userInfo) return;
@@ -431,7 +437,6 @@ export default function Booking() {
     // Simulate secure gateway delay
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    const advanceAmount = Math.ceil(totalPrice / 2);
     toast.success('Payment Successful! Confirming order...', { id: toastId });
 
     try {
@@ -986,17 +991,17 @@ export default function Booking() {
               </div>
               <div className="receipt-divider" style={{ borderStyle: 'dashed' }}></div>
               <div className="receipt-row" style={{ color: '#0f172a', fontWeight: 600 }}>
-                <span>Advance Required (50%)</span>
-                <span>Rs. {Math.ceil(totalPrice / 2).toLocaleString()}</span>
+                <span>Advance Required {isOwnFabric ? '(50%)' : ''}</span>
+                <span>Rs. {advanceAmount.toLocaleString()}</span>
               </div>
               <div className="receipt-row" style={{ color: '#64748b', fontSize: '0.95rem' }}>
                 <span>Cash on Delivery (Remaining)</span>
-                <span>Rs. {(totalPrice - Math.ceil(totalPrice / 2)).toLocaleString()}</span>
+                <span>Rs. {(totalPrice - advanceAmount).toLocaleString()}</span>
               </div>
             </div>
 
             <div style={{ marginTop: '2rem', padding: '1.25rem', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', fontSize: '0.9rem', color: '#0369a1' }}>
-              <strong>Secure Digital Payment:</strong> A 50% advance payment is required to confirm your custom tailoring order. The remaining balance will be collected by PostEx upon delivery.
+              <strong>Secure Digital Payment:</strong> An advance payment {isOwnFabric ? 'of 50%' : 'for the fabric'} is required to confirm your custom tailoring order. The remaining balance will be collected by PostEx upon delivery.
             </div>
 
             <div className="wizard-actions split">
@@ -1020,7 +1025,7 @@ export default function Booking() {
 
                   <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', textAlign: 'center' }}>
                     <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Advance Amount</p>
-                    <p style={{ margin: 0, color: '#0f172a', fontSize: '2rem', fontWeight: 'bold' }}>Rs. {Math.ceil(totalPrice / 2).toLocaleString()}</p>
+                    <p style={{ margin: 0, color: '#0f172a', fontSize: '2rem', fontWeight: 'bold' }}>Rs. {advanceAmount.toLocaleString()}</p>
                   </div>
 
                   <div style={{ marginBottom: '1.5rem' }}>
@@ -1050,7 +1055,7 @@ export default function Booking() {
                     disabled={loading}
                     style={{ width: '100%', padding: '1rem', background: '#0284c7', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.2s' }}
                   >
-                    {loading ? 'Processing...' : `Pay Rs. ${Math.ceil(totalPrice / 2).toLocaleString()}`}
+                    {loading ? 'Processing...' : `Pay Rs. ${advanceAmount.toLocaleString()}`}
                   </button>
                 </div>
               </div>
