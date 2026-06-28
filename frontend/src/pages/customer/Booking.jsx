@@ -338,7 +338,8 @@ export default function Booking() {
   }
 
   const discountAmount = hasDiscount ? (basePrice * 0.1) : 0;
-  const subTotal = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price;
+  const deliveryCharge = 250;
+  const subTotal = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price + deliveryCharge;
   const pointsDiscount = usePoints ? Math.min(userPoints, subTotal) : 0;
   const totalPrice = subTotal - pointsDiscount;
 
@@ -956,6 +957,10 @@ export default function Booking() {
                   <span>Rs. 1,000</span>
                 </div>
               )}
+              <div className="receipt-row">
+                <span>Delivery Charges</span>
+                <span>Rs. 250</span>
+              </div>
               {userPoints > 0 && (
                 <div className="receipt-row" style={{ marginTop: '1rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--stone)', fontSize: '0.9rem' }}>
