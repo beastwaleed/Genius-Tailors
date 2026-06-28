@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import { Helmet } from 'react-helmet-async';
 // Garment images
 
 import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
@@ -178,6 +179,11 @@ export default function Home() {
 
   return (
     <>
+      <Helmet>
+        <title>Genius Tailors | Premium Online Tailoring in Pakistan</title>
+        <meta name="description" content="Genius Tailors is the leading online tailor in Pakistan. Get custom-stitched Shalwar Kameez, Kurta Shalwar, Waistcoats, and Zardari Suits with a perfect fit guarantee. Free home delivery." />
+        <meta name="keywords" content="online tailor in pakistan, shalwar kameez tailor, custom suits pakistan, men's tailor hyderabad, zardari suit tailoring, bespoke kurta shalwar, men's fashion" />
+      </Helmet>
       <div className="home">
         <Navbar />
 

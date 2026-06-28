@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import CustomerLayout from '../../components/CustomerLayout';
+import { Helmet } from 'react-helmet-async';
 
 export default function Profile() {
   const { user, login } = useAuth();
@@ -55,7 +56,12 @@ export default function Profile() {
   };
 
   return (
-    <CustomerLayout title="My Profile">
+    <>
+      <Helmet>
+        <title>My Profile & Measurements | Genius Tailors</title>
+        <meta name="description" content="Manage your custom tailoring profile, save your measurements, and track your orders with Genius Tailors in Pakistan." />
+      </Helmet>
+      <CustomerLayout title="My Profile">
       <div className="luxury-workspace-inner" style={{ maxWidth: '800px', margin: '0' }}>
         
         <div className="luxury-section">
@@ -231,6 +237,7 @@ export default function Profile() {
           }
         }
       `}</style>
-    </CustomerLayout>
+      </CustomerLayout>
+    </>
   );
 }

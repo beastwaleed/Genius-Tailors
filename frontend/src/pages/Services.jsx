@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { Helmet } from 'react-helmet-async';
 
 // Garment images
 
@@ -230,7 +231,13 @@ export default function Services() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--ivory)' }}>
+    <>
+      <Helmet>
+        <title>Our Services | Genius Tailors Pakistan</title>
+        <meta name="description" content="Explore our premium tailoring services in Pakistan. We specialize in custom-stitched Kameez Shalwar, Designer Kurta Shalwar, Waistcoats, and 3-piece Zardari Suits." />
+        <meta name="keywords" content="custom tailoring services, shalwar kameez tailor, kurta shalwar stitching, waistcoat tailor, zardari suit designer, premium tailors in pakistan, online tailor services" />
+      </Helmet>
+      <div style={{ minHeight: '100vh', background: 'var(--ivory)' }}>
       <Navbar />
 
       {/* ── Page Hero ── */}
@@ -777,5 +784,6 @@ export default function Services() {
         }
       `}</style>
     </div>
+    </>
   );
 }

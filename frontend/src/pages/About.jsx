@@ -2,10 +2,16 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import imgDetail from '../assets/port_detail_stitch_1781781054620.png';
 import imgModel from '../assets/port_model_kurta_1781781028618.png';
+import { Helmet } from 'react-helmet-async';
 
 export default function About() {
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--ivory)' }}>
+    <>
+      <Helmet>
+        <title>About Us | Genius Tailors in Pakistan</title>
+        <meta name="description" content="Discover the heritage of Genius Tailors, Hyderabad's premier destination for bespoke traditional menswear and custom tailoring in Pakistan since 1992." />
+      </Helmet>
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--ivory)' }}>
       <Navbar />
 
       <section style={{ paddingTop: 'calc(var(--nav-height) + 5rem)', paddingBottom: '5rem', flex: 1 }}>
@@ -97,6 +103,7 @@ export default function About() {
           }
         }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 }

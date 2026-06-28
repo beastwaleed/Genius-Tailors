@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import CustomerLayout from '../../components/CustomerLayout';
 import api from '../../api';
 import toast from 'react-hot-toast';
+import { Helmet } from 'react-helmet-async';
 
 import imgBanCollar from '../../assets/styles/ban_collar.jpg';
 import imgShirtCollar from '../../assets/styles/shirt_collar.jpg';
@@ -462,8 +463,13 @@ export default function Booking() {
   });
 
   return (
-    <CustomerLayout title="Place New Order">
-      <div className="booking-wizard">
+    <>
+      <Helmet>
+        <title>Book a Custom Tailor in Pakistan | Genius Tailors</title>
+        <meta name="description" content="Book online for custom stitched Kameez Shalwar, Designer Kurta Shalwar, and 3-piece suits in Pakistan. Provide your measurements online and get a perfect fit." />
+      </Helmet>
+      <CustomerLayout title="Place New Order">
+        <div className="booking-wizard">
         
         {/* Progress Bar */}
         <div className="wizard-progress">
@@ -1410,5 +1416,6 @@ export default function Booking() {
         }
       `}</style>
     </CustomerLayout>
+    </>
   );
 }

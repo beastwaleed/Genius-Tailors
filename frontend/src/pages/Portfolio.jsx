@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { Helmet } from 'react-helmet-async';
 
 import img1 from '../assets/portfolio_1.png';
 import img2 from '../assets/portfolio_2.png';
@@ -24,7 +25,12 @@ const PORTFOLIO_IMAGES = [
 
 export default function Portfolio() {
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--ivory)', display: 'flex', flexDirection: 'column' }}>
+    <>
+      <Helmet>
+        <title>Portfolio | Premium Tailoring Gallery | Genius Tailors</title>
+        <meta name="description" content="View the portfolio of Genius Tailors. Discover our finely stitched bespoke garments including Kameez Shalwar, Kurta Shalwar, and Waistcoats in Pakistan." />
+      </Helmet>
+      <div style={{ minHeight: '100vh', background: 'var(--ivory)', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
 
       <section style={{ paddingTop: 'calc(var(--nav-height) + 4rem)', paddingBottom: '4rem', flex: 1 }}>
@@ -118,6 +124,7 @@ export default function Portfolio() {
           .portfolio-item-overlay span { font-size: 1.25rem; }
         }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 }

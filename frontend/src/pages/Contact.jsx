@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import toast from 'react-hot-toast';
 import api from '../api';
+import { Helmet } from 'react-helmet-async';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -23,7 +24,12 @@ export default function Contact() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--ivory)' }}>
+    <>
+      <Helmet>
+        <title>Contact Us | Genius Tailors Pakistan</title>
+        <meta name="description" content="Get in touch with Genius Tailors in Hyderabad, Pakistan. Contact us for custom tailoring queries, measurement assistance, or bespoke suit appointments." />
+      </Helmet>
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--ivory)' }}>
       <Navbar />
 
       <section style={{ paddingTop: 'calc(var(--nav-height) + 5rem)', paddingBottom: '5rem', flex: 1 }}>
@@ -167,6 +173,7 @@ export default function Contact() {
           }
         }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 }
