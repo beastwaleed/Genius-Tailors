@@ -689,8 +689,8 @@ export default function Booking() {
 
               {viewingFabric && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setViewingFabric(null)}>
-                  <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', width: '100%', maxWidth: '900px', display: 'flex', maxHeight: '90vh', flexDirection: window.innerWidth < 768 ? 'column' : 'row' }} onClick={e => e.stopPropagation()}>
-                    <div style={{ flex: 1, position: 'relative', minHeight: window.innerWidth < 768 ? '250px' : '400px', background: '#f1f5f9' }}>
+                  <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', width: '100%', maxWidth: '1100px', display: 'flex', maxHeight: '95vh', flexDirection: window.innerWidth < 768 ? 'column' : 'row' }} onClick={e => e.stopPropagation()}>
+                    <div style={{ flex: 1.3, position: 'relative', minHeight: window.innerWidth < 768 ? '350px' : '550px', background: '#f1f5f9' }}>
                       <img 
                         src={viewingFabric.colors?.find(c => c.name === selectedColor)?.imageUrl || viewingFabric.imageUrl || viewingFabric.img} 
                         alt={viewingFabric.name} 
