@@ -5,9 +5,11 @@ import toast from 'react-hot-toast';
 
 export default function AdminFabrics() {
   const [fabrics, setFabrics] = useState([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [colorImageFiles, setColorImageFiles] = useState({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -15,12 +17,23 @@ export default function AdminFabrics() {
     desc: '',
     category: 'General',
     imageUrl: '',
-    colors: [{ name: '', hex: '#000000' }]
+    colors: [{ name: '', hex: '#000000', imageUrl: '' }],
+    allowedServices: []
   });
 
   useEffect(() => {
     fetchFabrics();
+    fetchServices();
   }, []);
+
+  const fetchServices = async () => {
+    try {
+      const { data } = await api.get('/api/services');
+      setServices(data);
+    } catch (error) {
+      console.error('Failed to fetch services');
+    }
+  };
 
   const fetchFabrics = async () => {
     try {
@@ -51,38 +64,69 @@ export default function AdminFabrics() {
   };
 
   const addColor = () => {
-    setFormData({ ...formData, colors: [...formData.colors, { name: '', hex: '#ffffff' }] });
+    setFormData({ ...formData, colors: [...formData.colors, { name: '', hex: '#ffffff', imageUrl: '' }] });
   };
 
   const removeColor = (index) => {
     const newColors = [...formData.colors];
     newColors.splice(index, 1);
     setFormData({ ...formData, colors: newColors });
+    
+    const newColorFiles = { ...colorImageFiles };
+    delete newColorFiles[index];
+    // Re-index remaining files
+    const reindexedFiles = {};
+    Object.keys(newColorFiles).forEach(key => {
+      const k = parseInt(key);
+      if (k > index) {
+        reindexedFiles[k - 1] = newColorFiles[key];
+      } else {
+        reindexedFiles[key] = newColorFiles[key];
+      }
+    });
+    setColorImageFiles(reindexedFiles);
+  };
+
+  const handleServiceToggle = (serviceName) => {
+    const current = [...formData.allowedServices];
+    if (current.includes(serviceName)) {
+      setFormData({ ...formData, allowedServices: current.filter(s => s !== serviceName) });
+    } else {
+      setFormData({ ...formData, allowedServices: [...current, serviceName] });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let payload = formData;
-      let headers = {};
-
+      const payload = new FormData();
+      payload.append('name', formData.name);
+      payload.append('price', formData.price);
+      payload.append('desc', formData.desc);
+      payload.append('category', formData.category);
+      payload.append('colors', JSON.stringify(formData.colors));
+      payload.append('allowedServices', JSON.stringify(formData.allowedServices));
+      
+      if (formData.imageUrl && !imageFile) {
+        payload.append('imageUrl', formData.imageUrl);
+      }
       if (imageFile) {
-        payload = new FormData();
-        payload.append('name', formData.name);
-        payload.append('price', formData.price);
-        payload.append('desc', formData.desc);
-        payload.append('category', formData.category);
-        payload.append('colors', JSON.stringify(formData.colors));
-        if (formData.imageUrl) payload.append('imageUrl', formData.imageUrl);
         payload.append('image', imageFile);
-        headers = { 'Content-Type': 'multipart/form-data' };
       }
 
-      await api.post('/api/fabrics', payload, { headers });
+      // Append color variant images
+      Object.keys(colorImageFiles).forEach(index => {
+        if (colorImageFiles[index]) {
+          payload.append(`colorImage_${index}`, colorImageFiles[index]);
+        }
+      });
+
+      await api.post('/api/fabrics', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
       toast.success('Fabric created successfully');
       setShowModal(false);
-      setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000' }] });
+      setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000', imageUrl: '' }], allowedServices: [] });
       setImageFile(null);
+      setColorImageFiles({});
       fetchFabrics();
     } catch (error) {
       console.error('Fabric save error:', error.response?.data || error);
@@ -94,7 +138,7 @@ export default function AdminFabrics() {
     <AdminLayout title="Manage Fabrics">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h2 className="admin-section-title" style={{ marginBottom: 0 }}>Fabric Catalog</h2>
-        <button className="admin-btn-primary" onClick={() => { setShowModal(true); setImageFile(null); setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000' }] }); }}>+ Add New Fabric</button>
+        <button className="admin-btn-primary" onClick={() => { setShowModal(true); setImageFile(null); setColorImageFiles({}); setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000', imageUrl: '' }], allowedServices: [] }); }}>+ Add New Fabric</button>
       </div>
 
       {loading ? (
@@ -114,11 +158,20 @@ export default function AdminFabrics() {
                 <h3 style={{ margin: 0 }}>{fabric.name}</h3>
                 <span style={{ background: '#f3f4f6', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' }}>Rs. {fabric.price}</span>
               </div>
-              <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '1rem', flex: 1 }}>{fabric.desc}</p>
+              <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '0.5rem', flex: 1 }}>{fabric.desc}</p>
               
+              {fabric.allowedServices && fabric.allowedServices.length > 0 && (
+                <div style={{ marginBottom: '1rem', fontSize: '0.85rem' }}>
+                  <strong>For:</strong> {fabric.allowedServices.join(', ')}
+                </div>
+              )}
+
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                {fabric.colors.map(c => (
-                  <div key={c._id || c.name} style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: c.hex, border: '1px solid #d1d5db' }} title={c.name} />
+                {fabric.colors.map((c, i) => (
+                  <div key={c._id || i} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: c.hex, border: '1px solid #d1d5db' }} title={c.name} />
+                    {c.imageUrl && <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>(img)</span>}
+                  </div>
                 ))}
               </div>
 
@@ -165,6 +218,23 @@ export default function AdminFabrics() {
                 <label>Description</label>
                 <textarea className="form-control" value={formData.desc} onChange={(e) => setFormData({...formData, desc: e.target.value})} rows="3" />
               </div>
+
+              <div style={{ background: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+                <label style={{ fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Allowed Services</label>
+                <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.75rem' }}>Select which services this fabric is available for. Leave empty to allow for all services.</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  {services.map(s => (
+                    <label key={s._id} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', fontSize: '0.9rem' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={formData.allowedServices.includes(s.name)}
+                        onChange={() => handleServiceToggle(s.name)}
+                      />
+                      {s.name}
+                    </label>
+                  ))}
+                </div>
+              </div>
               
               <div style={{ background: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -172,12 +242,36 @@ export default function AdminFabrics() {
                   <button type="button" onClick={addColor} style={{ background: '#e5e7eb', border: 'none', padding: '0.25rem 0.75rem', borderRadius: '4px', cursor: 'pointer' }}>+ Add Color</button>
                 </div>
                 {formData.colors.map((color, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem', alignItems: 'center' }}>
-                    <input type="text" placeholder="Color Name (e.g. Navy Blue)" className="form-control" value={color.name} onChange={(e) => handleColorChange(idx, 'name', e.target.value)} required style={{ flex: 2 }} />
-                    <input type="color" className="form-control" value={color.hex} onChange={(e) => handleColorChange(idx, 'hex', e.target.value)} required style={{ flex: 1, padding: '0 0.5rem' }} />
-                    {formData.colors.length > 1 && (
-                      <button type="button" onClick={() => removeColor(idx)} style={{ background: 'transparent', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '1.25rem' }}>&times;</button>
-                    )}
+                  <div key={idx} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '0.75rem', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.5rem' }}>
+                      <input type="text" placeholder="Color Name (e.g. Navy Blue)" className="form-control" value={color.name} onChange={(e) => handleColorChange(idx, 'name', e.target.value)} required style={{ flex: 2, margin: 0 }} />
+                      <input type="color" className="form-control" value={color.hex} onChange={(e) => handleColorChange(idx, 'hex', e.target.value)} required style={{ flex: 1, padding: '0 0.5rem', margin: 0, height: '42px' }} />
+                      {formData.colors.length > 1 && (
+                        <button type="button" onClick={() => removeColor(idx)} style={{ background: 'transparent', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: '1.25rem' }}>&times;</button>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="form-control" 
+                        style={{ flex: 1, margin: 0, fontSize: '0.85rem' }} 
+                        onChange={(e) => {
+                          const newColorFiles = { ...colorImageFiles };
+                          newColorFiles[idx] = e.target.files[0];
+                          setColorImageFiles(newColorFiles);
+                        }} 
+                      />
+                      <input 
+                        type="url" 
+                        placeholder="Or Image URL" 
+                        className="form-control" 
+                        value={color.imageUrl} 
+                        onChange={(e) => handleColorChange(idx, 'imageUrl', e.target.value)} 
+                        style={{ flex: 1, margin: 0, fontSize: '0.85rem' }} 
+                        disabled={!!colorImageFiles[idx]}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>

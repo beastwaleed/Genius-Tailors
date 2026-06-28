@@ -236,9 +236,10 @@ export default function Booking() {
   
   const [dbFabrics, setDbFabrics] = useState([]);
   const [dbServices, setDbServices] = useState([]);
+  const filteredDbFabrics = dbFabrics.filter(f => !f.allowedServices || f.allowedServices.length === 0 || f.allowedServices.includes(serviceName));
   const fabricList = [
     { name: 'Provide my own fabric', price: 0, desc: 'Drop off your unstitched fabric to our physical store within 3 days.', img: imgFabricOwn },
-    ...dbFabrics
+    ...filteredDbFabrics
   ];
 
   const [selectedFabric, setSelectedFabric] = useState(fabricList[0]);
@@ -656,6 +657,9 @@ export default function Booking() {
                           className="color-swatch" 
                           style={{ 
                             width: '45px', height: '45px', borderRadius: '50%', backgroundColor: color.hex, 
+                            backgroundImage: color.imageUrl ? `url(${color.imageUrl})` : 'none',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
                             border: color.hex === '#ffffff' || color.hex === '#f8fafc' ? '1px solid #cbd5e1' : 'none',
                             boxShadow: selectedColor === color.name ? '0 0 0 3px white, 0 0 0 5px var(--onyx)' : '0 2px 5px rgba(0,0,0,0.1)',
                             transition: 'all 0.2s',
