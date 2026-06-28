@@ -8,6 +8,7 @@ export default function AdminFabrics() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [colorImageFiles, setColorImageFiles] = useState({});
 
@@ -121,9 +122,15 @@ export default function AdminFabrics() {
         }
       });
 
-      await api.post('/api/fabrics', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
-      toast.success('Fabric created successfully');
+      if (editingId) {
+        await api.put(`/api/fabrics/${editingId}`, payload, { headers: { 'Content-Type': 'multipart/form-data' } });
+        toast.success('Fabric updated successfully');
+      } else {
+        await api.post('/api/fabrics', payload, { headers: { 'Content-Type': 'multipart/form-data' } });
+        toast.success('Fabric created successfully');
+      }
       setShowModal(false);
+      setEditingId(null);
       setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000', imageUrl: '' }], allowedServices: [] });
       setImageFile(null);
       setColorImageFiles({});
@@ -138,7 +145,7 @@ export default function AdminFabrics() {
     <AdminLayout title="Manage Fabrics">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h2 className="admin-section-title" style={{ marginBottom: 0 }}>Fabric Catalog</h2>
-        <button className="admin-btn-primary" onClick={() => { setShowModal(true); setImageFile(null); setColorImageFiles({}); setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000', imageUrl: '' }], allowedServices: [] }); }}>+ Add New Fabric</button>
+        <button className="admin-btn-primary" onClick={() => { setShowModal(true); setEditingId(null); setImageFile(null); setColorImageFiles({}); setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000', imageUrl: '' }], allowedServices: [] }); }}>+ Add New Fabric</button>
       </div>
 
       {loading ? (
@@ -176,6 +183,21 @@ export default function AdminFabrics() {
               </div>
 
               <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
+                <button className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', color: '#3b82f6', borderColor: '#93c5fd' }} onClick={() => {
+                  setEditingId(fabric._id);
+                  setFormData({
+                    name: fabric.name || '',
+                    price: fabric.price || '',
+                    desc: fabric.desc || '',
+                    category: fabric.category || 'General',
+                    imageUrl: fabric.imageUrl || '',
+                    colors: fabric.colors && fabric.colors.length > 0 ? fabric.colors : [{ name: '', hex: '#000000', imageUrl: '' }],
+                    allowedServices: fabric.allowedServices || []
+                  });
+                  setImageFile(null);
+                  setColorImageFiles({});
+                  setShowModal(true);
+                }}>Edit</button>
                 <button className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', color: '#dc2626', borderColor: '#fca5a5' }} onClick={() => handleDelete(fabric._id)}>Delete</button>
               </div>
             </div>
@@ -187,7 +209,7 @@ export default function AdminFabrics() {
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal-content" style={{ maxWidth: '600px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2>Add New Fabric</h2>
+            <h2>{editingId ? 'Edit Fabric' : 'Add New Fabric'}</h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <label>Fabric Name</label>
@@ -277,8 +299,8 @@ export default function AdminFabrics() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Save Fabric</button>
+                <button type="button" className="btn btn-outline" onClick={() => { setShowModal(false); setEditingId(null); }}>Cancel</button>
+                <button type="submit" className="btn btn-primary">{editingId ? 'Update Fabric' : 'Save Fabric'}</button>
               </div>
             </form>
           </div>
