@@ -480,12 +480,12 @@ export default function Booking() {
           <div className="step-divider"></div>
           <div className={`step ${step >= 2 ? 'active' : ''}`}>
             <span className="step-num">2</span>
-            <span className="step-label">Fabric</span>
+            <span className="step-label">Style</span>
           </div>
           <div className="step-divider"></div>
           <div className={`step ${step >= 3 ? 'active' : ''}`}>
             <span className="step-num">3</span>
-            <span className="step-label">Style</span>
+            <span className="step-label">Fabric</span>
           </div>
           <div className="step-divider"></div>
           <div className={`step ${step >= 4 ? 'active' : ''}`}>
@@ -565,14 +565,14 @@ export default function Booking() {
                 onClick={handleNext} 
                 disabled={!selectedProfileId}
               >
-                Proceed to Fabric →
+                Proceed to Style →
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 2: Fabric Selection */}
-        {step === 2 && (
+        {/* Step 3: Fabric Selection */}
+        {step === 3 && (
           <div className="wizard-step luxury-card">
             <h2 className="step-title">Fabric Selection</h2>
             <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>Choose your preferred fabric or provide your own.</p>
@@ -637,13 +637,13 @@ export default function Booking() {
             
             <div className="wizard-actions split">
               <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
-              <button className="btn btn-primary btn-lg" onClick={handleNext}>Proceed to Style →</button>
+              <button className="btn btn-primary btn-lg" onClick={handleNext}>Proceed to Details →</button>
             </div>
           </div>
         )}
 
-        {/* Step 3: Customization (Visual Style Picks) */}
-        {step === 3 && (
+        {/* Step 2: Customization (Visual Style Picks) */}
+        {step === 2 && (
           <div className="wizard-step luxury-card">
             <h2 className="step-title">{config.designs ? 'Select Your Design' : 'Customize Your Style'}</h2>
             <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>
@@ -790,7 +790,7 @@ export default function Booking() {
                 onClick={handleNext}
                 disabled={config.designs && !styleVariations.design}
               >
-                Proceed to Details →
+                Proceed to Fabric →
               </button>
             </div>
           </div>
