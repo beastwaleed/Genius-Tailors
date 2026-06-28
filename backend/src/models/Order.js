@@ -30,6 +30,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  fabricImageUrl: {
+    type: String,
+    default: ''
+  },
   // SNAPSHOT: The exact measurements embedded securely at the time of order
   measurementSnapshot: {
     profileName: { type: String, required: true },

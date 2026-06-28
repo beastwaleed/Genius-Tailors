@@ -450,7 +450,7 @@ app.get('/api/shipping/cities', async (req, res) => {
 // Place a new order (Customer)
 app.post('/api/orders', protect, async (req, res) => {
   try {
-    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, isRush, referenceImageUrl, customerNote, neededByDate, deliveryCity, deliveryAddress, advancePaid, advancePaymentStatus } = req.body;
+    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, isRush, referenceImageUrl, customerNote, neededByDate, deliveryCity, deliveryAddress, advancePaid, advancePaymentStatus, fabricSelection, fabricColor, fabricImageUrl } = req.body;
 
     if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
     if (!measurementSnapshot || !measurementSnapshot.measurements) return res.status(400).json({ message: 'Measurement snapshot is required' });
@@ -478,6 +478,9 @@ app.post('/api/orders', protect, async (req, res) => {
       serviceName,
       styleVariations,
       measurementSnapshot,
+      fabricSelection: fabricSelection || 'Provide my own fabric',
+      fabricColor: fabricColor || '',
+      fabricImageUrl: fabricImageUrl || '',
       totalPrice,
       advancePaid: advancePaid || 0,
       remainingBalance: totalPrice - (advancePaid || 0),
@@ -1447,7 +1450,7 @@ app.post('/api/admin/users/:id/measurements', protect, admin, async (req, res) =
 // Admin Places an Order on Behalf of a Customer
 app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
   try {
-    const { customerId, serviceName, styleVariations, measurementSnapshot, totalPrice, isRush, customerNote, neededByDate } = req.body;
+    const { customerId, serviceName, styleVariations, measurementSnapshot, totalPrice, isRush, customerNote, neededByDate, fabricSelection, fabricColor, fabricImageUrl } = req.body;
 
     if (!customerId) return res.status(400).json({ message: 'Customer ID is required' });
     if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
@@ -1467,6 +1470,9 @@ app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
       serviceName,
       styleVariations,
       measurementSnapshot,
+      fabricSelection: fabricSelection || 'Provide my own fabric',
+      fabricColor: fabricColor || '',
+      fabricImageUrl: fabricImageUrl || '',
       totalPrice,
       pointsEarned,
       isPriority,
