@@ -11,7 +11,7 @@ mongoose.connect(MONGO_URI).then(async () => {
     {
       name: 'Kameez Shalwar',
       description: 'The Timeless Pakistani Classic. Our most-ordered garment.',
-      basePrice: 2500,
+      basePrice: 1800,
       customizations: {
         collarStyles: ['Ban', 'Collar', 'Sherwani', 'Round Neck'],
         sleeveStyles: ['Cuff', 'Open', 'Half Sleeve'],
@@ -22,7 +22,7 @@ mongoose.connect(MONGO_URI).then(async () => {
     {
       name: 'Kurta Shalwar',
       description: 'Relaxed, Refined, Everyday. A shorter, lighter alternative.',
-      basePrice: 2000,
+      basePrice: 1800,
       customizations: {
         collarStyles: ['Mandarin', 'Standard Collar', 'Round Neck'],
         sleeveStyles: ['Cuff', 'Open'],
@@ -44,12 +44,30 @@ mongoose.connect(MONGO_URI).then(async () => {
     {
       name: 'Waistcoat',
       description: 'Sharp Layering for Any Look. Elevates any ethnic outfit.',
-      basePrice: 2000,
+      basePrice: 3500,
       customizations: {
         collarStyles: ['Ban', 'V-Neck', 'Round'],
         frontStyles: ['Single Breasted', 'Double Breasted', 'Hidden Buttons'],
         bottomStyles: []
       }
+    },
+    {
+      name: 'Kameez Shalwar Design',
+      description: 'Custom Designed Masterpiece.',
+      basePrice: 2200,
+      customizations: { collarStyles: [], sleeveStyles: [], frontStyles: [], bottomStyles: [] }
+    },
+    {
+      name: 'Kurta Shalwar Design',
+      description: 'Modern Designer Kurta.',
+      basePrice: 2200,
+      customizations: { collarStyles: [], sleeveStyles: [], frontStyles: [], bottomStyles: [] }
+    },
+    {
+      name: 'Zardari Suit',
+      description: 'Complete 3-Piece Suit.',
+      basePrice: 5300,
+      customizations: { collarStyles: [], sleeveStyles: [], frontStyles: [], bottomStyles: [] }
     }
   ];
 
