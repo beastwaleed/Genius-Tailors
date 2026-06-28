@@ -1016,7 +1016,7 @@ export default function Booking() {
                 <strong style={{ color: 'var(--onyx)', display: 'block', marginBottom: '0.5rem' }}>
                   {config.designs ? 'Design Selection:' : 'Style Preferences:'}
                 </strong>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem', fontSize: '0.9rem' }}>
                   {config.designs ? (
                     <span>Design: {styleVariations.design}</span>
                   ) : (
