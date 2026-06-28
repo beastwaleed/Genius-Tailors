@@ -29,9 +29,45 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!name || name.trim() === '') {
+      return toast.error('Full Name is required');
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return toast.error('Please enter a valid email address');
+    }
+
+    const cleanPhone = phone.replace(/[\s-]/g, '');
+    if (!/^\+92\d{10}$/.test(cleanPhone)) {
+      return toast.error('Phone number must start with +92 followed by 10 digits (e.g., +923001234567)');
+    }
+
+    if (!street || street.trim() === '') {
+      return toast.error('Street Address is required');
+    }
+
+    if (!city || city.trim() === '') {
+      return toast.error('City is required');
+    }
+
+    if (password.length < 6) {
+      return toast.error('Password must be at least 6 characters long');
+    }
+
     setLoading(true);
     try {
-      const { data } = await api.post('/api/auth/register', { name, email, password, phone, street, city, country });
+      // Send the cleaned phone number to the backend
+      const { data } = await api.post('/api/auth/register', { 
+        name, 
+        email, 
+        password, 
+        phone: cleanPhone, 
+        street, 
+        city, 
+        country 
+      });
       login(data, data.token);
       toast.success('Account created successfully!');
       // Redirection is now handled by the useEffect above
