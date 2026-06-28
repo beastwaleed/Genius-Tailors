@@ -34,7 +34,7 @@ import imgShalwarOnePocket from '../../assets/styles/shalwar_one_pocket.jpg';
 import imgShalwarNoDesign from '../../assets/styles/shalwar_no_design.jpg';
 import imgShalwarZigzag from '../../assets/styles/shalwar_zigzag.jpg';
 
-import imgFabricOwn from '../../assets/fabrics/fabric_own.png';
+import imgFabricOwn from '../../assets/fabrics/courier_fabric.png';
 import imgFabricCotton from '../../assets/fabrics/fabric_cotton.png';
 import imgFabricWashWear from '../../assets/fabrics/fabric_wash_wear.png';
 import imgFabricEgyptian from '../../assets/fabrics/fabric_egyptian.png';
@@ -239,7 +239,7 @@ export default function Booking() {
   const [dbServices, setDbServices] = useState([]);
   const filteredDbFabrics = dbFabrics.filter(f => !f.allowedServices || f.allowedServices.length === 0 || f.allowedServices.includes(serviceName));
   const fabricList = [
-    { name: 'Provide my own fabric', price: 0, desc: 'Drop off your unstitched fabric to our physical store within 3 days.', img: imgFabricOwn },
+    { name: 'Provide my own fabric', price: 0, desc: 'Send your unstitched fabric to us through a courier service within 3 days.', img: imgFabricOwn },
     ...filteredDbFabrics
   ];
 
