@@ -98,6 +98,26 @@ export default function AdminOrderDetails() {
     const ms = order.measurementSnapshot?.measurements || order.measurementSnapshot || order.measurementsSnapshot;
     let finalYForImage = doc.lastAutoTable.finalY + 20;
 
+    // Style Variations
+    if (order.styleVariations && Object.keys(order.styleVariations).length > 0) {
+      doc.text('Style & Design Selection', 14, doc.lastAutoTable.finalY + 15);
+      
+      const sBody = [];
+      Object.entries(order.styleVariations).forEach(([key, val]) => {
+        if (val) sBody.push([key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'), val]);
+      });
+      
+      if (sBody.length > 0) {
+        autoTable(doc, {
+          startY: doc.lastAutoTable.finalY + 20,
+          head: [['Element', 'Selection']],
+          body: sBody,
+          theme: 'grid',
+          headStyles: { fillColor: [59, 130, 246] }
+        });
+      }
+    }
+
     if (ms && Object.keys(ms).length > 0) {
       doc.text('Measurements Snapshot', 14, doc.lastAutoTable.finalY + 15);
       
@@ -269,6 +289,26 @@ export default function AdminOrderDetails() {
                  <span className="info-value">{order.deliveryOption === 'Delivery' ? 'Home Delivery' : 'Store Pickup'}</span>
                </div>
              </div>
+
+             {/* Style & Design Specs */}
+             {order.styleVariations && Object.keys(order.styleVariations).length > 0 && (
+               <div className="premium-glass-card">
+                 <h3 style={{ fontSize: '1.1rem', color: '#1e293b', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                   🎨 Style & Design Selection
+                 </h3>
+                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+                   {Object.entries(order.styleVariations).map(([key, val]) => {
+                     if (!val) return null;
+                     return (
+                       <div key={key} style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem' }}>
+                         <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 600, letterSpacing: '0.5px' }}>{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                         <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1e293b' }}>{val}</div>
+                       </div>
+                     );
+                   })}
+                 </div>
+               </div>
+             )}
 
              {/* Measurements (If Available) */}
              {(order.measurementSnapshot?.measurements || order.measurementSnapshot || order.measurementsSnapshot) && Object.keys(order.measurementSnapshot?.measurements || order.measurementSnapshot || order.measurementsSnapshot).length > 0 && (
