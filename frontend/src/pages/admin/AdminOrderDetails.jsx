@@ -50,7 +50,7 @@ export default function AdminOrderDetails() {
     }
   };
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     const doc = new jsPDF();
     
     // Header
@@ -96,6 +96,8 @@ export default function AdminOrderDetails() {
     
     // Measurements
     const ms = order.measurementSnapshot?.measurements || order.measurementSnapshot || order.measurementsSnapshot;
+    let finalYForImage = doc.lastAutoTable.finalY + 20;
+
     if (ms && Object.keys(ms).length > 0) {
       doc.text('Measurements Snapshot', 14, doc.lastAutoTable.finalY + 15);
       
@@ -113,6 +115,38 @@ export default function AdminOrderDetails() {
         theme: 'grid',
         headStyles: { fillColor: [59, 130, 246] }
       });
+      finalYForImage = doc.lastAutoTable.finalY + 20;
+    }
+
+    if (order.fabricImageUrl) {
+      try {
+        const imgData = await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "Anonymous";
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL("image/jpeg"));
+          };
+          img.onerror = reject;
+          img.src = order.fabricImageUrl;
+        });
+        
+        // Add new page if not enough space
+        if (finalYForImage > 220) {
+          doc.addPage();
+          finalYForImage = 20;
+        }
+
+        doc.setFontSize(14);
+        doc.text('Fabric Selected', 14, finalYForImage);
+        doc.addImage(imgData, 'JPEG', 14, finalYForImage + 5, 50, 50);
+      } catch (err) {
+        console.warn('Failed to load fabric image for PDF', err);
+      }
     }
 
     doc.save(`${order.orderNumber || order._id}.pdf`);
@@ -223,6 +257,9 @@ export default function AdminOrderDetails() {
                  <div className="info-row">
                    <span className="info-label">Color</span>
                    <span className="info-value" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                     {order.fabricImageUrl && (
+                       <img src={order.fabricImageUrl} alt="Fabric" style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover', border: '1px solid #cbd5e1' }} />
+                     )}
                      {order.fabricColor}
                    </span>
                  </div>

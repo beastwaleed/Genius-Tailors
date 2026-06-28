@@ -447,6 +447,7 @@ export default function Booking() {
         styleVariations,
         fabricSelection: selectedFabric.name,
         fabricColor: selectedColor,
+        fabricImageUrl: selectedFabric.colors?.find(c => c.name === selectedColor)?.imageUrl || selectedFabric.imageUrl || selectedFabric.img || '',
         measurementSnapshot: {
           profileName: profile.profileName,
           measurements: profile.measurements || {}
