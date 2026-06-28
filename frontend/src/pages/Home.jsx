@@ -16,11 +16,11 @@ import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
 
-import img1 from '../assets/portfolio_1.png';
-import img2 from '../assets/portfolio_2.png';
-import img3 from '../assets/portfolio_3.png';
-import img4 from '../assets/portfolio_1.png';
-import img5 from '../assets/portfolio_5.png';
+import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
+import ShalwarKameezGallery1 from '../assets/ShalwarKameezGallery1.jpeg';
+import ShalwarKameezGallery2 from '../assets/ShalwarKameezGallery2.jpeg';
+import angularEdge01 from '../assets/AngularEdge01.jpeg'
+import urbanCore02 from '../assets/UrbanCore02.jpeg'
 
 import proc1 from '../assets/process_1.png';
 import proc2 from '../assets/process_2.png';
@@ -28,12 +28,12 @@ import proc3 from '../assets/process_3.png';
 import proc4 from '../assets/process_4.png';
 
 const PORTFOLIO_IMAGES = [
-  { id: 1, src: img1, title: 'Bespoke Brown Kurta' },
-  { id: 2, src: img2, title: 'Classic Fit' },
-  { id: 3, src: img3, title: 'Dark Blue Kameez Shalwar' },
-  { id: 4, src: img4, title: 'White Formal Kurta' },
-  { id: 5, src: img5, title: 'Signature Black Cut' },
-  { id: 6, src: img1, title: 'Tailoring Details' },
+  { id: 1, src: ShalwarKameezFeaturedImage, title: 'Bespoke Kameez Shalwar' },
+  { id: 2, src: angularEdgeMain, title: 'Angular Edge Kurta' },
+  { id: 3, src: MainShalwarKameez, title: 'Classic Finish' },
+  { id: 4, src: WaistcoatFront, title: 'Premium Waistcoat' },
+  { id: 5, src: ShalwarKameezGallery0, title: 'Tailoring Details' },
+  { id: 6, src: urbanCore02, title: 'Zardari Suit Fit' },
 ];
 
 import { ALL_SERVICES as SERVICES_PREVIEW } from './Services';

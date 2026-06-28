@@ -4,23 +4,49 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet-async';
 
-import img1 from '../assets/portfolio_1.png';
-import img2 from '../assets/portfolio_2.png';
-import img3 from '../assets/portfolio_3.png';
-import img4 from '../assets/portfolio_1.png';
-import img5 from '../assets/portfolio_5.png';
+import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
+import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
+import ShalwarKameezGallery1 from '../assets/ShalwarKameezGallery1.jpeg';
+import ShalwarKameezGallery2 from '../assets/ShalwarKameezGallery2.jpeg';
+import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg'
 
-// Since we have 5 images, we duplicate a few to fill out the 9-item grid nicely
+import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
+import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
+import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
+import angularEdge01 from '../assets/AngularEdge01.jpeg'
+import angularEdge02 from '../assets/AngularEdge02.jpeg'
+
+import WaistcoatFront from '../assets/waistcoatfront.jpeg'
+import WaistcoatV from '../assets/V collar waistcoat.jpeg';
+import WaistcoatRound from '../assets/round neck collar waistcoat.jpeg';
+import WaistcoatSherwani from '../assets/sherwani collar waistcoat.jpeg';
+
+import urbanCoreMain from '../assets/UrbanCoreMain.jpeg'
+import urbanCore01 from '../assets/UrbanCore01.jpeg'
+import urbanCore02 from '../assets/UrbanCore02.jpeg'
+import royalSlateClassicMain from '../assets/RoyalSlateClassicMain.jpeg'
+import royalSlateClassic01 from '../assets/RoyalSlateClassic01.jpeg'
+
 const PORTFOLIO_IMAGES = [
-  { id: 1, src: img1, title: 'Bespoke Brown Kurta' },
-  { id: 2, src: img2, title: 'Classic Fit' },
-  { id: 3, src: img3, title: 'Dark Blue Kameez Shalwar' },
-  { id: 4, src: img4, title: 'White Formal Kurta' },
-  { id: 5, src: img5, title: 'Signature Black Cut' },
-  { id: 6, src: img2, title: 'Tailoring Details' },
-  { id: 7, src: img3, title: 'Traditional Details' },
-  { id: 8, src: img4, title: 'Casual Refined' },
-  { id: 9, src: img5, title: 'Event Wear' },
+  { id: 1, src: ShalwarKameezFeaturedImage, title: 'Classic Kameez Shalwar' },
+  { id: 2, src: angularEdgeMain, title: 'Angular Edge Design' },
+  { id: 3, src: urbanCoreMain, title: 'Urban Core Zardari Suit' },
+  { id: 4, src: WaistcoatFront, title: 'Premium Waistcoat' },
+  { id: 5, src: HeroKurtaPajama, title: 'Kurta Pajama Fit' },
+  { id: 6, src: ShalwarKameezGallery0, title: 'Kameez Shalwar Detail' },
+  { id: 7, src: ShalwarKameezGallery1, title: 'Precision Stitching' },
+  { id: 8, src: ShalwarKameezGallery2, title: 'Fabric Quality' },
+  { id: 9, src: MainShalwarKameez, title: 'Traditional Elegance' },
+  { id: 10, src: angularEdge01, title: 'Angular Edge Cut' },
+  { id: 11, src: angularEdge02, title: 'Modern Silhouette' },
+  { id: 12, src: kurtaShalwarFeatured, title: 'Kurta Shalwar Style' },
+  { id: 13, src: WaistcoatV, title: 'V-Collar Waistcoat' },
+  { id: 14, src: WaistcoatRound, title: 'Round Neck Waistcoat' },
+  { id: 15, src: WaistcoatSherwani, title: 'Sherwani Collar' },
+  { id: 16, src: urbanCore01, title: 'Zardari Suit Cut' },
+  { id: 17, src: urbanCore02, title: 'Signature Finish' },
+  { id: 18, src: royalSlateClassicMain, title: 'Royal Slate Classic' },
+  { id: 19, src: royalSlateClassic01, title: 'Premium Royal Fit' },
 ];
 
 export default function Portfolio() {
