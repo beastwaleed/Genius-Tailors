@@ -70,28 +70,28 @@ import angularEdge01 from '../../assets/AngularEdge01.jpeg';
 import angularEdge02 from '../../assets/AngularEdge02.jpeg';
 
 const SERVICES_PRICES = {
-  'Kameez Shalwar': 2500,
-  'Kurta Shalwar': 2000,
-  'Kurta Pajama': 2000,
-  'Waistcoat': 2000,
-  'Kameez Shalwar Design': 3500,
-  'Kurta Shalwar Design': 3000,
-  'Zardari Suit': 5000
+  'Kameez Shalwar': 1800,
+  'Kurta Shalwar': 1800,
+  'Kurta Pajama': 1800,
+  'Waistcoat': 3500,
+  'Kameez Shalwar Design': 2200,
+  'Kurta Shalwar Design': 2200,
+  'Zardari Suit': 5300
 };
 
 const STYLE_CONFIGS = {
   'Kameez Shalwar': {
     designs: [
-      { name: 'Classic Design', img: imgShalwarNoDesign, price: 2500, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
-      { name: 'Modern Pattern', img: imgBanCollar, price: 3000, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
-      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 3500, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
+      { name: 'Classic Design', img: imgShalwarNoDesign, price: 1800, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
+      { name: 'Modern Pattern', img: imgBanCollar, price: 1800, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
+      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1800, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Kurta Shalwar': {
     designs: [
-      { name: 'Classic Design', img: imgShalwarNoDesign, price: 2000, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
-      { name: 'Modern Pattern', img: imgBanCollar, price: 2500, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
-      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 3000, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
+      { name: 'Classic Design', img: imgShalwarNoDesign, price: 1800, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
+      { name: 'Modern Pattern', img: imgBanCollar, price: 1800, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
+      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1800, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
     ]
   },
   'Kurta Pajama': {
@@ -127,22 +127,22 @@ const STYLE_CONFIGS = {
   },
   'Kameez Shalwar Design': {
     designs: [
-      { name: "'X-Stitch' Classic", img: xStitchMain, price: 3500, gallery: [xStitchMain, xStitch01, xStitch02] },
-      { name: 'Elite Aura Premium', img: eliteAuraMain, price: 4000, gallery: [eliteAuraMain, eliteAura01, eliteAura02, eliteAura03] },
-      { name: 'Triple Edge Stitch', img: tripleEdgeStitchMain, price: 4500, gallery: [tripleEdgeStitchMain, tripleEdgeStitch01, tripleEdgeStitch02] }
+      { name: "'X-Stitch' Classic", img: xStitchMain, price: 2200, gallery: [xStitchMain, xStitch01, xStitch02] },
+      { name: 'Elite Aura Premium', img: eliteAuraMain, price: 2500, gallery: [eliteAuraMain, eliteAura01, eliteAura02, eliteAura03] },
+      { name: 'Triple Edge Stitch', img: tripleEdgeStitchMain, price: 2500, gallery: [tripleEdgeStitchMain, tripleEdgeStitch01, tripleEdgeStitch02] }
     ]
   },
   'Kurta Shalwar Design': {
     designs: [
-      { name: 'Royal Heritage', img: royalHeritageMain, price: 3000, gallery: [royalHeritageMain, royalHeritage01, royalHeritage02] },
-      { name: 'Delta Fit', img: deltaFitMain, price: 3500, gallery: [deltaFitMain, deltaFit01, deltaFit02] },
-      { name: 'Angular Edge', img: angularEdgeMain, price: 4000, gallery: [angularEdgeMain, angularEdge01, angularEdge02] }
+      { name: 'Royal Heritage', img: royalHeritageMain, price: 2500, gallery: [royalHeritageMain, royalHeritage01, royalHeritage02] },
+      { name: 'Delta Fit', img: deltaFitMain, price: 2200, gallery: [deltaFitMain, deltaFit01, deltaFit02] },
+      { name: 'Angular Edge', img: angularEdgeMain, price: 2500, gallery: [angularEdgeMain, angularEdge01, angularEdge02] }
     ]
   },
   'Zardari Suit': {
     designs: [
-      { name: 'Royal Slate Classic', img: royalSlateClassicMain, price: 5000, gallery: [royalSlateClassicMain, royalSlateClassic01] },
-      { name: 'Urban Core', img: urbanCoreMain, price: 5500, gallery: [urbanCoreMain, urbanCore01, urbanCore02] }
+      { name: 'Royal Slate Classic', img: royalSlateClassicMain, price: 5500, gallery: [royalSlateClassicMain, royalSlateClassic01] },
+      { name: 'Urban Core', img: urbanCoreMain, price: 5300, gallery: [urbanCoreMain, urbanCore01, urbanCore02] }
     ]
   }
 };
