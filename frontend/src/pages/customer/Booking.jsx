@@ -663,7 +663,11 @@ export default function Booking() {
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setViewingFabric(null)}>
                   <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', width: '100%', maxWidth: '900px', display: 'flex', maxHeight: '90vh', flexDirection: window.innerWidth < 768 ? 'column' : 'row' }} onClick={e => e.stopPropagation()}>
                     <div style={{ flex: 1, position: 'relative', minHeight: window.innerWidth < 768 ? '250px' : '400px', background: '#f1f5f9' }}>
-                      <img src={viewingFabric.imageUrl || viewingFabric.img} alt={viewingFabric.name} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+                      <img 
+                        src={viewingFabric.colors?.find(c => c.name === selectedColor)?.imageUrl || viewingFabric.imageUrl || viewingFabric.img} 
+                        alt={viewingFabric.name} 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0, transition: 'opacity 0.3s ease-in-out' }} 
+                      />
                     </div>
                     <div style={{ flex: 1, padding: '2rem', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
