@@ -204,9 +204,10 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
           <p style="margin: 8px 0 0 0; color: #777; font-size: 13px;">Order ID: ${orderId}</p>
           ${paymentReceiptUrl ? `<p style="margin: 8px 0 0 0; color: #333;"><strong>Payment Receipt:</strong> <a href="${paymentReceiptUrl}" target="_blank" style="color: #2980b9;">View Receipt</a></p>` : ''}
         </div>
-        <div style="text-align: center; margin: 32px 0;">
-          <p style="font-size: 14px; color: #666;">Log in to your Admin Panel to view full measurements, fabric selections, and styling details.</p>
-        </div>
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${process.env.FRONTEND_URL || 'https://geniustailors.vercel.app/'}admin/orders/${orderId}" style="background: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 12px;">View Order in Dashboard</a>
+            <p style="font-size: 14px; color: #666;">Or use this direct link: <a href="${process.env.FRONTEND_URL || 'https://geniustailors.vercel.app/'}admin/orders/${orderId}" style="color: #2980b9;">Admin Panel</a></p>
+          </div>
       </div>
     </div>
   `;

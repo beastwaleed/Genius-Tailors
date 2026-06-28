@@ -120,8 +120,8 @@ const sendAdminAbandonedCartWhatsapp = async (customerName, serviceName, totalPr
 };
 
 const sendAdminNewOrderWhatsapp = async (customerName, serviceName, totalPrice, orderId, paymentReceiptUrl) => {
-  // Replace with actual admin phone number
-  const adminPhone = '+923162791882'; // You can update this to the actual admin number or an env variable
+  // Using the correct admin phone number
+  const adminPhone = '+923332662110'; 
   
   let message = `*🔔 New Order Alert!*\n\n`;
   message += `*Customer:* ${customerName}\n`;
@@ -133,7 +133,7 @@ const sendAdminNewOrderWhatsapp = async (customerName, serviceName, totalPrice, 
   }
   
   message += `*Admin Order Link:*\n`;
-  message += `https://geniustailors.com/admin/orders\n\n`;
+  message += `${process.env.FRONTEND_URL || 'https://geniustailors.vercel.app/'}admin/orders/${orderId}\n\n`;
   message += `Please check the dashboard to verify the payment and approve the order.`;
 
   await sendWhatsappMessage(adminPhone, message);
