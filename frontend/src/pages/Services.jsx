@@ -21,6 +21,9 @@ import urbanCore02 from '../assets/UrbanCore02.jpeg'
 import royalSlateClassicMain from '../assets/RoyalSlateClassicMain.jpeg'
 import royalSlateClassic01 from '../assets/RoyalSlateClassic01.jpeg'
 import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
+import eliteAura01 from '../assets/EliteAura01.jpeg'
+import eliteAura02 from '../assets/EliteAura02.jpeg'
+import eliteAura03 from '../assets/EliteAura03.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
@@ -143,7 +146,7 @@ export const ALL_SERVICES = [
     category: 'Designer',
     features: ['Exclusive design patterns', 'Premium stitching', 'Custom embroidery options', 'Perfect fit guarantee'],
     occasions: ['Weddings', 'Eid', 'Special Events'],
-    images: shalwarKameezGallery,
+    images: [eliteAuraMain, eliteAura01, eliteAura02, eliteAura03],
   },
   {
     id: 'kurta-shalwar-design',
