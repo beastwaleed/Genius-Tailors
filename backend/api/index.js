@@ -628,7 +628,7 @@ app.get('/api/orders/:id/tracking', protect, async (req, res) => {
 
     const trackRes = await postexService.trackBulkOrders([order.trackingNumber]);
     if (trackRes && trackRes.dist && trackRes.dist.length > 0) {
-      const trackingData = trackRes.dist[0].trackingResponse;
+      const trackingData = trackRes.dist[0].trackingResponse || {};
       return res.json({ history: trackingData.transactionStatusHistory || [] });
     }
     return res.json({ history: [] });

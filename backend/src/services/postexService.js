@@ -38,12 +38,11 @@ exports.createOrder = async (orderData) => {
 // Phase 3: Bulk Tracking API
 exports.trackBulkOrders = async (trackingNumbersArray) => {
   try {
-    // Note: PDF indicates GET request but uses JSON body. 
-    // Usually axios GET bodies are ignored by some browsers/proxies, but since this is server-to-server it should pass.
-    const response = await axios.get(`${POSTEX_BASE_URL}/v1/track-bulk-order`, {
-      headers: getHeaders(),
-      data: { trackingNumber: trackingNumbersArray } 
-    });
+    // Vercel strips GET bodies, so we must use POST. If PostEx supports POST for this, it will work.
+    const response = await axios.post(`${POSTEX_BASE_URL}/v1/track-bulk-order`, 
+      { trackingNumber: trackingNumbersArray }, 
+      { headers: getHeaders() }
+    );
     return response.data;
   } catch (error) {
     console.error('PostEx API Error [trackBulkOrders]:', error.response?.data || error.message);
