@@ -632,7 +632,7 @@ export default function Booking() {
                       } else {
                         setViewingFabric(opt);
                         if (!selectedColor || selectedFabric.name !== opt.name) {
-                          setSelectedColor(opt.colors && opt.colors.length > 0 ? opt.colors[0].name : '');
+                          setSelectedColor('Shade No 01');
                         }
                       }
                     }}
@@ -680,7 +680,10 @@ export default function Booking() {
                       <div style={{ marginBottom: '2rem' }}>
                         <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: 'var(--onyx)', fontWeight: '600' }}>Color: <span style={{ fontWeight: 'normal', color: '#64748b' }}>{selectedColor}</span></h3>
                         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                          {(viewingFabric.colors && viewingFabric.colors.length > 0 ? viewingFabric.colors : FABRIC_COLORS).map(color => (
+                          {[
+                            ...(viewingFabric.colors?.some(c => c.name === 'Shade No 01') ? [] : [{ name: 'Shade No 01', hex: '#e2e8f0', imageUrl: viewingFabric.imageUrl || viewingFabric.img }]),
+                            ...(viewingFabric.colors || [])
+                          ].map(color => (
                             <label 
                               key={color.name} 
                               className="color-label"
@@ -712,8 +715,8 @@ export default function Booking() {
                           style={{ width: '100%', padding: '1rem', fontSize: '1rem', background: 'var(--onyx)', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
                           onClick={() => {
                             setSelectedFabric(viewingFabric);
-                            if (!selectedColor && viewingFabric.colors && viewingFabric.colors.length > 0) {
-                              setSelectedColor(viewingFabric.colors[0].name);
+                            if (!selectedColor) {
+                              setSelectedColor('Shade No 01');
                             }
                             setViewingFabric(null);
                           }}
