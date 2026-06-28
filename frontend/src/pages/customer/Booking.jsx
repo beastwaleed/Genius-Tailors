@@ -1156,58 +1156,68 @@ export default function Booking() {
             </div>
 
             {bankTransferModalOpen && (
-              <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
-                <div className="luxury-card" style={{ maxWidth: '450px', width: '100%', padding: '2rem', position: 'relative' }}>
-                  <button onClick={() => setBankTransferModalOpen(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>&times;</button>
+              <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem' }}>
+                <div style={{ background: '#ffffff', maxWidth: '450px', width: '100%', padding: '2rem', position: 'relative', borderRadius: '16px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', maxHeight: '95vh', overflowY: 'auto' }}>
+                  <button onClick={() => setBankTransferModalOpen(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: '#f1f5f9', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', cursor: 'pointer', color: '#64748b', transition: 'background 0.2s' }}>&times;</button>
+                  
                   <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '60px', height: '60px', borderRadius: '50%', background: '#f0f9ff', color: '#0284c7', marginBottom: '1rem' }}>
-                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '50%', background: '#eff6ff', color: '#2563eb', marginBottom: '1rem' }}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
                     </div>
-                    <h3 style={{ margin: 0, color: '#0f172a', fontFamily: 'var(--font-serif)', fontSize: '1.5rem' }}>Bank Transfer Details</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.5rem' }}>Please transfer the advance amount to confirm your order.</p>
+                    <h3 style={{ margin: 0, color: '#0f172a', fontFamily: 'var(--font-serif)', fontSize: '1.5rem', fontWeight: 700 }}>Bank Transfer</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.5rem', lineHeight: 1.5 }}>Please transfer the advance amount below to confirm your custom tailoring order.</p>
                   </div>
 
-                  <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', textAlign: 'center' }}>
-                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Advance Amount Required</p>
-                    <p style={{ margin: 0, color: '#0f172a', fontSize: '2rem', fontWeight: 'bold' }}>Rs. {advanceAmount.toLocaleString()}</p>
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '1.25rem', borderRadius: '12px', marginBottom: '1.5rem', textAlign: 'center' }}>
+                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>Amount Required</p>
+                    <p style={{ margin: '0.5rem 0 0 0', color: '#0f172a', fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Rs. {advanceAmount.toLocaleString()}</p>
                   </div>
 
-                  <div style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '8px', background: '#fff' }}>
-                    <div style={{ marginBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bank Name</span>
-                      <strong style={{ color: '#0f172a', fontSize: '1rem' }}>Meezan Bank Limited</strong>
+                  <div style={{ marginBottom: '1.5rem', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', background: '#ffffff', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>Bank Name</span>
+                      <strong style={{ color: '#0f172a', fontSize: '0.95rem' }}>Meezan Bank Limited</strong>
                     </div>
-                    <div style={{ marginBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account Title</span>
-                      <strong style={{ color: '#0f172a', fontSize: '1rem' }}>Genius Tailors</strong>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>Account Title</span>
+                      <strong style={{ color: '#0f172a', fontSize: '0.95rem' }}>Genius Tailors</strong>
                     </div>
                     <div>
-                      <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account / IBAN Number</span>
-                      <strong style={{ color: '#0f172a', fontSize: '1rem', letterSpacing: '1px' }}>PK22 MEZN 0123 4567 8901</strong>
+                      <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500, display: 'block', marginBottom: '0.25rem' }}>Account / IBAN Number</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <strong style={{ color: '#0f172a', fontSize: '1rem', letterSpacing: '0.5px' }}>PK22 MEZN 0123 4567 8901</strong>
+                        <button onClick={() => { navigator.clipboard.writeText('PK22 MEZN 0123 4567 8901'); toast.success('Account number copied!'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6', padding: '0.25rem' }} title="Copy to clipboard">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem', fontWeight: 600 }}>Upload Payment Screenshot <span style={{color: '#ef4444'}}>*</span></label>
-                    <div style={{ padding: '0.5rem', border: '1px dashed #cbd5e1', borderRadius: '6px', textAlign: 'center', background: paymentReceiptUrl ? '#f0fdf4' : '#f8fafc' }}>
+                    <label style={{ display: 'block', fontSize: '0.9rem', color: '#0f172a', marginBottom: '0.5rem', fontWeight: 600 }}>Upload Payment Screenshot <span style={{color: '#ef4444'}}>*</span></label>
+                    <label style={{ display: 'block', cursor: loading ? 'not-allowed' : 'pointer', padding: '1.25rem 1rem', border: `2px dashed ${paymentReceiptUrl ? '#22c55e' : '#cbd5e1'}`, borderRadius: '12px', textAlign: 'center', background: paymentReceiptUrl ? '#f0fdf4' : '#f8fafc', transition: 'all 0.2s' }}>
                       {paymentReceiptUrl ? (
-                        <div style={{ color: '#16a34a', fontSize: '0.9rem', fontWeight: 500 }}>✓ Receipt Uploaded</div>
+                        <div style={{ color: '#16a34a', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                          <span style={{ fontWeight: 600 }}>Receipt Uploaded</span>
+                          <span style={{ fontSize: '0.8rem', color: '#15803d', textDecoration: 'underline' }}>Click to upload a different image</span>
+                        </div>
                       ) : (
-                        <input type="file" accept="image/*" onChange={handleReceiptUpload} style={{ fontSize: '0.85rem' }} disabled={loading} />
+                        <div style={{ color: '#64748b', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                          <span style={{ fontWeight: 500 }}>Click to browse or take a photo</span>
+                        </div>
                       )}
-                    </div>
+                      <input type="file" accept="image/*" onChange={handleReceiptUpload} style={{ display: 'none' }} disabled={loading} />
+                    </label>
                   </div>
-
-                  <p style={{ fontSize: '0.85rem', color: '#64748b', textAlign: 'center', marginBottom: '1.5rem', lineHeight: 1.5 }}>
-                    Please transfer the amount and upload the screenshot above. Our admin will verify and process your order immediately.
-                  </p>
 
                   <button 
                     onClick={executeBankTransferOrder}
                     disabled={loading || !paymentReceiptUrl}
-                    style={{ width: '100%', padding: '1rem', background: (!paymentReceiptUrl || loading) ? '#94a3b8' : '#0284c7', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', cursor: (!paymentReceiptUrl || loading) ? 'not-allowed' : 'pointer', transition: 'background 0.2s' }}
+                    style={{ width: '100%', padding: '1rem', background: (!paymentReceiptUrl || loading) ? '#e2e8f0' : '#0f172a', color: (!paymentReceiptUrl || loading) ? '#94a3b8' : 'white', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 600, cursor: (!paymentReceiptUrl || loading) ? 'not-allowed' : 'pointer', transition: 'all 0.2s', boxShadow: (!paymentReceiptUrl || loading) ? 'none' : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}
                   >
-                    {loading ? 'Confirming...' : 'I Understand, Place Order'}
+                    {loading ? 'Processing...' : 'Confirm Order Placed'}
                   </button>
                 </div>
               </div>
