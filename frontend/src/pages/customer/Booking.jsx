@@ -921,72 +921,117 @@ export default function Booking() {
 
         {/* Step 4: Details & Priority */}
         {step === 4 && (
-          <div className="wizard-step luxury-card">
-            <h2 className="step-title">Order Preferences</h2>
-
-            <div className="luxury-form-group" style={{ marginBottom: '1.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '12px' }}>
-              <h3 style={{ marginBottom: '1rem' }}>Shipping Details (via PostEx)</h3>
-              
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--stone)' }}>City <span style={{color: 'red'}}>*</span></label>
-              <select 
-                className="luxury-input" 
-                style={{ marginBottom: '1rem', width: '100%', appearance: 'auto' }}
-                value={deliveryCity}
-                onChange={(e) => setDeliveryCity(e.target.value)}
-              >
-                {operationalCities.map((city, idx) => (
-                  <option key={idx} value={city.operationalCityName}>{city.operationalCityName}</option>
-                ))}
-              </select>
-
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--stone)' }}>Complete Delivery Address <span style={{color: 'red'}}>*</span></label>
-              <textarea 
-                className="luxury-textarea" 
-                rows="2"
-                placeholder="House #, Street, Block, Area..."
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-              ></textarea>
+          <div className="wizard-step luxury-card" style={{ maxWidth: '900px', margin: '0 auto', padding: window.innerWidth < 768 ? '1.5rem' : '3rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: 300, color: 'var(--onyx)', marginBottom: '0.5rem', fontFamily: 'var(--font-serif)' }}>Final Details</h2>
+              <p style={{ color: 'var(--stone)', fontSize: '1rem' }}>Let us know where to ship and any special requests.</p>
             </div>
 
-            <div className="luxury-form-group">
-              <label>Additional Design Notes (Optional)</label>
-              <textarea 
-                rows="4" 
-                placeholder="e.g. Please make the collar extra stiff, or keep the fit slightly loose."
-                value={customerNote}
-                onChange={(e) => setCustomerNote(e.target.value)}
-                className="luxury-textarea"
-              ></textarea>
-            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+              {/* Left Column: Shipping & Notes */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--onyx)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Shipping Address
+                  </h3>
+                  
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, color: '#64748b', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>City <span style={{color: '#ef4444'}}>*</span></label>
+                    <select 
+                      className="luxury-input" 
+                      style={{ width: '100%', appearance: 'auto', padding: '0.875rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc' }}
+                      value={deliveryCity}
+                      onChange={(e) => setDeliveryCity(e.target.value)}
+                    >
+                      {operationalCities.map((city, idx) => (
+                        <option key={idx} value={city.operationalCityName}>{city.operationalCityName}</option>
+                      ))}
+                    </select>
+                  </div>
 
-            <div className="priority-section">
-              <h3 style={{ marginBottom: '1rem' }}>Delivery Speed</h3>
-              <label className={`priority-card ${!isRush ? 'selected' : ''}`}>
-                <input type="radio" name="rush" checked={!isRush} onChange={() => setIsRush(false)} />
-                <div className="priority-info">
-                  <h4>Standard Delivery</h4>
-                  <p>5-7 working days. Included in base price.</p>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, color: '#64748b', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Address <span style={{color: '#ef4444'}}>*</span></label>
+                    <textarea 
+                      className="luxury-textarea" 
+                      rows="3"
+                      style={{ width: '100%', padding: '0.875rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', resize: 'vertical' }}
+                      placeholder="House #, Street, Block, Area..."
+                      value={deliveryAddress}
+                      onChange={(e) => setDeliveryAddress(e.target.value)}
+                    ></textarea>
+                  </div>
                 </div>
-              </label>
 
-              <label className={`priority-card rush-card ${isRush ? 'selected' : ''}`}>
-                <input type="radio" name="rush" checked={isRush} onChange={() => setIsRush(true)} />
-                <div className="priority-info">
-                  <h4>Expedited Rush ⚡</h4>
-                  <p>2-3 working days. +Rs. 1,000 extra charge.</p>
+                <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--onyx)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Additional Notes
+                  </h3>
+                  <textarea 
+                    rows="3" 
+                    style={{ width: '100%', padding: '0.875rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', resize: 'vertical' }}
+                    placeholder="Special instructions for the tailor..."
+                    value={customerNote}
+                    onChange={(e) => setCustomerNote(e.target.value)}
+                    className="luxury-textarea"
+                  ></textarea>
                 </div>
-              </label>
+              </div>
+
+              {/* Right Column: Delivery Speed */}
+              <div>
+                <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02)', height: '100%' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--onyx)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Delivery Speed
+                  </h3>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <label style={{ 
+                      display: 'block', padding: '1.25rem', borderRadius: '10px', 
+                      border: !isRush ? '2px solid var(--onyx)' : '1px solid #e2e8f0', 
+                      backgroundColor: !isRush ? '#f8fafc' : '#fff', cursor: 'pointer', transition: 'all 0.2s',
+                      boxShadow: !isRush ? '0 4px 6px -1px rgba(0,0,0,0.05)' : 'none'
+                    }}>
+                      <input type="radio" name="rush" checked={!isRush} onChange={() => setIsRush(false)} style={{ display: 'none' }} />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                        <h4 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--onyx)', fontWeight: 600 }}>Standard</h4>
+                        <span style={{ fontSize: '0.85rem', background: '#e2e8f0', color: '#475569', padding: '0.25rem 0.5rem', borderRadius: '4px', fontWeight: 500 }}>Included</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b' }}>5-7 working days delivery after fabric is received.</p>
+                    </label>
+      
+                    <label style={{ 
+                      display: 'block', padding: '1.25rem', borderRadius: '10px', 
+                      border: isRush ? '2px solid #3b82f6' : '1px solid #e2e8f0', 
+                      backgroundColor: isRush ? '#eff6ff' : '#fff', cursor: 'pointer', transition: 'all 0.2s',
+                      boxShadow: isRush ? '0 4px 12px -2px rgba(59,130,246,0.15)' : 'none'
+                    }}>
+                      <input type="radio" name="rush" checked={isRush} onChange={() => setIsRush(true)} style={{ display: 'none' }} />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                        <h4 style={{ margin: 0, fontSize: '1.05rem', color: '#1e40af', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          Expedited Rush 
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        </h4>
+                        <span style={{ fontSize: '0.85rem', background: '#dbeafe', color: '#2563eb', padding: '0.25rem 0.5rem', borderRadius: '4px', fontWeight: 600 }}>+Rs. 1,000</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.9rem', color: '#3b82f6' }}>2-3 working days. Skip the queue.</p>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="wizard-actions split">
-              <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
+            <div className="wizard-actions split" style={{ marginTop: '3rem', borderTop: '1px solid #e2e8f0', paddingTop: '2rem' }}>
+              <button className="btn btn-outline btn-lg" onClick={handleBack} style={{ padding: '0.875rem 2rem' }}>&larr; Back</button>
               <button 
                 className="btn btn-primary btn-lg" 
                 onClick={handleNext}
                 disabled={!deliveryCity || !deliveryAddress || deliveryAddress.trim().length < 5}
+                style={{ padding: '0.875rem 2.5rem', fontSize: '1.05rem' }}
               >
-                Proceed to Summary →
+                Proceed to Summary &rarr;
               </button>
             </div>
           </div>
