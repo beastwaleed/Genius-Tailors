@@ -251,6 +251,7 @@ export default function Booking() {
   const [loading, setLoading] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [bankTransferModalOpen, setBankTransferModalOpen] = useState(false);
+  const [paymentReceiptUrl, setPaymentReceiptUrl] = useState('');
   
   const [selectedDesignModal, setSelectedDesignModal] = useState(null);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
@@ -451,7 +452,31 @@ export default function Booking() {
     setBankTransferModalOpen(true);
   };
 
+  const handleReceiptUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    setLoading(true);
+    const toastId = toast.loading('Uploading receipt...');
+    try {
+      const { data } = await api.post('/api/upload/reference-image', formData);
+      setPaymentReceiptUrl(data.url);
+      toast.success('Receipt uploaded successfully!', { id: toastId });
+    } catch (err) {
+      toast.error('Failed to upload receipt. Please try again.', { id: toastId });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const executeBankTransferOrder = async () => {
+    if (!paymentReceiptUrl) {
+      return toast.error('Please upload your payment receipt to confirm the order');
+    }
+
     setLoading(true);
     const toastId = toast.loading('Confirming your order...');
 
@@ -474,7 +499,8 @@ export default function Booking() {
         isRush,
         customerNote,
         advancePaid: advanceAmount,
-        advancePaymentStatus: 'Pending'
+        advancePaymentStatus: 'Pending',
+        paymentReceiptUrl
       };
 
       const { data } = await api.post('/api/orders', payload);
@@ -1161,14 +1187,25 @@ export default function Booking() {
                     </div>
                   </div>
 
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#475569', marginBottom: '0.5rem', fontWeight: 600 }}>Upload Payment Screenshot <span style={{color: '#ef4444'}}>*</span></label>
+                    <div style={{ padding: '0.5rem', border: '1px dashed #cbd5e1', borderRadius: '6px', textAlign: 'center', background: paymentReceiptUrl ? '#f0fdf4' : '#f8fafc' }}>
+                      {paymentReceiptUrl ? (
+                        <div style={{ color: '#16a34a', fontSize: '0.9rem', fontWeight: 500 }}>✓ Receipt Uploaded</div>
+                      ) : (
+                        <input type="file" accept="image/*" onChange={handleReceiptUpload} style={{ fontSize: '0.85rem' }} disabled={loading} />
+                      )}
+                    </div>
+                  </div>
+
                   <p style={{ fontSize: '0.85rem', color: '#64748b', textAlign: 'center', marginBottom: '1.5rem', lineHeight: 1.5 }}>
-                    After placing the order, please transfer the amount and send a screenshot to our WhatsApp support number. Our admin will verify and process your order immediately.
+                    Please transfer the amount and upload the screenshot above. Our admin will verify and process your order immediately.
                   </p>
 
                   <button 
                     onClick={executeBankTransferOrder}
-                    disabled={loading}
-                    style={{ width: '100%', padding: '1rem', background: '#0284c7', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.2s' }}
+                    disabled={loading || !paymentReceiptUrl}
+                    style={{ width: '100%', padding: '1rem', background: (!paymentReceiptUrl || loading) ? '#94a3b8' : '#0284c7', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', cursor: (!paymentReceiptUrl || loading) ? 'not-allowed' : 'pointer', transition: 'background 0.2s' }}
                   >
                     {loading ? 'Confirming...' : 'I Understand, Place Order'}
                   </button>

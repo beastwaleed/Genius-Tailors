@@ -219,6 +219,7 @@ export default function AdminOrderDetails() {
               onChange={(e) => handleUpdateStatus(e.target.value)}
             >
               <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
               <option value="Cutting">Cutting</option>
               <option value="Stitching">Stitching</option>
               <option value="Ready">Ready</option>
@@ -406,12 +407,15 @@ export default function AdminOrderDetails() {
                  </>
                )}
 
-               <div style={{ marginTop: '2rem', width: '100%', background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.1)' }}>
-                 <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Payment Status</div>
-                 <div style={{ fontSize: '1.1rem', fontWeight: 600, color: order.advancePaymentStatus === 'Paid' ? '#10b981' : '#f59e0b' }}>
-                   {order.advancePaymentStatus === 'Paid' ? 'Advance Paid' : 'Pending'} via {order.advancePaid > 0 ? 'PostEx XPay' : 'Manual'}
-                 </div>
-               </div>
+                <div style={{ marginTop: '2rem', width: '100%', background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Payment Status</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 600, color: order.advancePaymentStatus === 'Paid' ? '#10b981' : '#f59e0b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>{order.advancePaymentStatus === 'Paid' ? 'Advance Paid' : 'Pending'} via {order.advancePaid > 0 ? 'PostEx XPay' : 'Manual'}</span>
+                    {order.paymentReceiptUrl && (
+                      <a href={order.paymentReceiptUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: '#3b82f6', textDecoration: 'none', background: 'rgba(59,130,246,0.1)', padding: '0.25rem 0.75rem', borderRadius: '4px' }}>View Receipt</a>
+                    )}
+                  </div>
+                </div>
             </div>
 
             {/* Custom Notes */}
