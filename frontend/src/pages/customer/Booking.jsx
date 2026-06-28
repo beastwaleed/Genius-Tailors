@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import CustomerLayout from '../../components/CustomerLayout';
 import api from '../../api';
@@ -204,6 +204,7 @@ export default function Booking() {
   const [hasDiscount, setHasDiscount] = useState(false);
   const [abandonedCartId, setAbandonedCartId] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const orderPlacedRef = useRef(false);
   
   useEffect(() => {
     setSelectedProfileId('');
@@ -374,12 +375,28 @@ export default function Booking() {
     
   }, [step, serviceName, totalPrice, userInfo]);
 
-  // Alert Admin when user reaches the final step (highest drop-off risk)
+  // Alert Admin on unload / unmount if not recovered
   useEffect(() => {
-    if (step === 4 && abandonedCartId) {
-      api.post(`/api/abandoned-carts/${abandonedCartId}/notify-admin`).catch(() => {});
-    }
-  }, [step, abandonedCartId]);
+    const notifyAdmin = () => {
+      if (abandonedCartId && !orderPlacedRef.current) {
+        const token = localStorage.getItem('token');
+        const baseURL = api.defaults.baseURL || '';
+        fetch(`${baseURL}/api/abandoned-carts/${abandonedCartId}/notify-admin`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          keepalive: true
+        }).catch(() => {});
+      }
+    };
+
+    window.addEventListener('beforeunload', notifyAdmin);
+    return () => {
+      window.removeEventListener('beforeunload', notifyAdmin);
+      notifyAdmin();
+    };
+  }, [abandonedCartId]);
 
   const handleNext = () => setStep(s => s + 1);
   const handleBack = () => setStep(s => s - 1);
@@ -460,6 +477,7 @@ export default function Booking() {
       };
 
       const { data } = await api.post('/api/orders', payload);
+      orderPlacedRef.current = true;
       
       // If we were tracking this checkout session, mark it as recovered
       if (abandonedCartId) {
