@@ -72,7 +72,7 @@ import angularEdge02 from '../../assets/AngularEdge02.jpeg';
 const SERVICES_PRICES = {
   'Kameez Shalwar': 1800,
   'Kurta Shalwar': 1800,
-  'Kurta Pajama': 1800,
+  'Kurta Pajama': 2000,
   'Waistcoat': 3500,
   'Kameez Shalwar Design': 2200,
   'Kurta Shalwar Design': 2200,

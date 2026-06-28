@@ -97,7 +97,7 @@ export const ALL_SERVICES = [
     urdu: 'کرتا پاجامہ',
     tagline: 'Evening Elegance',
     desc: 'An elegant ethnic option perfect for events, evenings, and festive wear. Tailored with precision to give you a sharp, distinguished look.',
-    price: 'From Rs. 1,800',
+    price: 'From Rs. 2,000',
     deliveryDays: '5–7 working days',
     img: HeroKurtaPajama,
     badge: 'Trending',
