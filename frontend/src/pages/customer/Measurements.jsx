@@ -9,7 +9,6 @@ import mannequinImg from '../../assets/port_mannequin_kurta_1781781041804.png';
 import imgKameez from '../../assets/model_kameez_shalwar.png';
 import imgKurta from '../../assets/model_kurta_pajama.png';
 import imgWaistcoat from '../../assets/model_waistcoat.png';
-import AIMeasurementCamera from '../../components/AIMeasurementCamera';
 
 const IMAGE_MAP = {
   'Kameez Shalwar': imgKameez,
@@ -159,7 +158,6 @@ export default function Measurements() {
   const [selectedService, setSelectedService] = useState('Kameez Shalwar');
   const [measurements, setMeasurements] = useState({});
   const [activeField, setActiveField] = useState(null);
-  const [isAiCameraOpen, setIsAiCameraOpen] = useState(false);
 
   useEffect(() => {
     fetchProfiles();
@@ -331,34 +329,6 @@ export default function Measurements() {
     setMeasurements(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleAiMeasurementsReady = (aiData) => {
-    toast.success('AI Scan Complete! Fields auto-filled.');
-    setIsAiCameraOpen(false);
-
-    // Map the generic AI output to the specific service fields
-    const newMeasurements = { ...measurements };
-    const topLabel = SERVICE_FIELDS[selectedService].top.label;
-    const bottomLabel = SERVICE_FIELDS[selectedService].bottom.label;
-
-    if (topLabel) {
-      if (SERVICE_FIELDS[selectedService].top.fields.includes('Shoulder')) newMeasurements[`${topLabel} Shoulder`] = aiData.shoulder;
-      if (SERVICE_FIELDS[selectedService].top.fields.includes('Sleeves')) newMeasurements[`${topLabel} Sleeves`] = aiData.sleeves;
-      if (SERVICE_FIELDS[selectedService].top.fields.includes('Length')) newMeasurements[`${topLabel} Length`] = aiData.kameezLength;
-      if (SERVICE_FIELDS[selectedService].top.fields.includes('Chest')) newMeasurements[`${topLabel} Chest`] = aiData.chest;
-      if (SERVICE_FIELDS[selectedService].top.fields.includes('Abdomen')) newMeasurements[`${topLabel} Abdomen`] = aiData.abdomen;
-      if (SERVICE_FIELDS[selectedService].top.fields.includes('Hips')) newMeasurements[`${topLabel} Hips`] = aiData.hips;
-      if (SERVICE_FIELDS[selectedService].top.fields.includes('Collar')) newMeasurements[`${topLabel} Collar`] = aiData.neck;
-    }
-
-    if (bottomLabel) {
-      if (SERVICE_FIELDS[selectedService].bottom.fields.includes('Length')) newMeasurements[`${bottomLabel} Length`] = aiData.shalwarLength;
-      if (SERVICE_FIELDS[selectedService].bottom.fields.includes('Bottom')) newMeasurements[`${bottomLabel} Bottom`] = aiData.bottom;
-      if (SERVICE_FIELDS[selectedService].bottom.fields.includes('Crotch Depth')) newMeasurements[`${bottomLabel} Crotch Depth`] = aiData.crotchDepth;
-      if (SERVICE_FIELDS[selectedService].bottom.fields.includes('Hips')) newMeasurements[`${bottomLabel} Hips`] = aiData.hips;
-    }
-
-    setMeasurements(newMeasurements);
-  };
 
   const handleHWEstimate = (e) => {
     e.preventDefault();
@@ -513,11 +483,10 @@ export default function Measurements() {
                   <div className="ai-scanner-section" style={{ marginTop: '1.5rem', background: 'linear-gradient(135deg, rgba(201, 169, 110, 0.1), transparent)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(201, 169, 110, 0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                     <div>
                       <strong style={{ display: 'block', color: 'var(--onyx)', marginBottom: '0.25rem' }}>✨ Smart Auto-Measure</strong>
-                      <span style={{ fontSize: '0.85rem', color: 'var(--stone)' }}>Use your camera or input vitals to estimate.</span>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--stone)' }}>Input your vitals to estimate mathematically.</span>
                     </div>
                     <div className="ai-scanner-btns">
                       <button type="button" className="btn btn-outline" style={{ borderColor: '#C9A96E', color: '#C9A96E' }} onClick={() => setShowHWModal(true)}>Height/Weight 📐</button>
-                      <button type="button" className="btn btn-gold" onClick={() => setIsAiCameraOpen(true)}>AI Camera 📸</button>
                     </div>
                   </div>
 
@@ -1097,13 +1066,6 @@ export default function Measurements() {
         }
       `}</style>
 
-      {/* AI Camera Modal */}
-      {isAiCameraOpen && (
-        <AIMeasurementCamera
-          onMeasurementsReady={handleAiMeasurementsReady}
-          onClose={() => setIsAiCameraOpen(false)}
-        />
-      )}
     </CustomerLayout>
   );
 }
