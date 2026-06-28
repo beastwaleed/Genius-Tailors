@@ -989,6 +989,19 @@ app.put('/api/season/:id/deactivate', protect, admin, async (req, res) => {
   }
 });
 
+// Delete a season (Admin)
+app.delete('/api/season/:id', protect, admin, async (req, res) => {
+  try {
+    const season = await SeasonConfig.findByIdAndDelete(req.params.id);
+    if (!season) {
+      return res.status(404).json({ message: 'Season not found' });
+    }
+    res.json({ message: 'Season deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete season', error: error.message });
+  }
+});
+
 /**
  * GET /api/admin/orders/priority-queue
  *
