@@ -160,8 +160,10 @@ export default function Home() {
     api.get('/api/services')
       .then(res => {
         const dbServices = res.data;
+        if (!Array.isArray(dbServices)) return;
+        
         const merged = SERVICES_PREVIEW.map(staticSvc => {
-          const dbSvc = dbServices.find(s => s.name.toLowerCase() === staticSvc.name.toLowerCase());
+          const dbSvc = dbServices.find(s => s.name && s.name.toLowerCase() === staticSvc.name.toLowerCase());
           if (dbSvc) {
             return {
               ...staticSvc,
@@ -536,7 +538,7 @@ export default function Home() {
               </div>
               
               <div className="ig-grid">
-                {[img1, img3, img4, img5].map((img, idx) => (
+                {[ShalwarKameezFeaturedImage, HeroKurtaPajama, kurtaShalwarFeatured, WaistcoatFront].map((img, idx) => (
                   <a key={idx} href="https://www.instagram.com/geniustailors/" target="_blank" rel="noopener noreferrer" className="ig-post">
                     <img src={img} alt="Instagram post" />
                     <div className="ig-overlay">
