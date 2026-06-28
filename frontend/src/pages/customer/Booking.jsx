@@ -265,12 +265,15 @@ export default function Booking() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profRes, ordRes, userRes, citiesRes] = await Promise.all([
+        const [profRes, ordRes, userRes, citiesRes, fabRes, srvRes] = await Promise.all([
           api.get('/api/measurements').catch(() => ({ data: [] })),
           api.get('/api/orders/myorders').catch(() => ({ data: [] })),
           api.get('/api/profile').catch(() => ({ data: {} })),
-          api.get('/api/shipping/cities').catch(() => ({ data: [] }))
+          api.get('/api/shipping/cities').catch(() => ({ data: [] })),
+          api.get('/api/fabrics').catch(() => ({ data: [] })),
+          api.get('/api/services').catch(() => ({ data: [] }))
         ]);
+        
         if (profRes.data) setProfiles(profRes.data);
         if (ordRes.data && ordRes.data.length === 0) setHasDiscount(true);
         if (userRes.data) {
@@ -280,20 +283,9 @@ export default function Booking() {
           setUserInfo(userRes.data);
         }
         if (citiesRes.data) setOperationalCities(citiesRes.data);
-        
-        try {
-          const fabRes = await api.get('/api/fabrics');
-          setDbFabrics(fabRes.data);
-        } catch (fabErr) {
-          console.error('Warning: Could not fetch fabrics from database', fabErr);
-        }
+        if (fabRes.data) setDbFabrics(fabRes.data);
+        if (srvRes.data) setDbServices(srvRes.data);
 
-        try {
-          const srvRes = await api.get('/api/services');
-          setDbServices(srvRes.data);
-        } catch (srvErr) {
-          console.error('Warning: Could not fetch services from database', srvErr);
-        }
       } catch (error) {
         console.error('Failed to fetch data', error);
       } finally {
