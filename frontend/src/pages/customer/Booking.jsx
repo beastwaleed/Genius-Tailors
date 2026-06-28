@@ -243,6 +243,7 @@ export default function Booking() {
   ];
 
   const [selectedFabric, setSelectedFabric] = useState(fabricList[0]);
+  const [viewingFabric, setViewingFabric] = useState(null);
   const [selectedColor, setSelectedColor] = useState('');
   const [isRush, setIsRush] = useState(false);
   const [customerNote, setCustomerNote] = useState('');
@@ -624,56 +625,99 @@ export default function Booking() {
                   <div 
                     key={opt._id || opt.name} 
                     className={`fabric-card ${selectedFabric.name === opt.name ? 'selected' : ''}`}
-                    onClick={() => { setSelectedFabric(opt); setSelectedColor(''); }}
+                    onClick={() => { 
+                      if (opt.name === 'Provide my own fabric') {
+                        setSelectedFabric(opt);
+                        setSelectedColor('');
+                      } else {
+                        setViewingFabric(opt);
+                        if (!selectedColor || selectedFabric.name !== opt.name) {
+                          setSelectedColor(opt.colors && opt.colors.length > 0 ? opt.colors[0].name : '');
+                        }
+                      }
+                    }}
                     style={{ 
                       border: selectedFabric.name === opt.name ? '2px solid var(--onyx)' : '1px solid #e2e8f0', 
                       borderRadius: '8px', cursor: 'pointer', overflow: 'hidden', transition: 'all 0.2s',
-                      boxShadow: selectedFabric.name === opt.name ? '0 10px 15px -3px rgba(0,0,0,0.1)' : 'none'
+                      boxShadow: selectedFabric.name === opt.name ? '0 10px 15px -3px rgba(0,0,0,0.1)' : 'none',
+                      position: 'relative'
                     }}
                   >
-                    <div className="fabric-img-wrapper" style={{ height: '140px', overflow: 'hidden', background: '#f1f5f9' }}>
+                    <div className="fabric-img-wrapper" style={{ height: '220px', overflow: 'hidden', background: '#f1f5f9' }}>
                       <img src={opt.imageUrl || opt.img} alt={opt.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
-                    <div className="fabric-info" style={{ padding: '1rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                        <h4 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--onyx)' }}>{opt.name}</h4>
-                        <span style={{ fontWeight: '600', fontSize: '0.9rem', color: opt.price === 0 ? 'var(--stone)' : 'var(--primary)' }}>
-                          {opt.price === 0 ? 'Free' : `+Rs. ${opt.price}`}
-                        </span>
-                      </div>
-                      <p style={{ margin: 0, color: 'var(--stone)', fontSize: '0.85rem', lineHeight: 1.4 }}>{opt.desc}</p>
+                    <div className="fabric-info" style={{ padding: '1rem', textAlign: 'center' }}>
+                      <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.05rem', color: 'var(--onyx)' }}>{opt.name}</h4>
+                      <span style={{ fontWeight: '600', fontSize: '0.9rem', color: opt.price === 0 ? 'var(--stone)' : 'var(--primary)' }}>
+                        {opt.price === 0 ? 'Free' : `+Rs. ${opt.price}`}
+                      </span>
                     </div>
+                    {selectedFabric.name === opt.name && selectedFabric.name !== 'Provide my own fabric' && (
+                      <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>✓</div>
+                    )}
                   </div>
                 ))}
               </div>
 
-              {selectedFabric.name !== 'Provide my own fabric' && (
-                <div className="color-selection fade-in" style={{ padding: '1.5rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
-                  <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>Select Fabric Color</h3>
-                  <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-                    {(selectedFabric.colors && selectedFabric.colors.length > 0 ? selectedFabric.colors : FABRIC_COLORS).map(color => (
-                      <label 
-                        key={color.name} 
-                        className="color-label"
-                        style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}
-                      >
-                        <input type="radio" name="color" checked={selectedColor === color.name} onChange={() => setSelectedColor(color.name)} style={{ display: 'none' }} />
-                        <div 
-                          className="color-swatch" 
-                          style={{ 
-                            width: '45px', height: '45px', borderRadius: '50%', backgroundColor: color.hex, 
-                            backgroundImage: color.imageUrl ? `url(${color.imageUrl})` : 'none',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            border: color.hex === '#ffffff' || color.hex === '#f8fafc' ? '1px solid #cbd5e1' : 'none',
-                            boxShadow: selectedColor === color.name ? '0 0 0 3px white, 0 0 0 5px var(--onyx)' : '0 2px 5px rgba(0,0,0,0.1)',
-                            transition: 'all 0.2s',
-                            transform: selectedColor === color.name ? 'scale(1.1)' : 'scale(1)'
+              {viewingFabric && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setViewingFabric(null)}>
+                  <div style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', width: '100%', maxWidth: '900px', display: 'flex', maxHeight: '90vh', flexDirection: window.innerWidth < 768 ? 'column' : 'row' }} onClick={e => e.stopPropagation()}>
+                    <div style={{ flex: 1, position: 'relative', minHeight: window.innerWidth < 768 ? '250px' : '400px', background: '#f1f5f9' }}>
+                      <img src={viewingFabric.imageUrl || viewingFabric.img} alt={viewingFabric.name} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+                    </div>
+                    <div style={{ flex: 1, padding: '2rem', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                        <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: 'var(--onyx)', margin: 0, fontFamily: 'var(--font-serif)' }}>{viewingFabric.name}</h2>
+                        <button onClick={() => setViewingFabric(null)} style={{ background: 'transparent', border: 'none', fontSize: '1.75rem', cursor: 'pointer', color: '#64748b', lineHeight: 1 }}>&times;</button>
+                      </div>
+                      <p style={{ fontSize: '1.25rem', fontWeight: '600', color: 'var(--primary)', marginBottom: '1.5rem' }}>Rs. {viewingFabric.price}</p>
+                      {viewingFabric.desc && <p style={{ color: '#64748b', fontSize: '0.95rem', marginBottom: '2rem', lineHeight: '1.6' }}>{viewingFabric.desc}</p>}
+                      
+                      <div style={{ marginBottom: '2rem' }}>
+                        <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: 'var(--onyx)', fontWeight: '600' }}>Color: <span style={{ fontWeight: 'normal', color: '#64748b' }}>{selectedColor}</span></h3>
+                        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                          {(viewingFabric.colors && viewingFabric.colors.length > 0 ? viewingFabric.colors : FABRIC_COLORS).map(color => (
+                            <label 
+                              key={color.name} 
+                              className="color-label"
+                              style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}
+                            >
+                              <input type="radio" name="modal-color" checked={selectedColor === color.name} onChange={() => setSelectedColor(color.name)} style={{ display: 'none' }} />
+                              <div 
+                                style={{ 
+                                  width: '45px', height: '45px', borderRadius: '4px', backgroundColor: color.hex, 
+                                  backgroundImage: color.imageUrl ? `url(${color.imageUrl})` : 'none',
+                                  backgroundSize: 'cover',
+                                  backgroundPosition: 'center',
+                                  border: color.hex === '#ffffff' || color.hex === '#f8fafc' ? '1px solid #cbd5e1' : '1px solid #e2e8f0',
+                                  outline: selectedColor === color.name ? '2px solid var(--onyx)' : 'none',
+                                  outlineOffset: '2px',
+                                  transition: 'all 0.2s',
+                                  transform: selectedColor === color.name ? 'scale(1.05)' : 'scale(1)'
+                                }}
+                                title={color.name}
+                              ></div>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+                        <button 
+                          className="btn btn-primary" 
+                          style={{ width: '100%', padding: '1rem', fontSize: '1rem', background: 'var(--onyx)', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                          onClick={() => {
+                            setSelectedFabric(viewingFabric);
+                            if (!selectedColor && viewingFabric.colors && viewingFabric.colors.length > 0) {
+                              setSelectedColor(viewingFabric.colors[0].name);
+                            }
+                            setViewingFabric(null);
                           }}
-                        ></div>
-                        <span style={{ fontSize: '0.8rem', fontWeight: selectedColor === color.name ? '600' : '500', color: selectedColor === color.name ? 'var(--onyx)' : 'var(--stone)' }}>{color.name}</span>
-                      </label>
-                    ))}
+                        >
+                          Confirm Fabric
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
