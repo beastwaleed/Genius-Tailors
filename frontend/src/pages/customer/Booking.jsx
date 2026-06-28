@@ -18,6 +18,10 @@ import imgRoundSleeves from '../../assets/roundSleeves.jpeg';
 import imgSingleCuff from '../../assets/styles/single_cuff.jpg';
 import imgDoubleCuff from '../../assets/styles/double_cuff.jpg';
 
+import roundCuffSK from '../../assets/roundCuffSK.jpeg';
+import doubleCuffSK from '../../assets/doubleCuffSK.jpeg';
+import shirtCollarSK from '../../assets/shirtCollarSK.jpeg';
+
 import imgSidePockets from '../../assets/styles/side_pockets.jpg';
 import imgFrontSidePockets from '../../assets/styles/front_side_pockets.jpg';
 
@@ -82,11 +86,13 @@ const SERVICES_PRICES = {
 const STYLE_CONFIGS = {
   'Kameez Shalwar': {
     collarTypes: [
-      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
+      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] },
+      { name: 'Shirt Collar', img: shirtCollarSK, subs: ['2 inch', '2.25 inch', '2.5 inch', 'arrow collar(1.75 inch)'] }
     ],
     cuffs: [
-      { name: 'Round Sleeves', img: imgRoundSleeves, price: 0 },
-      { name: 'Square Cuff', img: imgSingleCuff, price: 0 }
+      { name: 'Round Cuff', img: roundCuffSK, price: 0 },
+      { name: 'Square Cuff', img: imgSingleCuff, price: 0 },
+      { name: 'Double Cuff', img: doubleCuffSK, price: 0 }
     ],
     pockets: [
       { name: '2 Side Pockets', img: imgSidePockets },
