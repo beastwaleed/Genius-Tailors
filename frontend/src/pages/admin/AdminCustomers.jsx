@@ -42,31 +42,13 @@ const ADMIN_STYLE_CONFIGS = {
     bottomDesigns: []
   },
   'Kameez Shalwar Design': {
-    collarTypes: ['Ban Collar', 'Shirt Collar'],
-    collarSubs: {
-      'Ban Collar': ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'],
-      'Shirt Collar': ['2 inch notch', '2.25 inch notch', 'Arrow Collar']
-    },
-    cuffs: ['Round Cuff', 'Square Cuff', 'Double Cuff'],
-    pockets: ['2 Side Pockets', '1 Front and 2 Sides'],
-    bottomPockets: ['No Pocket', '1 Pocket'],
-    bottomDesigns: ['No Design', 'Zigzag Stitch']
+    designs: ["'X-Stitch' Classic", 'Elite Aura Premium', 'Triple Edge Stitch']
   },
   'Kurta Shalwar Design': {
-    collarTypes: ['Ban Collar'],
-    collarSubs: { 'Ban Collar': ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] },
-    cuffs: ['Round Sleeves', 'Square Cuff'],
-    pockets: ['2 Side Pockets', '1 Front and 2 Sides'],
-    bottomPockets: ['No Pocket', '1 Pocket'],
-    bottomDesigns: ['No Design', 'Zigzag Stitch']
+    designs: ['Royal Heritage', 'Delta Fit', 'Angular Edge']
   },
   'Zardari Suit': {
-    collarTypes: ['Round Neck', 'Sherwani Collar', 'V Collar'],
-    collarSubs: { 'Round Neck': [], 'Sherwani Collar': [], 'V Collar': [] },
-    cuffs: [],
-    pockets: [],
-    bottomPockets: [],
-    bottomDesigns: []
+    designs: ['Royal Slate Classic', 'Urban Core']
   }
 };
 
@@ -621,13 +603,14 @@ export default function AdminCustomers() {
                   const s = services.find(s => s._id === sId);
                   
                   const sName = s ? s.name : 'Kameez Shalwar';
-                      const config = ADMIN_STYLE_CONFIGS[sName] || ADMIN_STYLE_CONFIGS['Kameez Shalwar'];
+                  const config = ADMIN_STYLE_CONFIGS[sName] || ADMIN_STYLE_CONFIGS['Kameez Shalwar'];
                   
                   setOrderForm({
                     ...orderForm, 
                     serviceName: sId, 
                     totalPrice: s ? s.basePrice : '',
                     styleVariations: {
+                      design: config.designs?.[0] || '',
                       collar: config.collarTypes?.[0] || '',
                       collarSub: config.collarSubs?.[config.collarTypes?.[0]]?.[0] || '',
                       cuff: config.cuffs?.[0] || '',
@@ -674,80 +657,96 @@ export default function AdminCustomers() {
                     
                     return (
                       <>
-                        {config.collarTypes && config.collarTypes.length > 0 && (
-                          <div>
-                            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Collar Type</label>
+                        {config.designs && config.designs.length > 0 ? (
+                          <div style={{ gridColumn: '1 / -1' }}>
+                            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Design Selection</label>
                             <select 
-                              value={orderForm.styleVariations.collar} 
-                              onChange={(e) => {
-                                const newCollar = e.target.value;
-                                setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, collar: newCollar, collarSub: (config.collarSubs[newCollar] || [])[0] }});
-                              }}
+                              value={orderForm.styleVariations.design || ''} 
+                              onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, design: e.target.value}})}
                               style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
                             >
-                              {config.collarTypes.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                              <option value="">Select a Design...</option>
+                              {config.designs.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                             </select>
                           </div>
-                        )}
-                        {config.collarSubs && config.collarSubs[orderForm.styleVariations.collar] && config.collarSubs[orderForm.styleVariations.collar].length > 0 && (
-                          <div>
-                            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Collar Size / Sub-style</label>
-                            <select 
-                              value={orderForm.styleVariations.collarSub} 
-                              onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, collarSub: e.target.value}})}
-                              style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
-                            >
-                              {(config.collarSubs[orderForm.styleVariations.collar] || []).map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </div>
-                        )}
-                        {config.cuffs && config.cuffs.length > 0 && (
-                          <div>
-                            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Cuff / Sleeves</label>
-                            <select 
-                              value={orderForm.styleVariations.cuff} 
-                              onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, cuff: e.target.value}})}
-                              style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
-                            >
-                              {config.cuffs.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </div>
-                        )}
-                        {config.pockets && config.pockets.length > 0 && (
-                          <div>
-                            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Pockets</label>
-                            <select 
-                              value={orderForm.styleVariations.pockets} 
-                              onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, pockets: e.target.value}})}
-                              style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
-                            >
-                              {config.pockets.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </div>
-                        )}
-                        {config.bottomPockets && config.bottomPockets.length > 0 && (
-                          <div>
-                            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Bottom Pocket</label>
-                            <select 
-                              value={orderForm.styleVariations.bottomPocket} 
-                              onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, bottomPocket: e.target.value}})}
-                              style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
-                            >
-                              {config.bottomPockets.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </div>
-                        )}
-                        {config.bottomDesigns && config.bottomDesigns.length > 0 && (
-                          <div>
-                            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Bottom Design</label>
-                            <select 
-                              value={orderForm.styleVariations.bottomDesign} 
-                              onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, bottomDesign: e.target.value}})}
-                              style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
-                            >
-                              {config.bottomDesigns.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                            </select>
-                          </div>
+                        ) : (
+                          <>
+                            {config.collarTypes && config.collarTypes.length > 0 && (
+                              <div>
+                                <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Collar Type</label>
+                                <select 
+                                  value={orderForm.styleVariations.collar || ''} 
+                                  onChange={(e) => {
+                                    const newCollar = e.target.value;
+                                    setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, collar: newCollar, collarSub: (config.collarSubs[newCollar] || [])[0] }});
+                                  }}
+                                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
+                                >
+                                  {config.collarTypes.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                </select>
+                              </div>
+                            )}
+                            {config.collarSubs && config.collarSubs[orderForm.styleVariations.collar] && config.collarSubs[orderForm.styleVariations.collar].length > 0 && (
+                              <div>
+                                <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Collar Size / Sub-style</label>
+                                <select 
+                                  value={orderForm.styleVariations.collarSub || ''} 
+                                  onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, collarSub: e.target.value}})}
+                                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
+                                >
+                                  {(config.collarSubs[orderForm.styleVariations.collar] || []).map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                </select>
+                              </div>
+                            )}
+                            {config.cuffs && config.cuffs.length > 0 && (
+                              <div>
+                                <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Cuff / Sleeves</label>
+                                <select 
+                                  value={orderForm.styleVariations.cuff || ''} 
+                                  onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, cuff: e.target.value}})}
+                                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
+                                >
+                                  {config.cuffs.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                </select>
+                              </div>
+                            )}
+                            {config.pockets && config.pockets.length > 0 && (
+                              <div>
+                                <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Pockets</label>
+                                <select 
+                                  value={orderForm.styleVariations.pockets || ''} 
+                                  onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, pockets: e.target.value}})}
+                                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
+                                >
+                                  {config.pockets.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                </select>
+                              </div>
+                            )}
+                            {config.bottomPockets && config.bottomPockets.length > 0 && (
+                              <div>
+                                <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Bottom Pocket</label>
+                                <select 
+                                  value={orderForm.styleVariations.bottomPocket || ''} 
+                                  onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, bottomPocket: e.target.value}})}
+                                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
+                                >
+                                  {config.bottomPockets.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                </select>
+                              </div>
+                            )}
+                            {config.bottomDesigns && config.bottomDesigns.length > 0 && (
+                              <div>
+                                <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.8rem', color: '#64748b' }}>Bottom Design</label>
+                                <select 
+                                  value={orderForm.styleVariations.bottomDesign || ''} 
+                                  onChange={(e) => setOrderForm({...orderForm, styleVariations: {...orderForm.styleVariations, bottomDesign: e.target.value}})}
+                                  style={{ width: '100%', padding: '0.5rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.9rem' }}
+                                >
+                                  {config.bottomDesigns.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                </select>
+                              </div>
+                            )}
+                          </>
                         )}
                       </>
                     );
