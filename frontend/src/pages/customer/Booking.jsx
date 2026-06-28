@@ -955,7 +955,13 @@ export default function Booking() {
 
             <div className="wizard-actions split">
               <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
-              <button className="btn btn-primary btn-lg" onClick={handleNext}>Proceed to Summary →</button>
+              <button 
+                className="btn btn-primary btn-lg" 
+                onClick={handleNext}
+                disabled={!deliveryCity || !deliveryAddress || deliveryAddress.trim().length < 5}
+              >
+                Proceed to Summary →
+              </button>
             </div>
           </div>
         )}
