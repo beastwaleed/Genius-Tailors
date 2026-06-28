@@ -183,7 +183,7 @@ const sendContactEmail = async (name, email, subject, message) => {
 };
 
 // ── Email 5: Admin New Order Notification ────────────────────────────────────
-const sendAdminNewOrderNotification = async (customerName, serviceName, totalPrice, orderId, isPriority, isRush) => {
+const sendAdminNewOrderNotification = async (customerName, serviceName, totalPrice, orderId, isPriority, isRush, paymentReceiptUrl = '') => {
   const adminEmail = 'geniustailors110@gmail.com';
   
   const priorityBadge = isRush ? '<span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">Rush</span>' : '';
@@ -192,7 +192,7 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
       <div style="background: #1a1a2e; padding: 24px; text-align: center;">
-        <h1 style="color: #ffd700; margin: 0; font-size: 22px;">New Order Received! 🔔</h1>
+        <h1 style="color: #ffd700; margin: 0; font-size: 22px;">New Order Received! 🛍️</h1>
       </div>
       <div style="padding: 32px;">
         <p style="color: #333;">Hello Admin,</p>
@@ -202,6 +202,7 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Garment:</strong> ${serviceName} ${priorityBadge}</p>
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Total Price:</strong> Rs. ${totalPrice.toLocaleString()}</p>
           <p style="margin: 8px 0 0 0; color: #777; font-size: 13px;">Order ID: ${orderId}</p>
+          ${paymentReceiptUrl ? `<p style="margin: 8px 0 0 0; color: #333;"><strong>Payment Receipt:</strong> <a href="${paymentReceiptUrl}" target="_blank" style="color: #2980b9;">View Receipt</a></p>` : ''}
         </div>
         <div style="text-align: center; margin: 32px 0;">
           <p style="font-size: 14px; color: #666;">Log in to your Admin Panel to view full measurements, fabric selections, and styling details.</p>

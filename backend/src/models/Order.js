@@ -42,7 +42,7 @@ const orderSchema = new mongoose.Schema({
   },
   status: { 
     type: String, 
-    enum: ['Pending', 'Cutting', 'Stitching', 'Ready', 'Delivered', 'Cancelled'], 
+    enum: ['Pending', 'Approved', 'Cutting', 'Stitching', 'Ready', 'Delivered', 'Cancelled'], 
     default: 'Pending' 
   },
   totalPrice: { 
@@ -120,6 +120,10 @@ const orderSchema = new mongoose.Schema({
   // Customer's free-text note placed at order time.
   // e.g., "Make kameez 2 inches longer", "Loose fit please"
   customerNote: {
+    type: String,
+    default: ''
+  },
+  paymentReceiptUrl: {
     type: String,
     default: ''
   },

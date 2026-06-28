@@ -119,4 +119,24 @@ const sendAdminAbandonedCartWhatsapp = async (customerName, serviceName, totalPr
   await sendWhatsappMessage(adminPhone, message);
 };
 
-module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp };
+const sendAdminNewOrderWhatsapp = async (customerName, serviceName, totalPrice, orderId, paymentReceiptUrl) => {
+  // Replace with actual admin phone number
+  const adminPhone = '+923162791882'; // You can update this to the actual admin number or an env variable
+  
+  let message = `*🔔 New Order Alert!*\n\n`;
+  message += `*Customer:* ${customerName}\n`;
+  message += `*Service:* ${serviceName}\n`;
+  message += `*Total Amount:* Rs. ${totalPrice.toLocaleString()}\n\n`;
+  
+  if (paymentReceiptUrl) {
+    message += `*Payment Receipt:* ${paymentReceiptUrl}\n\n`;
+  }
+  
+  message += `*Admin Order Link:*\n`;
+  message += `https://geniustailors.com/admin/orders\n\n`;
+  message += `Please check the dashboard to verify the payment and approve the order.`;
+
+  await sendWhatsappMessage(adminPhone, message);
+};
+
+module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp };

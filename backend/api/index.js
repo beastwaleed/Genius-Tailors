@@ -22,7 +22,7 @@ const AbandonedCart = require('../src/models/AbandonedCart');
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/cloudinary');
 const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
-const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp } = require('../src/config/whatsapp');
+const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -450,7 +450,7 @@ app.get('/api/shipping/cities', async (req, res) => {
 // Place a new order (Customer)
 app.post('/api/orders', protect, async (req, res) => {
   try {
-    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, isRush, referenceImageUrl, customerNote, neededByDate, deliveryCity, deliveryAddress, advancePaid, advancePaymentStatus, fabricSelection, fabricColor, fabricImageUrl } = req.body;
+    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, isRush, referenceImageUrl, customerNote, neededByDate, deliveryCity, deliveryAddress, advancePaid, advancePaymentStatus, fabricSelection, fabricColor, fabricImageUrl, paymentReceiptUrl } = req.body;
 
     if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
     if (!measurementSnapshot || !measurementSnapshot.measurements) return res.status(400).json({ message: 'Measurement snapshot is required' });
@@ -494,7 +494,8 @@ app.post('/api/orders', protect, async (req, res) => {
       season: activeSeason ? activeSeason.name : '',
       referenceImageUrl: referenceImageUrl || null,
       customerNote: customerNote || '',     // Feature 1
-      neededByDate: neededByDate || null    // Feature 8
+      neededByDate: neededByDate || null,   // Feature 8
+      paymentReceiptUrl: paymentReceiptUrl || ''
     });
 
     const createdOrder = await order.save();
@@ -564,7 +565,7 @@ app.post('/api/orders', protect, async (req, res) => {
       .catch(err => console.error('Confirmation email failed:', err.message));
 
     // Send admin notification email
-    sendAdminNewOrderNotification(user.name, serviceName, totalPrice, createdOrder._id, isPriority, createdOrder.isRush)
+    sendAdminNewOrderNotification(user.name, serviceName, totalPrice, createdOrder._id, isPriority, createdOrder.isRush, paymentReceiptUrl)
       .catch(err => console.error('Admin notification email failed:', err.message));
 
     // Send WhatsApp confirmation
@@ -572,6 +573,10 @@ app.post('/api/orders', protect, async (req, res) => {
       sendWhatsappOrderConfirmation(user.phone, user.name, serviceName, totalPrice, createdOrder._id)
         .catch(err => console.error('WhatsApp confirmation failed:', err.message));
     }
+    
+    // Send admin WhatsApp notification
+    sendAdminNewOrderWhatsapp(user.name, serviceName, totalPrice, createdOrder._id, paymentReceiptUrl)
+      .catch(err => console.error('Admin WhatsApp notification failed:', err.message));
 
     res.status(201).json(createdOrder);
   } catch (error) {
