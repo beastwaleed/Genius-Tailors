@@ -1517,14 +1517,37 @@ app.get('/api/fabrics', async (req, res) => {
   }
 });
 
-app.post('/api/fabrics', protect, admin, upload.single('image'), async (req, res) => {
+app.post('/api/fabrics', protect, admin, upload.any(), async (req, res) => {
   try {
-    if (req.file) {
-      req.body.imageUrl = req.file.secure_url || req.file.url || req.file.path;
+    let mainImageUrl = req.body.imageUrl || '';
+    const files = req.files || [];
+
+    const mainImgFile = files.find(f => f.fieldname === 'image');
+    if (mainImgFile) {
+      mainImageUrl = mainImgFile.secure_url || mainImgFile.url || mainImgFile.path;
     }
+    req.body.imageUrl = mainImageUrl;
+
+    let colors = [];
     if (typeof req.body.colors === 'string') {
-      req.body.colors = JSON.parse(req.body.colors);
+      colors = JSON.parse(req.body.colors);
+    } else if (req.body.colors) {
+      colors = req.body.colors;
     }
+
+    colors = colors.map((c, index) => {
+      const colorImgFile = files.find(f => f.fieldname === `colorImage_${index}`);
+      if (colorImgFile) {
+        c.imageUrl = colorImgFile.secure_url || colorImgFile.url || colorImgFile.path;
+      }
+      return c;
+    });
+    req.body.colors = colors;
+
+    if (typeof req.body.allowedServices === 'string') {
+      req.body.allowedServices = JSON.parse(req.body.allowedServices);
+    }
+
     const fabric = new Fabric(req.body);
     await fabric.save();
     res.status(201).json(fabric);
@@ -1533,14 +1556,37 @@ app.post('/api/fabrics', protect, admin, upload.single('image'), async (req, res
   }
 });
 
-app.put('/api/fabrics/:id', protect, admin, upload.single('image'), async (req, res) => {
+app.put('/api/fabrics/:id', protect, admin, upload.any(), async (req, res) => {
   try {
-    if (req.file) {
-      req.body.imageUrl = req.file.secure_url || req.file.url || req.file.path;
+    let mainImageUrl = req.body.imageUrl || '';
+    const files = req.files || [];
+
+    const mainImgFile = files.find(f => f.fieldname === 'image');
+    if (mainImgFile) {
+      mainImageUrl = mainImgFile.secure_url || mainImgFile.url || mainImgFile.path;
     }
+    req.body.imageUrl = mainImageUrl;
+
+    let colors = [];
     if (typeof req.body.colors === 'string') {
-      req.body.colors = JSON.parse(req.body.colors);
+      colors = JSON.parse(req.body.colors);
+    } else if (req.body.colors) {
+      colors = req.body.colors;
     }
+
+    colors = colors.map((c, index) => {
+      const colorImgFile = files.find(f => f.fieldname === `colorImage_${index}`);
+      if (colorImgFile) {
+        c.imageUrl = colorImgFile.secure_url || colorImgFile.url || colorImgFile.path;
+      }
+      return c;
+    });
+    req.body.colors = colors;
+
+    if (typeof req.body.allowedServices === 'string') {
+      req.body.allowedServices = JSON.parse(req.body.allowedServices);
+    }
+
     const fabric = await Fabric.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!fabric) return res.status(404).json({ message: 'Fabric not found' });
     res.json(fabric);
