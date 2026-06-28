@@ -152,33 +152,33 @@ const AIMeasurementCamera = ({ onMeasurementsReady, onClose }) => {
       const dist = (p1, p2) => Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
 
       // Calculate Tailoring Measurements (in inches)
-      // 2D distance needs a multiplier (~1.15) to account for the physical wrap/curve around the back
-      const shoulderWidth = dist(leftShoulder, rightShoulder) * inchesPerUnit * 1.15;
+      // 2D distance needs a multiplier (~1.25) to account for the physical wrap/curve around the back
+      const shoulderWidth = dist(leftShoulder, rightShoulder) * inchesPerUnit * 1.25;
 
-      // Sleeve length (shoulder to wrist + 1.5 inch allowance for bending)
-      const armLength = (dist(leftShoulder, leftWrist) * inchesPerUnit) + 1.5;
+      // Sleeve length (shoulder to wrist + 1.0 inch allowance for bending)
+      const armLength = (dist(leftShoulder, leftWrist) * inchesPerUnit) + 1.0;
 
-      // Kameez length (shoulder straight down to average knee position)
+      // Kameez length (shoulder straight down to average knee position + 1.5 inches for fold)
       const kneeY = (leftKnee.y + rightKnee.y) / 2;
-      const kameezLength = dist(leftShoulder, { x: leftShoulder.x, y: kneeY }) * inchesPerUnit;
+      const kameezLength = dist(leftShoulder, { x: leftShoulder.x, y: kneeY }) * inchesPerUnit + 1.5;
 
-      // Shalwar length (hip to ankle + 2 inches allowance)
-      const shalwarLength = (dist(leftHip, leftAnkle) * inchesPerUnit) + 2;
+      // Shalwar length (hip to ankle + 2.5 inches allowance for waist fold and pauncha)
+      const shalwarLength = (dist(leftHip, leftAnkle) * inchesPerUnit) + 2.5;
 
       const measurements = {
         shoulder: shoulderWidth.toFixed(1),
         sleeves: armLength.toFixed(1),
         kameezLength: kameezLength.toFixed(1),
         shalwarLength: shalwarLength.toFixed(1),
-        // Chest: Shoulder width * 2 + 2 inches breathing room
-        chest: (shoulderWidth * 2 + 2).toFixed(1),
-        abdomen: (shoulderWidth * 2 + 1).toFixed(1), // Roughly Chest - 1
-        hips: (shoulderWidth * 2 + 3).toFixed(1),    // Roughly Chest + 1
-        // Neck: Standard ratio
-        neck: (shoulderWidth * 0.8).toFixed(1),
-        // Crotch Depth: Approx 21% of total height for average adult
-        crotchDepth: (parseFloat(heightInches) * 0.21).toFixed(1),
-        // Bottom / Pancha: Standard 7.5 inches for most Shalwars unless specified
+        // Chest: Shoulder width * 2 + 4 inches breathing room for comfortable traditional fit
+        chest: (shoulderWidth * 2 + 4).toFixed(1),
+        abdomen: (shoulderWidth * 2 + 2).toFixed(1), // Roughly Chest - 2
+        hips: (shoulderWidth * 2 + 5).toFixed(1),    // Roughly Chest + 1 for loose fit
+        // Neck: Standard ratio based on shoulder
+        neck: (shoulderWidth * 0.85).toFixed(1),
+        // Crotch Depth (Asan): Approx 22% of total height for average adult
+        crotchDepth: (parseFloat(heightInches) * 0.22).toFixed(1),
+        // Bottom / Pancha: Standard 7.5 inches for most Shalwars
         bottom: "7.5",
       };
 
