@@ -81,17 +81,45 @@ const SERVICES_PRICES = {
 
 const STYLE_CONFIGS = {
   'Kameez Shalwar': {
-    designs: [
-      { name: 'Classic Design', img: imgShalwarNoDesign, price: 1800, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
-      { name: 'Modern Pattern', img: imgBanCollar, price: 1800, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
-      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1800, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
+    collarTypes: [
+      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
+    ],
+    cuffs: [
+      { name: 'Round Sleeves', img: imgRoundSleeves, price: 0 },
+      { name: 'Square Cuff', img: imgSingleCuff, price: 0 }
+    ],
+    pockets: [
+      { name: '2 Side Pockets', img: imgSidePockets },
+      { name: '1 Front and 2 Sides', img: imgFrontSidePockets }
+    ],
+    bottomPockets: [
+      { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
+      { name: '1 Pocket', img: imgShalwarOnePocket, price: 100 }
+    ],
+    bottomDesigns: [
+      { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
+      { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
     ]
   },
   'Kurta Shalwar': {
-    designs: [
-      { name: 'Classic Design', img: imgShalwarNoDesign, price: 1800, gallery: [imgShalwarNoDesign, imgBanCollar, imgSingleCuff] },
-      { name: 'Modern Pattern', img: imgBanCollar, price: 1800, gallery: [imgBanCollar, imgFrontSidePockets, imgDoubleCuff] },
-      { name: 'Embroidered Premium', img: imgFrontSidePockets, price: 1800, gallery: [imgFrontSidePockets, imgOpenSleeves, imgShalwarZigzag] }
+    collarTypes: [
+      { name: 'Ban Collar', img: imgBanCollar, subs: ['0.9 inch', '0.75 inch', '1 inch', '1.25 inch'] }
+    ],
+    cuffs: [
+      { name: 'Round Sleeves', img: imgRoundSleeves, price: 0 },
+      { name: 'Square Cuff', img: imgSingleCuff, price: 0 }
+    ],
+    pockets: [
+      { name: '2 Side Pockets', img: imgSidePockets },
+      { name: '1 Front and 2 Sides', img: imgFrontSidePockets }
+    ],
+    bottomPockets: [
+      { name: 'No Pocket', img: imgShalwarNoPocket, price: 0 },
+      { name: '1 Pocket', img: imgShalwarOnePocket, price: 100 }
+    ],
+    bottomDesigns: [
+      { name: 'No Design', img: imgShalwarNoDesign, price: 0 },
+      { name: 'Zigzag Stitch', img: imgShalwarZigzag, price: 200 }
     ]
   },
   'Kurta Pajama': {
