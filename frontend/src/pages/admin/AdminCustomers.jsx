@@ -77,7 +77,11 @@ const MEASUREMENT_TEMPLATES = {
   'Waistcoat': { length: '', shoulder: '', collar: '', chest: '', abdomen: '', hip: '' },
   'Kameez Shalwar Design': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
   'Kurta Shalwar Design': { length: '', shoulder: '', chest: '', waist: '', hip: '', sleeves: '', collar: '', shalwarLength: '', bottomPanja: '' },
-  'Zardari Suit': { length: '', shoulder: '', collar: '', chest: '', abdomen: '', hip: '' }
+  'Zardari Suit': { 
+    'Kameez Length': '', 'Kameez Shoulder': '', 'Kameez Sleeves': '', 'Kameez Chest': '', 'Kameez Abdomen': '', 'Kameez Hips': '', 'Kameez Collar': '',
+    'Shalwar Length': '', 'Shalwar Bottom': '', 'Shalwar Crotch Depth': '',
+    'Waistcoat Length': '', 'Waistcoat Shoulder': '', 'Waistcoat Collar': '', 'Waistcoat Chest': '', 'Waistcoat Abdomen': '', 'Waistcoat Hip': '' 
+  }
 };
 
 export default function AdminCustomers() {

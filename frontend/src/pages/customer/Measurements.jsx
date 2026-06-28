@@ -14,7 +14,8 @@ const IMAGE_MAP = {
   'Kameez Shalwar': imgKameez,
   'Kurta Shalwar': imgKameez,
   'Kurta Pajama': imgKurta,
-  'Waistcoat': imgWaistcoat
+  'Waistcoat': imgWaistcoat,
+  'Zardari Suit': imgKameez
 };
 
 const SERVICE_FIELDS = {
@@ -33,6 +34,11 @@ const SERVICE_FIELDS = {
   'Waistcoat': {
     top: { label: 'Waistcoat', fields: ['Length', 'Shoulder', 'Collar', 'Chest', 'Abdomen', 'Hips'] },
     bottom: { label: null, fields: [] }
+  },
+  'Zardari Suit': {
+    top: { label: 'Kameez', fields: ['Length', 'Shoulder', 'Sleeves', 'Chest', 'Abdomen', 'Hips', 'Collar'] },
+    bottom: { label: 'Shalwar', fields: ['Length', 'Bottom', 'Crotch Depth'] },
+    outer: { label: 'Waistcoat', fields: ['Length', 'Shoulder', 'Collar', 'Chest', 'Abdomen', 'Hips'] }
   }
 };
 
@@ -96,6 +102,28 @@ const STANDARD_SIZES = {
     'M': { 'Waistcoat Length': '27.5', 'Waistcoat Shoulder': '16', 'Waistcoat Collar': '16', 'Waistcoat Chest': '22', 'Waistcoat Abdomen': '21', 'Waistcoat Hip': '23' },
     'L': { 'Waistcoat Length': '29', 'Waistcoat Shoulder': '17', 'Waistcoat Collar': '17', 'Waistcoat Chest': '24', 'Waistcoat Abdomen': '23', 'Waistcoat Hip': '25' },
     'XL': { 'Waistcoat Length': '30.5', 'Waistcoat Shoulder': '18', 'Waistcoat Collar': '18', 'Waistcoat Chest': '26', 'Waistcoat Abdomen': '25', 'Waistcoat Hip': '27' }
+  },
+  'Zardari Suit': {
+    'S': {
+      'Kameez Length': '38', 'Kameez Shoulder': '17.5', 'Kameez Sleeves': '23.5', 'Kameez Chest': '20', 'Kameez Abdomen': '19', 'Kameez Hips': '21', 'Kameez Collar': '15',
+      'Shalwar Length': '38', 'Shalwar Bottom': '7', 'Shalwar Crotch Depth': '14',
+      'Waistcoat Length': '26', 'Waistcoat Shoulder': '15', 'Waistcoat Collar': '15', 'Waistcoat Chest': '20', 'Waistcoat Abdomen': '19', 'Waistcoat Hip': '21'
+    },
+    'M': {
+      'Kameez Length': '40', 'Kameez Shoulder': '18.5', 'Kameez Sleeves': '24.5', 'Kameez Chest': '22', 'Kameez Abdomen': '21', 'Kameez Hips': '23', 'Kameez Collar': '16',
+      'Shalwar Length': '40', 'Shalwar Bottom': '7.5', 'Shalwar Crotch Depth': '15',
+      'Waistcoat Length': '27.5', 'Waistcoat Shoulder': '16', 'Waistcoat Collar': '16', 'Waistcoat Chest': '22', 'Waistcoat Abdomen': '21', 'Waistcoat Hip': '23'
+    },
+    'L': {
+      'Kameez Length': '42', 'Kameez Shoulder': '19.5', 'Kameez Sleeves': '25.5', 'Kameez Chest': '24', 'Kameez Abdomen': '23', 'Kameez Hips': '25', 'Kameez Collar': '17',
+      'Shalwar Length': '41', 'Shalwar Bottom': '8', 'Shalwar Crotch Depth': '16',
+      'Waistcoat Length': '29', 'Waistcoat Shoulder': '17', 'Waistcoat Collar': '17', 'Waistcoat Chest': '24', 'Waistcoat Abdomen': '23', 'Waistcoat Hip': '25'
+    },
+    'XL': {
+      'Kameez Length': '44', 'Kameez Shoulder': '20.5', 'Kameez Sleeves': '26', 'Kameez Chest': '26', 'Kameez Abdomen': '25', 'Kameez Hips': '27', 'Kameez Collar': '18',
+      'Shalwar Length': '42', 'Shalwar Bottom': '8.5', 'Shalwar Crotch Depth': '17',
+      'Waistcoat Length': '30.5', 'Waistcoat Shoulder': '18', 'Waistcoat Collar': '18', 'Waistcoat Chest': '26', 'Waistcoat Abdomen': '25', 'Waistcoat Hip': '27'
+    }
   }
 };
 
@@ -211,6 +239,7 @@ export default function Measurements() {
     let guessedService = 'Kameez Shalwar';
     if (keys.some(k => k.includes('Pajama'))) guessedService = 'Kurta Pajama';
     else if (keys.some(k => k.includes('Kurta'))) guessedService = 'Kurta Shalwar';
+    else if (keys.some(k => k.includes('Waistcoat')) && keys.some(k => k.includes('Kameez'))) guessedService = 'Zardari Suit';
     else if (keys.some(k => k.includes('Waistcoat'))) guessedService = 'Waistcoat';
 
     setSelectedService(guessedService);
@@ -226,6 +255,12 @@ export default function Measurements() {
       const key = `${config.bottom.label} ${f}`;
       updatedMeasurements[key] = profile.measurements ? (profile.measurements[key] || '') : '';
     });
+    if (config.outer) {
+      config.outer.fields.forEach(f => {
+        const key = `${config.outer.label} ${f}`;
+        updatedMeasurements[key] = profile.measurements ? (profile.measurements[key] || '') : '';
+      });
+    }
 
     setMeasurements(updatedMeasurements);
     setIsModalOpen(true);
@@ -243,10 +278,18 @@ export default function Measurements() {
       const key = `${config.top.label} ${f}`;
       newMeasurements[key] = measurements[key] || '';
     });
-    config.bottom.fields.forEach(f => {
-      const key = `${config.bottom.label} ${f}`;
-      newMeasurements[key] = measurements[key] || '';
-    });
+    if (config.bottom.fields) {
+      config.bottom.fields.forEach(f => {
+        const key = `${config.bottom.label} ${f}`;
+        newMeasurements[key] = measurements[key] || '';
+      });
+    }
+    if (config.outer) {
+      config.outer.fields.forEach(f => {
+        const key = `${config.outer.label} ${f}`;
+        newMeasurements[key] = measurements[key] || '';
+      });
+    }
 
     setMeasurements(newMeasurements);
   };
@@ -538,7 +581,7 @@ export default function Measurements() {
                     </div>
                   </div>
 
-                  {SERVICE_FIELDS[selectedService].bottom.fields.length > 0 && (
+                  {SERVICE_FIELDS[selectedService].bottom && SERVICE_FIELDS[selectedService].bottom.fields.length > 0 && (
                     <div style={{ marginTop: '1.5rem' }}>
                       <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--onyx)', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
                         {SERVICE_FIELDS[selectedService].bottom.label} Measurements (Inches)
@@ -546,6 +589,32 @@ export default function Measurements() {
                       <div className="measurements-input-grid">
                         {SERVICE_FIELDS[selectedService].bottom.fields.map(field => {
                           const key = `${SERVICE_FIELDS[selectedService].bottom.label} ${field}`;
+                          return (
+                            <div className="luxury-form-group" key={key}>
+                              <label>{field}</label>
+                              <input
+                                type="number"
+                                step="0.25"
+                                placeholder="e.g., 38"
+                                value={measurements[key] || ''}
+                                onChange={(e) => setMeasurements({ ...measurements, [key]: e.target.value })}
+                                onFocus={() => setActiveField(key)}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {SERVICE_FIELDS[selectedService].outer && SERVICE_FIELDS[selectedService].outer.fields.length > 0 && (
+                    <div style={{ marginTop: '1.5rem' }}>
+                      <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--onyx)', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                        {SERVICE_FIELDS[selectedService].outer.label} Measurements (Inches)
+                      </h4>
+                      <div className="measurements-input-grid">
+                        {SERVICE_FIELDS[selectedService].outer.fields.map(field => {
+                          const key = `${SERVICE_FIELDS[selectedService].outer.label} ${field}`;
                           return (
                             <div className="luxury-form-group" key={key}>
                               <label>{field}</label>
