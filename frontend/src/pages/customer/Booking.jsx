@@ -264,39 +264,51 @@ export default function Booking() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [profRes, ordRes, userRes, citiesRes, fabRes, srvRes] = await Promise.all([
-          api.get('/api/measurements').catch(() => ({ data: [] })),
-          api.get('/api/orders/myorders').catch(() => ({ data: [] })),
-          api.get('/api/profile').catch(() => ({ data: {} })),
-          api.get('/api/shipping/cities').catch(() => ({ data: [] })),
-          api.get('/api/fabrics').catch(() => ({ data: [] })),
-          api.get('/api/services').catch(() => ({ data: [] }))
-        ]);
-        
-        if (profRes.data) setProfiles(profRes.data);
-        if (ordRes.data && ordRes.data.length === 0) setHasDiscount(true);
-        if (userRes.data) {
-          if (userRes.data.loyaltyPoints) setUserPoints(userRes.data.loyaltyPoints);
-          if (userRes.data.location?.city) setDeliveryCity(userRes.data.location.city);
-          if (userRes.data.location?.street) setDeliveryAddress(userRes.data.location.street);
-          setUserInfo(userRes.data);
-        }
-        if (citiesRes.data) {
-          setOperationalCities(citiesRes.data);
-          if (!userRes.data?.location?.city && citiesRes.data.length > 0) {
-            setDeliveryCity(citiesRes.data[0].operationalCityName);
-          }
-        }
-        if (fabRes.data) setDbFabrics(fabRes.data);
-        if (srvRes.data) setDbServices(srvRes.data);
-
-      } catch (error) {
-        console.error('Failed to fetch data', error);
-      } finally {
+    const fetchData = () => {
+      // 1. Fetch Measurement Profiles First (Critical path for Step 1 UI)
+      api.get('/api/measurements').then(res => {
+        if (res.data) setProfiles(res.data);
+      }).catch(error => {
+        console.error('Failed to fetch profiles', error);
+      }).finally(() => {
         setIsFetchingData(false);
-      }
+      });
+
+      // 2. Fetch User Info & Cities together to handle default city selection smoothly
+      api.get('/api/profile').then(userRes => {
+        const userData = userRes.data;
+        if (userData) {
+          if (userData.loyaltyPoints) setUserPoints(userData.loyaltyPoints);
+          
+          api.get('/api/shipping/cities').then(citiesRes => {
+            if (citiesRes.data) {
+              setOperationalCities(citiesRes.data);
+              if (!userData.location?.city && citiesRes.data.length > 0) {
+                setDeliveryCity(citiesRes.data[0].operationalCityName);
+              } else if (userData.location?.city) {
+                setDeliveryCity(userData.location.city);
+              }
+            }
+            if (userData.location?.street) setDeliveryAddress(userData.location.street);
+            setUserInfo(userData);
+          }).catch(console.error);
+        }
+      }).catch(console.error);
+
+      // 3. Fetch Orders (for discount logic)
+      api.get('/api/orders/myorders').then(ordRes => {
+        if (ordRes.data && ordRes.data.length === 0) setHasDiscount(true);
+      }).catch(console.error);
+
+      // 4. Fetch Fabrics (for step 2)
+      api.get('/api/fabrics').then(fabRes => {
+        if (fabRes.data) setDbFabrics(fabRes.data);
+      }).catch(console.error);
+
+      // 5. Fetch Services
+      api.get('/api/services').then(srvRes => {
+        if (srvRes.data) setDbServices(srvRes.data);
+      }).catch(console.error);
     };
     fetchData();
   }, []);
