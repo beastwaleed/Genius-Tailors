@@ -872,7 +872,7 @@ export default function Booking() {
 
                 {/* Bottoms Options (Pockets and Design) */}
                 {config.bottomPockets && config.bottomPockets.length > 0 && (
-                  <div className="style-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                  <div className="style-section" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
                     <div style={{ border: '1px solid var(--ivory-border)', padding: '1.5rem', borderRadius: '8px', background: '#f8fafc' }}>
                       <h3 style={{ marginTop: 0 }}>Bottom Pockets</h3>
                       <div className="style-grid">
