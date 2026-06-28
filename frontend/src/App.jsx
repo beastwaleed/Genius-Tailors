@@ -13,6 +13,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsConditions from './pages/TermsConditions';
 
 // Customer pages
 import Dashboard from './pages/customer/Dashboard';
@@ -54,6 +56,8 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-conditions" element={<TermsConditions />} />
 
       {/* ── Customer Routes ───────────────────────── */}
       <Route path="/dashboard" element={<ProtectedRoute role="Customer"><Dashboard /></ProtectedRoute>} />
