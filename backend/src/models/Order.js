@@ -13,6 +13,7 @@ const orderSchema = new mongoose.Schema({
   },
   // The customized layers selected by the user
   styleVariations: {
+    design: { type: String }, // Used for premium design templates
     collar: { type: String },
     collarSub: { type: String },
     cuff: { type: String },
