@@ -282,7 +282,12 @@ export default function Booking() {
           if (userRes.data.location?.street) setDeliveryAddress(userRes.data.location.street);
           setUserInfo(userRes.data);
         }
-        if (citiesRes.data) setOperationalCities(citiesRes.data);
+        if (citiesRes.data) {
+          setOperationalCities(citiesRes.data);
+          if (!userRes.data?.location?.city && citiesRes.data.length > 0) {
+            setDeliveryCity(citiesRes.data[0].operationalCityName);
+          }
+        }
         if (fabRes.data) setDbFabrics(fabRes.data);
         if (srvRes.data) setDbServices(srvRes.data);
 
@@ -899,7 +904,6 @@ export default function Booking() {
                 value={deliveryCity}
                 onChange={(e) => setDeliveryCity(e.target.value)}
               >
-                <option value="">Select your city...</option>
                 {operationalCities.map((city, idx) => (
                   <option key={idx} value={city.operationalCityName}>{city.operationalCityName}</option>
                 ))}
