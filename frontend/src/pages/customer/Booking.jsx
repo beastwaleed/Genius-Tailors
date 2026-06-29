@@ -1188,8 +1188,13 @@ export default function Booking() {
                       <p style={{ margin: '0.5rem 0 0 0', color: '#0f172a', fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Rs. {advanceAmount.toLocaleString()}</p>
                     </div>
 
-                    <div style={{ marginBottom: '1.5rem', borderRadius: '12px', background: '#ffffff', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', overflow: 'hidden', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', padding: '1rem' }}>
-                      <img src={jazzcashPaymentInfo} alt="JazzCash Payment Details and QR Code" style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }} />
+                    <div style={{ marginBottom: '1.5rem', borderRadius: '12px', background: '#ffffff', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', overflow: 'hidden', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '1rem' }}>
+                      <img src={jazzcashPaymentInfo} alt="JazzCash Payment Details and QR Code" style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }} />
+                      <div style={{ textAlign: 'left', width: '100%', background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.95rem', color: '#0f172a' }}><strong>Bank:</strong> RAAST</p>
+                        <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.95rem', color: '#0f172a' }}><strong>Til ID:</strong> 980208401</p>
+                        <p style={{ margin: '0', fontSize: '0.95rem', color: '#0f172a' }}><strong>Account Title:</strong> Genius Tailors</p>
+                      </div>
                     </div>
 
                     <div style={{ marginBottom: '1.5rem' }}>
