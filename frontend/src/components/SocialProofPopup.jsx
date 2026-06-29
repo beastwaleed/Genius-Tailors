@@ -17,19 +17,20 @@ const mockData = [
 
 export default function SocialProofPopup() {
   const [visible, setVisible] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(Math.floor(Math.random() * mockData.length)); // Start at a random index
 
   useEffect(() => {
-    // Show a popup every 20-30 seconds randomly
+    // Show a popup
     const showPopup = () => {
-      // Pick a random index
-      const randomIndex = Math.floor(Math.random() * mockData.length);
-      setCurrentIndex(randomIndex);
       setVisible(true);
 
       // Hide after 6 seconds
       setTimeout(() => {
         setVisible(false);
+        // After it hides, move to the next item so the next time it shows, it's different
+        setTimeout(() => {
+          setCurrentIndex((prevIndex) => (prevIndex + 1) % mockData.length);
+        }, 500); // Wait for the exit animation to finish before swapping data
       }, 6000);
     };
 
