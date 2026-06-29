@@ -11,6 +11,20 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -62,7 +76,16 @@ export default function Navbar() {
             </div>
 
             {/* Right Actions */}
-            <div className="navbar-actions">
+            <div className="navbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {/* Theme Toggle */}
+              <button 
+                onClick={toggleTheme} 
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: 'var(--onyx)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', borderRadius: '50%', transition: 'background 0.2s' }}
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {theme === 'dark' ? '☀️' : '🌙'}
+              </button>
+
               {isLoggedIn ? (
                 <div className="nav-user" style={{ position: 'relative' }}>
                   <button 
