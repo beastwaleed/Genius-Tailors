@@ -66,6 +66,10 @@ const orderSchema = new mongoose.Schema({
     type: Number, 
     default: 0 
   },
+  pointsAwarded: {
+    type: Boolean,
+    default: false
+  },
   pointsUsed: {
     type: Number,
     default: 0

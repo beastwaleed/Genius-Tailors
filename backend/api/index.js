@@ -538,8 +538,7 @@ app.post('/api/orders', protect, async (req, res) => {
       if (deliveryAddress) user.location.street = deliveryAddress;
     }
 
-    user.loyaltyPoints += pointsEarned;
-    user.membershipLevel = upgradeMembership(user.loyaltyPoints);
+    // Loyalty points are now awarded when the order becomes active (status update)
     await user.save();
 
     if (actualPointsUsed > 0) {
@@ -552,13 +551,7 @@ app.post('/api/orders', protect, async (req, res) => {
       });
     }
 
-    await LoyaltyRecord.create({
-      customer: user._id,
-      order: createdOrder._id,
-      type: 'earned',
-      points: pointsEarned,
-      description: `Earned ${pointsEarned} points on order for ${serviceName} (Rs.${totalPrice})${activeSeason ? ` — ${activeSeason.name}` : ''}`
-    });
+    // The 'earned' loyalty record is also created when the order becomes active
 
     // Feature 7: Send order confirmation email (non-blocking — won't crash if email fails)
     sendOrderConfirmationEmail(user.email, user.name, serviceName, totalPrice, createdOrder._id)
@@ -704,6 +697,24 @@ app.put('/api/orders/:id/status', protect, admin, async (req, res) => {
 
     order.status = status;
     if (estimatedDelivery) order.estimatedDelivery = new Date(estimatedDelivery); // Feature 4
+
+    const activeStatuses = ['Approved', 'Cutting', 'Stitching', 'Ready', 'Delivered'];
+    if (activeStatuses.includes(status) && !order.pointsAwarded && order.pointsEarned > 0) {
+      if (order.customer && order.customer._id) {
+        order.customer.loyaltyPoints += order.pointsEarned;
+        order.customer.membershipLevel = upgradeMembership(order.customer.loyaltyPoints);
+        await order.customer.save();
+
+        await LoyaltyRecord.create({
+          customer: order.customer._id,
+          order: order._id,
+          type: 'earned',
+          points: order.pointsEarned,
+          description: `Earned ${order.pointsEarned} points as order ${order.orderNumber || order.serviceName || ''} became active`
+        });
+      }
+      order.pointsAwarded = true;
+    }
 
     const updatedOrder = await order.save();
 
