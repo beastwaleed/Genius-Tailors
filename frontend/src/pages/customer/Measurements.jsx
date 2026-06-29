@@ -427,10 +427,11 @@ export default function Measurements() {
             <h2 className="luxury-section-title" style={{ marginBottom: '0.5rem' }}>Measurement Profiles</h2>
             <p style={{ color: 'var(--stone)' }}>Manage your saved measurements for bespoke orders.</p>
           </div>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <Link to="/services" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', padding: '0 1.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 500, height: '42px' }}>Place an Order</Link>
-            <button className="luxury-btn-primary" onClick={handleOpenCreate} style={{ height: '42px' }}>Add New Profile</button>
-          </div>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <Link to="/services" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', padding: '0 1.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 500, height: '42px' }}>Browse Services</Link>
+              <Link to="/book" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', padding: '0 1.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 500, height: '42px' }}>Place an Order</Link>
+              <button className="luxury-btn-primary" onClick={handleOpenCreate} style={{ height: '42px' }}>Add New Profile</button>
+            </div>
         </div>
 
         {loading ? (
