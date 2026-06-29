@@ -8,6 +8,7 @@ import { Helmet } from 'react-helmet-async';
 import imgBanCollar from '../../assets/styles/ban_collar.jpg';
 import imgShirtCollar from '../../assets/styles/shirt_collar.jpg';
 import imgRoundNeck from '../../assets/styles/round_neck.png';
+import jazzcashPaymentInfo from '../../assets/JazzcashPaymentInfo.jpeg';
 
 import imgWaistcoatRound from '../../assets/round neck collar waistcoat.jpeg';
 import imgWaistcoatV from '../../assets/V collar waistcoat.jpeg';
@@ -1182,24 +1183,8 @@ export default function Booking() {
                     <p style={{ margin: '0.5rem 0 0 0', color: '#0f172a', fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Rs. {advanceAmount.toLocaleString()}</p>
                   </div>
 
-                  <div style={{ marginBottom: '1.5rem', padding: '1.25rem', border: '1px solid #e2e8f0', borderRadius: '12px', background: '#ffffff', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>Bank Name</span>
-                      <strong style={{ color: '#0f172a', fontSize: '0.95rem' }}>Meezan Bank Limited</strong>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
-                      <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>Account Title</span>
-                      <strong style={{ color: '#0f172a', fontSize: '0.95rem' }}>Genius Tailors</strong>
-                    </div>
-                    <div>
-                      <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500, display: 'block', marginBottom: '0.25rem' }}>Account / IBAN Number</span>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                        <strong style={{ color: '#0f172a', fontSize: '1rem', letterSpacing: '0.5px' }}>PK22 MEZN 0123 4567 8901</strong>
-                        <button onClick={() => { navigator.clipboard.writeText('PK22 MEZN 0123 4567 8901'); toast.success('Account number copied!'); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6', padding: '0.25rem' }} title="Copy to clipboard">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                        </button>
-                      </div>
-                    </div>
+                  <div style={{ marginBottom: '1.5rem', borderRadius: '12px', background: '#ffffff', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', overflow: 'hidden', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', padding: '1rem' }}>
+                    <img src={jazzcashPaymentInfo} alt="JazzCash Payment Details and QR Code" style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }} />
                   </div>
 
                   <div style={{ marginBottom: '1.5rem' }}>
