@@ -1690,7 +1690,6 @@ app.post('/api/chat', async (req, res) => {
 1. **Making an Account**: Users can create an account by clicking the "Login" icon at the top right of the navigation bar. Having an account allows them to track orders, save measurements, and earn loyalty points.
 2. **Taking & Saving Measurements**: 
    - Customers can create Measurement Profiles from their Dashboard or directly during the checkout/booking flow.
-   - We offer two ways to measure: Manual Entry or using our AI Measurement Camera.
    - Note: Measurement profiles are strictly separated by garment type! For example, a Kameez Shalwar profile cannot be used to book a Waistcoat or Zardari Suit. You must create specific profiles for specific garments.
    - Zardari Suits have a special measurement profile that requires both Kameez and Waistcoat metrics.
 3. **Loyalty Points & Rewards**:
