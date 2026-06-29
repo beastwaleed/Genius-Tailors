@@ -1,61 +1,35 @@
 const axios = require('axios');
 
 /**
- * Ultramsg WhatsApp API Configuration
+ * Custom WhatsApp Microservice API
  * 
  * Setup:
- * 1. Go to https://ultramsg.com/ and create a free trial account.
- * 2. Scan the QR code with your actual WhatsApp phone to link it.
- * 3. Copy your "Instance ID" and "Token" from the dashboard.
- * 4. Add these to your backend/.env file:
- *    ULTRAMSG_INSTANCE_ID=instance12345
- *    ULTRAMSG_TOKEN=your_ultramsg_token_here
+ * 1. Run the separate `whatsapp-microservice` Node.js server.
+ * 2. Add these to your backend/.env file:
+ *    WHATSAPP_MICROSERVICE_URL=http://localhost:3005
+ *    WHATSAPP_MICROSERVICE_KEY=gt-super-secret-key-123
  */
 
-// Ensure the phone number format is E.164 compatible for WhatsApp
-const formatPhoneForUltramsg = (phone) => {
-  let formatted = phone.trim();
-  // Remove any non-numeric characters except +
-  formatted = formatted.replace(/[^\d+]/g, '');
-  
-  // If it starts with 0, assume Pakistan prefix (+92)
-  if (formatted.startsWith('0')) {
-    formatted = '+92' + formatted.substring(1);
-  } else if (!formatted.startsWith('+')) {
-    formatted = '+' + formatted;
-  }
-  
-  return formatted;
-};
-
 const sendWhatsappMessage = async (toPhone, message) => {
-  const instanceId = process.env.ULTRAMSG_INSTANCE_ID;
-  const token = process.env.ULTRAMSG_TOKEN;
-
-  if (!instanceId || !token) {
-    console.warn('Ultramsg not configured. Skipping WhatsApp message.');
-    return;
-  }
-
-  const to = formatPhoneForUltramsg(toPhone);
+  const baseUrl = process.env.WHATSAPP_MICROSERVICE_URL || 'http://localhost:3005';
+  const apiKey = process.env.WHATSAPP_MICROSERVICE_KEY || 'gt-super-secret-key-123';
 
   try {
-    // Ultramsg API endpoint for sending a text message
-    const url = `https://api.ultramsg.com/${instanceId}/messages/chat`;
+    const url = `${baseUrl}/send`;
     
-    // Convert data to URL encoded format for Ultramsg
-    const data = new URLSearchParams();
-    data.append('token', token);
-    data.append('to', to);
-    data.append('body', message);
-
-    await axios.post(url, data, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    await axios.post(url, {
+      to: toPhone,
+      message: message
+    }, {
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey
+      }
     });
 
-    console.log(`WhatsApp message sent to ${to} via Ultramsg`);
+    console.log(`WhatsApp message successfully queued to ${toPhone} via custom microservice`);
   } catch (error) {
-    console.error('Ultramsg sending failed:', error.response?.data || error.message);
+    console.error('WhatsApp Microservice sending failed:', error.response?.data || error.message);
   }
 };
 
