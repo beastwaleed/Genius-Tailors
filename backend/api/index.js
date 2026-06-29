@@ -1703,7 +1703,7 @@ app.post('/api/chat', async (req, res) => {
    - Checkout allows selecting fabric color, collars, cuffs, pocket styles, etc.
 5. **Payment Methods**:
    - Cash on Delivery or Bank Transfer.
-   - For JazzCash, an interactive image popup with a QR code and payment details will appear. Customers must upload their payment receipt.
+   - For Bank Transfer/JazzCash, an interactive popup with a QR code and payment details will appear. The text details are Bank: RAAST, Til ID: 980208401, Account Title: Genius Tailors. Customers must upload their payment receipt.
 6. **Social Proof**: The website displays real-time popups on the bottom right showing recent bookings by other customers.
 7. **Delivery & Support**: Standard delivery takes 5-12 working days depending on the service.
 
