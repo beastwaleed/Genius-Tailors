@@ -532,21 +532,26 @@ export default function Booking() {
     // Check if it's a generic profile from older versions (has 'shoulders' but no specific garment name)
     const isOldGeneric = keysStr.includes('shoulders') && !keysStr.includes('kameez') && !keysStr.includes('kurta');
     const hasOldBottom = keysStr.includes('bottom (pancha)');
+    const hasWaistcoat = keysStr.includes('waistcoat');
+
+    if (serviceName === 'Zardari Suit') {
+      return keysStr.includes('zardari') || (hasWaistcoat && (keysStr.includes('kameez') || keysStr.includes('kurta') || isOldGeneric));
+    }
 
     if (serviceName === 'Waistcoat') {
-      return keysStr.includes('waistcoat') || (isOldGeneric && !hasOldBottom);
+      return (hasWaistcoat && !keysStr.includes('kameez') && !keysStr.includes('kurta')) || (isOldGeneric && !hasOldBottom);
     }
 
     if (serviceName === 'Kameez Shalwar') {
-      return keysStr.includes('kameez') || keysStr.includes('shalwar') || hasOldBottom || isOldGeneric;
+      return (keysStr.includes('kameez') || keysStr.includes('shalwar') || hasOldBottom || isOldGeneric) && !hasWaistcoat;
     }
 
     if (serviceName === 'Kurta Shalwar') {
-      return keysStr.includes('kurta') || keysStr.includes('shalwar') || hasOldBottom || isOldGeneric;
+      return (keysStr.includes('kurta') || keysStr.includes('shalwar') || hasOldBottom || isOldGeneric) && !hasWaistcoat;
     }
 
     if (serviceName === 'Kurta Pajama') {
-      return keysStr.includes('kurta') || keysStr.includes('pajama') || hasOldBottom || isOldGeneric;
+      return (keysStr.includes('kurta') || keysStr.includes('pajama') || hasOldBottom || isOldGeneric) && !hasWaistcoat;
     }
 
     return true; // Fallback
