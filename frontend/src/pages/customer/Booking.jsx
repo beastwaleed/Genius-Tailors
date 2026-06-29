@@ -533,12 +533,8 @@ export default function Booking() {
     const isOldGeneric = keysStr.includes('shoulders') && !keysStr.includes('kameez') && !keysStr.includes('kurta');
     const hasOldBottom = keysStr.includes('bottom (pancha)');
     
-    if (serviceName === 'Waistcoat') {
-      return keysStr.includes('waistcoat') || (isOldGeneric && !hasOldBottom);
-    }
-    
-    if (serviceName === 'Kameez Shalwar') {
-      return keysStr.includes('kameez') || keysStr.includes('shalwar') || hasOldBottom || isOldGeneric;
+    if (serviceName === 'Waistcoat' || serviceName === 'Kameez Shalwar' || serviceName === 'Zardari Suit') {
+      return keysStr.includes('waistcoat') || keysStr.includes('kameez') || keysStr.includes('shalwar') || keysStr.includes('zardari') || hasOldBottom || isOldGeneric;
     }
     
     if (serviceName === 'Kurta Shalwar') {
