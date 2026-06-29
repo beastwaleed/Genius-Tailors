@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAuth } from './context/AuthContext';
 import Chatbot from './components/Chatbot';
+import SocialProofPopup from './components/SocialProofPopup';
 
 // Public pages
 import Home from './pages/Home';
@@ -87,6 +88,7 @@ export default function App() {
       <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Chatbot />
+      <SocialProofPopup />
       <a 
         href="https://wa.me/923332662110" 
         target="_blank" 
