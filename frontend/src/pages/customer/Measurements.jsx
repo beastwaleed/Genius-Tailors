@@ -9,13 +9,14 @@ import mannequinImg from '../../assets/port_mannequin_kurta_1781781041804.png';
 import imgKameez from '../../assets/model_kameez_shalwar.png';
 import imgKurta from '../../assets/model_kurta_pajama.png';
 import imgWaistcoat from '../../assets/model_waistcoat.png';
+import imgZardari from '../../assets/model_zardari_suit.png';
 
 const IMAGE_MAP = {
   'Kameez Shalwar': imgKameez,
   'Kurta Shalwar': imgKameez,
   'Kurta Pajama': imgKurta,
   'Waistcoat': imgWaistcoat,
-  'Zardari Suit': imgKameez
+  'Zardari Suit': imgZardari
 };
 
 const SERVICE_FIELDS = {
@@ -133,6 +134,7 @@ function getMeasurementVisualConfig(fieldKey) {
   const isBottom = fieldKey.includes('Shalwar') || fieldKey.includes('Pajama');
 
   if (fieldKey.includes('Length')) {
+    if (fieldKey.includes('Waistcoat')) return { top: '30%', left: '38%', height: '20%', width: '3px', transform: 'translateX(-50%)', label: 'Waistcoat Length' };
     if (isTop) return { top: '30%', left: '38%', height: '35%', width: '3px', transform: 'translateX(-50%)', label: 'Top Length (Shoulder to Knee)' };
     if (isBottom) return { top: '56%', left: '60%', height: '28%', width: '3px', transform: 'translateX(-50%)', label: 'Bottom Length (Waist to Ankle)' };
   }
