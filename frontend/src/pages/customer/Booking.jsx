@@ -609,7 +609,12 @@ export default function Booking() {
               </select>
             </div>
 
-            <h2 className="step-title" style={{ marginTop: '2rem' }}>Select Measurement Profile</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <h2 className="step-title" style={{ margin: 0 }}>Select Measurement Profile</h2>
+              <Link to="/measurements" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '14px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <i className="fa-solid fa-plus"></i> New Profile
+              </Link>
+            </div>
             {isFetchingData ? (
               <div style={{ padding: '2rem', textAlign: 'center', background: '#faf9f6', borderRadius: '8px' }}>
                 <p style={{ color: 'var(--stone)' }}>Loading measurement profiles...</p>
