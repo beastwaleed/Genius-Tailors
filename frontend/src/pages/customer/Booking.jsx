@@ -351,14 +351,18 @@ export default function Booking() {
 
   const discountAmount = hasDiscount ? (basePrice * 0.1) : 0;
   const deliveryCharge = 250;
-  const subTotal = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + selectedFabric.price + deliveryCharge;
+  
+  const isZardariSuit = serviceName === 'Zardari Suit';
+  const effectiveFabricPrice = isZardariSuit ? Math.round((selectedFabric.price / 4) * 5) : selectedFabric.price;
+
+  const subTotal = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + effectiveFabricPrice + deliveryCharge;
   const pointsDiscount = usePoints ? Math.min(userPoints, subTotal) : 0;
   const totalPrice = subTotal - pointsDiscount;
 
   const isOwnFabric = selectedFabric.name === 'Provide my own fabric';
   const calculatedAdvance = isOwnFabric 
     ? Math.ceil(totalPrice / 2) 
-    : Math.max(selectedFabric.price, Math.ceil(totalPrice / 2));
+    : Math.max(effectiveFabricPrice, Math.ceil(totalPrice / 2));
   const advanceAmount = Math.min(calculatedAdvance, Math.max(totalPrice, 0));
 
   // Track Checkout Drop-offs
@@ -1068,8 +1072,8 @@ export default function Booking() {
                 <span>Rs. {basePrice.toLocaleString()}</span>
               </div>
               <div className="receipt-row">
-                <span>Fabric: {selectedFabric.name} {selectedColor ? `(${selectedColor})` : ''}</span>
-                <span>{selectedFabric.price === 0 ? 'Customer Provided' : `Rs. ${selectedFabric.price.toLocaleString()}`}</span>
+                <span>Fabric: {selectedFabric.name} {selectedColor ? `(${selectedColor})` : ''} {isZardariSuit && effectiveFabricPrice > 0 ? '(5 Meters)' : ''}</span>
+                <span>{effectiveFabricPrice === 0 ? 'Customer Provided' : `Rs. ${effectiveFabricPrice.toLocaleString()}`}</span>
               </div>
               <div className="receipt-row">
                 <span>Measurement Profile</span>
