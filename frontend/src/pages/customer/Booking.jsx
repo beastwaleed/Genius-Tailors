@@ -874,7 +874,7 @@ export default function Booking() {
               <div className="wizard-actions split">
                 <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
                 <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                  <button className="btn btn-outline btn-lg" onClick={handleAddAnother} style={{ borderColor: 'var(--onyx)', color: 'var(--onyx)' }}>Add Another Garment</button>
+                  <button className="btn btn-outline btn-lg btn-add-garment" onClick={handleAddAnother}>Add Another Garment</button>
                   <button className="btn btn-primary btn-lg" onClick={handleProceedToDetails}>Proceed to Details →</button>
                 </div>
               </div>
@@ -1667,6 +1667,16 @@ export default function Booking() {
 
         .wizard-actions.split {
           justify-content: space-between;
+        }
+
+        .btn-add-garment {
+          border-color: var(--onyx) !important;
+          color: var(--onyx) !important;
+        }
+        
+        .btn-add-garment:hover {
+          color: var(--ivory) !important;
+          background-color: var(--onyx) !important;
         }
 
         @media (max-width: 768px) {
