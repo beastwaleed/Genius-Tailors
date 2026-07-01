@@ -188,6 +188,7 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
   
   const priorityBadge = isRush ? '<span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">Rush</span>' : '';
   const VIPBadge = isPriority ? '<span style="background: #f1c40f; color: #333; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">VIP/Gold Member</span>' : '';
+  const baseUrl = process.env.NODE_ENV === 'production' || process.env.VERCEL ? 'https://geniustailors.vercel.app' : 'https://geniustailors.vercel.app'; // Enforce production URL
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -202,11 +203,19 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Garment:</strong> ${serviceName} ${priorityBadge}</p>
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Total Price:</strong> Rs. ${totalPrice.toLocaleString()}</p>
           <p style="margin: 8px 0 0 0; color: #777; font-size: 13px;">Order ID: ${orderId}</p>
-          ${paymentReceiptUrl ? `<p style="margin: 8px 0 0 0; color: #333;"><strong>Payment Receipt:</strong> <a href="${paymentReceiptUrl}" target="_blank" style="color: #2980b9;">View Receipt</a></p>` : ''}
+          ${paymentReceiptUrl ? `
+            <div style="margin-top: 16px; border-top: 1px solid #eee; padding-top: 16px;">
+              <p style="margin: 0 0 8px 0; color: #333;"><strong>Payment Receipt:</strong></p>
+              <div style="text-align: center;">
+                <img src="${paymentReceiptUrl}" alt="Payment Receipt" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />
+              </div>
+              <p style="margin: 8px 0 0 0; font-size: 13px; text-align: center;"><a href="${paymentReceiptUrl}" target="_blank" style="color: #2980b9;">Open Receipt in New Tab</a></p>
+            </div>
+          ` : ''}
         </div>
           <div style="text-align: center; margin: 32px 0;">
-            <a href="${process.env.FRONTEND_URL || 'https://geniustailors.vercel.app/'}admin/orders/${orderId}" style="background: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 12px;">View Order in Dashboard</a>
-            <p style="font-size: 14px; color: #666;">Or use this direct link: <a href="${process.env.FRONTEND_URL || 'https://geniustailors.vercel.app/'}admin/orders/${orderId}" style="color: #2980b9;">Admin Panel</a></p>
+            <a href="${baseUrl}/admin/orders/${orderId}" style="background: #27ae60; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 12px;">View Order in Dashboard</a>
+            <p style="font-size: 14px; color: #666;">Or use this direct link: <a href="${baseUrl}/admin/orders/${orderId}" style="color: #2980b9;">Admin Panel</a></p>
           </div>
       </div>
     </div>
