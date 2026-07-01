@@ -206,6 +206,7 @@ export default function Booking() {
   const [abandonedCartId, setAbandonedCartId] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const orderPlacedRef = useRef(false);
+  const [garmentsList, setGarmentsList] = useState([]);
 
   useEffect(() => {
     setSelectedProfileId('');
@@ -350,20 +351,33 @@ export default function Booking() {
     }
   }
 
-  const discountAmount = hasDiscount ? (basePrice * 0.1) : 0;
-  const deliveryCharge = 250;
-
   const isZardariSuit = serviceName === 'Zardari Suit';
   const effectiveFabricPrice = isZardariSuit ? Math.round((selectedFabric.price / 4) * 5) : selectedFabric.price;
+  
+  const currentGarmentSubTotal = basePrice + styleExtras + effectiveFabricPrice;
+  const listSubTotal = garmentsList.reduce((sum, g) => sum + g.basePrice + g.styleExtras + g.effectiveFabricPrice, 0);
+  const allGarmentsSubTotal = listSubTotal + currentGarmentSubTotal;
 
-  const subTotal = basePrice + styleExtras - discountAmount + (isRush ? 1000 : 0) + effectiveFabricPrice + deliveryCharge;
+  const discountAmount = hasDiscount ? (allGarmentsSubTotal * 0.1) : 0;
+  const deliveryCharge = 250;
+
+  const subTotal = allGarmentsSubTotal - discountAmount + (isRush ? 1000 : 0) + deliveryCharge;
   const pointsDiscount = usePoints ? Math.min(userPoints, subTotal) : 0;
   const totalPrice = subTotal - pointsDiscount;
 
+  let calculatedAdvance = 0;
+  garmentsList.forEach(g => {
+    calculatedAdvance += g.fabricSelection.name === 'Provide my own fabric' 
+      ? Math.ceil((g.basePrice + g.styleExtras) / 2) 
+      : Math.max(g.effectiveFabricPrice, Math.ceil((g.basePrice + g.styleExtras + g.effectiveFabricPrice) / 2));
+  });
+
   const isOwnFabric = selectedFabric.name === 'Provide my own fabric';
-  const calculatedAdvance = isOwnFabric
-    ? Math.ceil(totalPrice / 2)
-    : Math.max(effectiveFabricPrice, Math.ceil(totalPrice / 2));
+  const currentCalculatedAdvance = isOwnFabric
+    ? Math.ceil(currentGarmentSubTotal / 2)
+    : Math.max(effectiveFabricPrice, Math.ceil(currentGarmentSubTotal / 2));
+    
+  calculatedAdvance += currentCalculatedAdvance;
   const advanceAmount = Math.min(calculatedAdvance, Math.max(totalPrice, 0));
 
   // Track Checkout Drop-offs
@@ -417,6 +431,47 @@ export default function Booking() {
 
   const handleNext = () => setStep(s => s + 1);
   const handleBack = () => setStep(s => s - 1);
+
+  const handleAddAnother = () => {
+    if (selectedFabric.name !== 'Provide my own fabric' && !selectedColor) {
+      toast.error('Please select a color for your fabric');
+      return;
+    }
+    
+    setGarmentsList([...garmentsList, {
+      serviceName,
+      styleVariations: { ...styleVariations },
+      fabricSelection: selectedFabric,
+      fabricColor: selectedColor,
+      basePrice,
+      styleExtras,
+      effectiveFabricPrice
+    }]);
+
+    const conf = STYLE_CONFIGS[serviceName] || STYLE_CONFIGS['Kameez Shalwar'];
+    setStyleVariations({
+      collar: conf.collarTypes?.length > 0 ? conf.collarTypes[0].name : '',
+      collarSub: conf.collarTypes?.length > 0 && conf.collarTypes[0].subs?.length > 0 ? conf.collarTypes[0].subs[0] : '',
+      cuff: conf.cuffs?.length > 0 ? conf.cuffs[0].name : '',
+      pockets: conf.pockets?.length > 0 ? conf.pockets[0].name : '',
+      bottomPocket: conf.bottomPockets?.length > 0 ? conf.bottomPockets[0].name : '',
+      bottomDesign: conf.bottomDesigns?.length > 0 ? conf.bottomDesigns[0].name : '',
+      design: ''
+    });
+    setSelectedFabric(fabricList[0]);
+    setSelectedColor('');
+    
+    toast.success('Garment saved to cart! Configure the next one.');
+    setStep(2); 
+  };
+
+  const handleProceedToDetails = () => {
+    if (selectedFabric.name !== 'Provide my own fabric' && !selectedColor) {
+      toast.error('Please select a color for your fabric');
+      return;
+    }
+    setStep(4);
+  };
 
   const renderProfileIcon = (measurements) => {
     const keys = Object.keys(measurements || {});
@@ -483,42 +538,70 @@ export default function Booking() {
     }
 
     setLoading(true);
-    const toastId = toast.loading('Confirming your order...');
+    const toastId = toast.loading('Confirming your order(s)...');
 
     try {
       const profile = profiles.find(p => p._id === selectedProfileId);
-      const payload = {
+      
+      const allGarmentsToOrder = [...garmentsList, {
         serviceName,
         styleVariations,
-        fabricSelection: selectedFabric.name,
+        fabricSelection: selectedFabric,
         fabricColor: selectedColor,
-        fabricImageUrl: selectedFabric.colors?.find(c => c.name === selectedColor)?.imageUrl || selectedFabric.imageUrl || selectedFabric.img || '',
-        measurementSnapshot: {
-          profileName: profile.profileName,
-          measurements: profile.measurements || {}
-        },
-        totalPrice,
-        pointsUsed: usePoints ? pointsDiscount : 0,
-        deliveryCity,
-        deliveryAddress,
-        isRush,
-        customerNote,
-        advancePaid: advanceAmount,
-        advancePaymentStatus: 'Pending',
-        paymentReceiptUrl
-      };
+        basePrice,
+        styleExtras,
+        effectiveFabricPrice
+      }];
 
-      const { data } = await api.post('/api/orders', payload);
+      let remainingAdvance = advanceAmount;
+
+      for (let i = 0; i < allGarmentsToOrder.length; i++) {
+        const g = allGarmentsToOrder[i];
+        
+        let gTotalPrice = g.basePrice + g.styleExtras + g.effectiveFabricPrice;
+        if (i === 0) {
+           gTotalPrice += deliveryCharge;
+           if (isRush) gTotalPrice += 1000;
+           gTotalPrice -= discountAmount;
+           gTotalPrice -= pointsDiscount;
+        }
+
+        const appliedAdvance = Math.min(gTotalPrice, remainingAdvance);
+        remainingAdvance -= appliedAdvance;
+
+        const payload = {
+          serviceName: g.serviceName,
+          styleVariations: g.styleVariations,
+          fabricSelection: g.fabricSelection.name,
+          fabricColor: g.fabricColor,
+          fabricImageUrl: g.fabricColor ? g.fabricSelection.colors?.find(c => c.name === g.fabricColor)?.imageUrl : g.fabricSelection.imageUrl || g.fabricSelection.img || '',
+          measurementSnapshot: {
+            profileName: profile.profileName,
+            measurements: profile.measurements || {}
+          },
+          totalPrice: gTotalPrice,
+          pointsUsed: i === 0 && usePoints ? pointsDiscount : 0,
+          deliveryCity,
+          deliveryAddress,
+          isRush: i === 0 ? isRush : false,
+          customerNote,
+          advancePaid: appliedAdvance,
+          advancePaymentStatus: 'Pending',
+          paymentReceiptUrl
+        };
+
+        await api.post('/api/orders', payload);
+      }
+
       orderPlacedRef.current = true;
 
-      // If we were tracking this checkout session, mark it as recovered
       if (abandonedCartId) {
         api.put(`/api/abandoned-carts/${abandonedCartId}/recover`, { status: 'Recovered' }).catch(() => { });
       }
 
       setBankTransferModalOpen(false);
-      toast.success('Order placed successfully! Please complete your transfer.', { id: toastId });
-      navigate(`/my-orders/${data._id || ''}`);
+      toast.success('Orders placed successfully! Please complete your transfer.', { id: toastId });
+      navigate('/customer/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to place order', { id: toastId });
     } finally {
@@ -790,7 +873,10 @@ export default function Booking() {
 
               <div className="wizard-actions split">
                 <button className="btn btn-outline btn-lg" onClick={handleBack}>← Back</button>
-                <button className="btn btn-primary btn-lg" onClick={handleNext}>Proceed to Details →</button>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <button className="btn btn-outline btn-lg" onClick={handleAddAnother} style={{ borderColor: 'var(--onyx)', color: 'var(--onyx)' }}>Add Another Garment</button>
+                  <button className="btn btn-primary btn-lg" onClick={handleProceedToDetails}>Proceed to Details →</button>
+                </div>
               </div>
             </div>
           )}
@@ -1093,45 +1179,26 @@ export default function Booking() {
               <h2 className="step-title">Order Summary</h2>
 
               <div className="receipt-box">
-                <div className="receipt-row">
-                  <span>{serviceName} (Base Stitching)</span>
-                  <span>Rs. {basePrice.toLocaleString()}</span>
-                </div>
-                <div className="receipt-row">
-                  <span>Fabric: {selectedFabric.name} {selectedColor ? `(${selectedColor})` : ''} {isZardariSuit && effectiveFabricPrice > 0 ? '(5 Meters)' : ''}</span>
-                  <span>{effectiveFabricPrice === 0 ? 'Customer Provided' : `Rs. ${effectiveFabricPrice.toLocaleString()}`}</span>
-                </div>
+                {[...garmentsList, { serviceName, styleVariations, fabricSelection: selectedFabric, fabricColor: selectedColor, basePrice, styleExtras, effectiveFabricPrice }].map((g, idx, arr) => (
+                  <div key={idx} style={{ marginBottom: '1.5rem', borderBottom: idx < arr.length - 1 ? '1px dashed #cbd5e1' : 'none', paddingBottom: idx < arr.length - 1 ? '1rem' : '0' }}>
+                    <div className="receipt-row">
+                      <span style={{ fontWeight: 600, color: 'var(--primary)' }}>Garment {idx + 1}: {g.serviceName}</span>
+                      <span style={{ fontWeight: 600 }}>Rs. {(g.basePrice + g.styleExtras + g.effectiveFabricPrice).toLocaleString()}</span>
+                    </div>
+                    <div className="receipt-row" style={{ fontSize: '0.9rem', color: 'var(--stone)', marginTop: '0.25rem' }}>
+                      <span>Fabric: {g.fabricSelection.name} {g.fabricColor ? `(${g.fabricColor})` : ''}</span>
+                    </div>
+                    <div className="receipt-row" style={{ fontSize: '0.9rem', color: 'var(--stone)', marginTop: '0.25rem' }}>
+                      <span>Style: {g.styleVariations.design ? g.styleVariations.design : `${g.styleVariations.collar}${g.styleVariations.cuff ? ', ' + g.styleVariations.cuff : ''}${g.styleVariations.pockets ? ', ' + g.styleVariations.pockets : ''}`}</span>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="receipt-divider"></div>
                 <div className="receipt-row">
                   <span>Measurement Profile</span>
                   <span>{profiles.find(p => p._id === selectedProfileId)?.profileName}</span>
                 </div>
-
-                <div className="receipt-divider"></div>
-                <div style={{ padding: '0.5rem 0', color: 'var(--stone)' }}>
-                  <strong style={{ color: 'var(--onyx)', display: 'block', marginBottom: '0.5rem' }}>
-                    {config.designs ? 'Design Selection:' : 'Style Preferences:'}
-                  </strong>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem', fontSize: '0.9rem' }}>
-                    {config.designs ? (
-                      <span>Design: {styleVariations.design}</span>
-                    ) : (
-                      <>
-                        <span>Collar: {styleVariations.collar} {styleVariations.collarSub ? `(${styleVariations.collarSub})` : ''}</span>
-                        {styleVariations.cuff && <span>Cuffs: {styleVariations.cuff}</span>}
-                        {styleVariations.pockets && <span>{serviceName === 'Waistcoat' ? 'Waistcoat Pockets' : serviceName.includes('Kameez') ? 'Kameez Pockets' : serviceName.includes('Kurta') ? 'Kurta Pockets' : 'Shirt Pockets'}: {styleVariations.pockets}</span>}
-                        {styleVariations.bottomPocket && <span>Bottom Pocket: {styleVariations.bottomPocket}</span>}
-                        {styleVariations.bottomDesign && <span>Bottom Design: {styleVariations.bottomDesign}</span>}
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className="receipt-divider"></div>
-                {styleExtras > 0 && (
-                  <div className="receipt-row" style={{ color: 'var(--gold)', fontWeight: 500 }}>
-                    <span>Extra Styling Charges</span>
-                    <span>+ Rs. {styleExtras.toLocaleString()}</span>
-                  </div>
-                )}
                 <div className="receipt-divider"></div>
                 {hasDiscount && (
                   <div className="receipt-row" style={{ color: '#16a34a', fontWeight: 500 }}>
@@ -1170,7 +1237,7 @@ export default function Booking() {
                 </div>
                 <div className="receipt-divider" style={{ borderStyle: 'dashed' }}></div>
                 <div className="receipt-row" style={{ color: '#0f172a', fontWeight: 600 }}>
-                  <span>Advance Required {isOwnFabric ? '(50%)' : ''}</span>
+                  <span>Advance Required</span>
                   <span>Rs. {advanceAmount.toLocaleString()}</span>
                 </div>
                 <div className="receipt-row" style={{ color: '#64748b', fontSize: '0.95rem' }}>
