@@ -840,7 +840,11 @@ export default function Booking() {
                       {config.collarTypes.map(opt => (
                         <div key={opt.name} className={`style-card ${styleVariations.collar === opt.name ? 'selected' : ''}`}
                           onClick={() => setStyleVariations({ ...styleVariations, collar: opt.name, collarSub: opt.subs?.length > 0 ? opt.subs[0] : '' })}
+                          style={{ position: 'relative' }}
                         >
+                          {styleVariations.collar === opt.name && (
+                            <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', fontSize: '12px', zIndex: 2 }}>✓</div>
+                          )}
                           <img src={opt.img} alt={opt.name} className="style-img" />
                           <span>{opt.name}</span>
                         </div>
@@ -874,7 +878,11 @@ export default function Booking() {
                         {config.cuffs.map(opt => (
                           <div key={opt.name} className={`style-card ${styleVariations.cuff === opt.name ? 'selected' : ''}`}
                             onClick={() => setStyleVariations({ ...styleVariations, cuff: opt.name })}
+                            style={{ position: 'relative' }}
                           >
+                            {styleVariations.cuff === opt.name && (
+                              <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', fontSize: '12px', zIndex: 2 }}>✓</div>
+                            )}
                             <img src={opt.img} alt={opt.name} className="style-img" />
                             <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
                           </div>
@@ -891,7 +899,11 @@ export default function Booking() {
                         {config.pockets.map(opt => (
                           <div key={opt.name} className={`style-card ${styleVariations.pockets === opt.name ? 'selected' : ''}`}
                             onClick={() => setStyleVariations({ ...styleVariations, pockets: opt.name })}
+                            style={{ position: 'relative' }}
                           >
+                            {styleVariations.pockets === opt.name && (
+                              <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', fontSize: '12px', zIndex: 2 }}>✓</div>
+                            )}
                             <img src={opt.img} alt={opt.name} className="style-img" />
                             <span>{opt.name}</span>
                           </div>
@@ -909,7 +921,11 @@ export default function Booking() {
                           {config.bottomPockets.map(opt => (
                             <div key={opt.name} className={`style-card ${styleVariations.bottomPocket === opt.name ? 'selected' : ''}`}
                               onClick={() => setStyleVariations({ ...styleVariations, bottomPocket: opt.name })}
+                              style={{ position: 'relative' }}
                             >
+                              {styleVariations.bottomPocket === opt.name && (
+                                <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', fontSize: '12px', zIndex: 2 }}>✓</div>
+                              )}
                               <img src={opt.img} alt={opt.name} className="style-img" />
                               <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
                             </div>
@@ -923,7 +939,11 @@ export default function Booking() {
                             {config.bottomDesigns.map(opt => (
                               <div key={opt.name} className={`style-card ${styleVariations.bottomDesign === opt.name ? 'selected' : ''}`}
                                 onClick={() => setStyleVariations({ ...styleVariations, bottomDesign: opt.name })}
+                                style={{ position: 'relative' }}
                               >
+                                {styleVariations.bottomDesign === opt.name && (
+                                  <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', fontSize: '12px', zIndex: 2 }}>✓</div>
+                                )}
                                 <img src={opt.img} alt={opt.name} className="style-img" />
                                 <span>{opt.name} {opt.price > 0 ? `(+Rs.${opt.price})` : ''}</span>
                               </div>

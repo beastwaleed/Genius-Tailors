@@ -224,6 +224,23 @@ export default function OrderDetail() {
           {/* Right Column */}
           <div className="details-col">
             <div className="luxury-card">
+              <h3 className="card-section-title">Fabric Details</h3>
+              <div className="detail-row">
+                <span className="label">Fabric Source</span>
+                <span className="val">{order.fabricSelection || 'Provide my own fabric'}</span>
+              </div>
+              {order.fabricSelection !== 'Provide my own fabric' && order.fabricColor && (
+                <div className="detail-row">
+                  <span className="label">Color Selected</span>
+                  <span className="val" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ display: 'inline-block', width: '16px', height: '16px', borderRadius: '50%', background: order.fabricColor, border: '1px solid #ccc' }}></span>
+                    {order.fabricColor}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="luxury-card">
               <h3 className="card-section-title">Style Variations</h3>
               {order.styleVariations && Object.keys(order.styleVariations).length > 0 ? (
                 <div className="meta-grid">
