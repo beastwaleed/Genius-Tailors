@@ -47,13 +47,13 @@ export default function Contact() {
             <div className="contact-info">
               <div className="info-block">
                 <h3 className="text-heading-3">Visit the Studio</h3>
-                <p>Latifabad Unit 7, near Quba Mosque<br />Hyderabad, Sindh<br />Pakistan</p>
+                <p>Alam chand street tilak chari<br />Hyderabad, Sindh<br />Pakistan</p>
               </div>
 
               <div className="info-block">
                 <h3 className="text-heading-3">Reach Out</h3>
                 <p>
-                  <strong>Email:</strong> geniustailors110@gmail.com<br />
+                  <strong>Email:</strong> info@geniustailors.com<br />
                   <strong>Phone:</strong> +92 333 266 2110<br />
                   <strong>WhatsApp:</strong> +92 333 266 2110
                 </p>
@@ -63,7 +63,7 @@ export default function Contact() {
                 <h3 className="text-heading-3">Business Hours</h3>
                 <p>
                   Monday – Saturday<br />
-                  10:00 AM – 10:00 PM<br />
+                  11:00 AM – 9:00 PM<br />
                   Friday: Closed
                 </p>
               </div>
