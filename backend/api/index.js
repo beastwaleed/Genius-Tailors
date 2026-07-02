@@ -2105,16 +2105,18 @@ app.get('/api/admin/stats', protect, admin, async (req, res) => {
 // Upload Media for Blog (Admin)
 app.post('/api/upload', protect, admin, upload.any(), (req, res) => {
   console.log('--- UPLOAD DEBUG ---');
-  console.log('req.file:', req.file);
   console.log('req.files:', req.files);
   
-  if (req.files && req.files.length > 0 && req.files[0].path) {
-    res.json({ url: req.files[0].path });
-  } else if (req.file && req.file.path) {
-    res.json({ url: req.file.path });
-  } else {
-    res.status(400).json({ message: 'Image upload failed, req.files is empty', files: req.files });
+  const file = (req.files && req.files.length > 0) ? req.files[0] : req.file;
+  
+  if (file) {
+    const fileUrl = file.secure_url || file.url || file.path;
+    if (fileUrl) {
+      return res.json({ url: fileUrl });
+    }
   }
+  
+  res.status(400).json({ message: 'Image upload failed to process the file URL', fileData: file });
 });
 
 // Create a new blog post (Admin)
