@@ -47,6 +47,7 @@ export default function Navbar() {
               <Link to="/services" className={`nav-link ${isActive('/services') ? 'nav-link-active' : ''}`}>Services</Link>
               <Link to="/portfolio" className={`nav-link ${isActive('/portfolio') ? 'nav-link-active' : ''}`}>Portfolio</Link>
               <Link to="/about" className={`nav-link ${isActive('/about') ? 'nav-link-active' : ''}`}>About</Link>
+              <Link to="/blogs" className={`nav-link ${isActive('/blogs') ? 'nav-link-active' : ''}`}>Journal</Link>
               <Link to="/contact" className={`nav-link ${isActive('/contact') ? 'nav-link-active' : ''}`}>Contact</Link>
 
 
@@ -131,6 +132,7 @@ export default function Navbar() {
           <Link to="/services" className="mobile-link">Services</Link>
           <Link to="/portfolio" className="mobile-link">Portfolio</Link>
           <Link to="/about" className="mobile-link">About</Link>
+          <Link to="/blogs" className="mobile-link">Journal</Link>
           <Link to="/contact" className="mobile-link">Contact</Link>
 
           {isLoggedIn && !isAdmin && (

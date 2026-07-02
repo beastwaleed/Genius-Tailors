@@ -17,6 +17,7 @@ const SeasonConfig = require('../src/models/SeasonConfig');
 const Fabric = require('../src/models/Fabric');
 const Promo = require('../src/models/Promo');
 const AbandonedCart = require('../src/models/AbandonedCart');
+const Blog = require('../src/models/Blog');
 
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
@@ -2094,6 +2095,95 @@ app.get('/api/admin/stats', protect, admin, async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: 'Server error fetching dashboard stats' });
+  }
+});
+
+// ==========================================
+// 14. BLOG ROUTES
+// ==========================================
+
+// Create a new blog post (Admin)
+app.post('/api/blogs', protect, admin, async (req, res) => {
+  try {
+    let { title, slug, content, summary, featuredImage, altText, tags, metaTitle, metaDescription, status } = req.body;
+    
+    if (!slug) {
+      slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    }
+
+    const blogExists = await Blog.findOne({ slug });
+    if (blogExists) {
+      return res.status(400).json({ message: 'Blog with this slug already exists' });
+    }
+
+    const blog = await Blog.create({
+      title, slug, content, summary, featuredImage, altText, tags, metaTitle, metaDescription, status
+    });
+    res.status(201).json(blog);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create blog post', error: error.message });
+  }
+});
+
+// Get all blog posts (Public for published, Admin for all)
+app.get('/api/blogs', async (req, res) => {
+  try {
+    const { status, limit = 10, page = 1 } = req.query;
+    const filter = {};
+    if (status) filter.status = status;
+    
+    // Simple pagination
+    const skip = (page - 1) * limit;
+
+    const blogs = await Blog.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+      
+    const total = await Blog.countDocuments(filter);
+    
+    res.json({ blogs, total, page: Number(page), pages: Math.ceil(total / limit) });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch blogs', error: error.message });
+  }
+});
+
+// Get a single blog by slug (Public)
+app.get('/api/blogs/:slug', async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ slug: req.params.slug });
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch blog', error: error.message });
+  }
+});
+
+// Update a blog post (Admin)
+app.put('/api/blogs/:id', protect, admin, async (req, res) => {
+  try {
+    const blog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update blog', error: error.message });
+  }
+});
+
+// Delete a blog post (Admin)
+app.delete('/api/blogs/:id', protect, admin, async (req, res) => {
+  try {
+    const blog = await Blog.findByIdAndDelete(req.params.id);
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+    res.json({ message: 'Blog deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete blog', error: error.message });
   }
 });
 

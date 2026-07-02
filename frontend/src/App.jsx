@@ -16,6 +16,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
+import Blogs from './pages/Blogs';
+import BlogDetail from './pages/BlogDetail';
 
 // Customer pages
 import Dashboard from './pages/customer/Dashboard';
@@ -40,6 +42,7 @@ import AdminCustomerDetails from './pages/admin/AdminCustomerDetails';
 import AdminFabrics from './pages/admin/AdminFabrics';
 import AdminPromos from './pages/admin/AdminPromos';
 import AdminAbandonedCarts from './pages/admin/AdminAbandonedCarts';
+import AdminBlogs from './pages/admin/AdminBlogs';
 
 export default function App() {
   const { isLoggedIn, isAdmin } = useAuth();
@@ -59,6 +62,8 @@ export default function App() {
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-conditions" element={<TermsConditions />} />
+      <Route path="/blogs" element={<Blogs />} />
+      <Route path="/blog/:slug" element={<BlogDetail />} />
 
       {/* ── Customer Routes ───────────────────────── */}
       <Route path="/dashboard" element={<ProtectedRoute role="Customer"><Dashboard /></ProtectedRoute>} />
@@ -83,6 +88,7 @@ export default function App() {
       <Route path="/admin/fabrics" element={<ProtectedRoute role="Admin"><AdminFabrics /></ProtectedRoute>} />
       <Route path="/admin/marketing" element={<ProtectedRoute role="Admin"><AdminPromos /></ProtectedRoute>} />
       <Route path="/admin/abandoned-carts" element={<ProtectedRoute role="Admin"><AdminAbandonedCarts /></ProtectedRoute>} />
+      <Route path="/admin/blogs" element={<ProtectedRoute role="Admin"><AdminBlogs /></ProtectedRoute>} />
 
       {/* ── Catch All ─────────────────────────────── */}
       <Route path="*" element={<Navigate to="/" replace />} />
