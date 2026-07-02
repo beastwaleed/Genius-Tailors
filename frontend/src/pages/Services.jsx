@@ -236,9 +236,9 @@ export default function Services() {
   return (
     <>
       <Helmet>
-        <title>Our Services | Genius Tailors Pakistan</title>
-        <meta name="description" content="Explore our premium tailoring services in Pakistan. We specialize in custom-stitched Kameez Shalwar, Designer Kurta Shalwar, Waistcoats, and 3-piece Zardari Suits." />
-        <meta name="keywords" content="custom tailoring services, shalwar kameez tailor, kurta shalwar stitching, waistcoat tailor, zardari suit designer, premium tailors in pakistan, online tailor services" />
+        <title>Premium Men's Shalwar Kameez & Kurta Pakistan | Genius Tailors</title>
+        <meta name="description" content="Browse our premium gents shalwar kameez design, designer kurta for men, and wedding waistcoat for men in pakistan. Custom stitched by the best online tailor." />
+        <meta name="keywords" content="gents shalwar kameez design, designer kurta for men pakistan, wedding waistcoat for men pakistan, embroidered kurta design for gents, custom stitching shalwar kameez online" />
       </Helmet>
       <div style={{ minHeight: '100vh', background: 'var(--ivory)' }}>
       <Navbar />

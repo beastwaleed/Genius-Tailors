@@ -643,8 +643,8 @@ export default function Booking() {
   return (
     <>
       <Helmet>
-        <title>Book a Custom Tailor in Pakistan | Genius Tailors</title>
-        <meta name="description" content="Book online for custom stitched Kameez Shalwar, Designer Kurta Shalwar, and 3-piece suits in Pakistan. Provide your measurements online and get a perfect fit." />
+        <title>Custom Stitching Shalwar Kameez Online | Genius Tailors</title>
+        <meta name="description" content="Experience the finest online tailor in Pakistan. Get bespoke custom stitching for kurta shalwar delivered right to your doorstep. Submit your measurements!" />
       </Helmet>
       <CustomerLayout title="Place New Order">
         <div className="booking-wizard">

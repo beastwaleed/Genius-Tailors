@@ -182,9 +182,9 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>Genius Tailors | Premium Online Tailoring in Pakistan</title>
-        <meta name="description" content="Genius Tailors is the leading online tailor in Pakistan. Get custom-stitched Shalwar Kameez, Kurta Shalwar, Waistcoats, and Zardari Suits with a perfect fit guarantee. Free home delivery." />
-        <meta name="keywords" content="online tailor in pakistan, shalwar kameez tailor, custom suits pakistan, men's tailor hyderabad, zardari suit tailoring, bespoke kurta shalwar, men's fashion" />
+        <title>Premium Online Tailor in Pakistan | Genius Tailors</title>
+        <meta name="description" content="Shop premium men branded shalwar kameez online. Experience the best gents tailor in Hyderabad, Pakistan with our custom stitching. Book your fit today!" />
+        <meta name="keywords" content="online tailor in pakistan, best gents tailor in hyderabad pakistan, men branded shalwar kameez online, kameez shalwar design, designer kurta for men pakistan, premium cotton kurta pajama" />
       </Helmet>
       <div className="home">
         <Navbar />
