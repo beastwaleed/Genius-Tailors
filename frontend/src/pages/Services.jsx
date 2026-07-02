@@ -469,6 +469,28 @@ export default function Services() {
         </div>
       </section>
 
+      {/* ── SEO Content Section ── */}
+      <section className="section seo-content-section" style={{ background: '#faf9f6', padding: '4rem 0', borderTop: '1px solid var(--ivory-border)' }}>
+        <div className="container">
+          <div style={{ maxWidth: '860px', margin: '0 auto' }}>
+            <h2 className="text-heading-2" style={{ marginBottom: '1.5rem', color: 'var(--onyx)', textAlign: 'center' }}>
+              Premium Custom Tailoring in Pakistan
+            </h2>
+            <div style={{ color: 'var(--stone)', fontSize: '1.05rem', lineHeight: '1.8', textAlign: 'justify' }}>
+              <p style={{ marginBottom: '1.25rem' }}>
+                At Genius Tailors, we redefine men's fashion by bringing the traditional artistry of a bespoke tailor to your fingertips. As the premier <strong>online tailor in Pakistan</strong>, we specialize in crafting high-quality, custom-stitched garments that reflect your personal style. Whether you are looking for a timeless <strong>gents shalwar kameez design</strong> for everyday elegance, or a statement <strong>designer kurta for men pakistan</strong>, our master craftsmen ensure a flawless fit using only the finest materials.
+              </p>
+              <p style={{ marginBottom: '1.25rem' }}>
+                Our exclusive collection features everything from lightweight, breathable <strong>premium cotton kurta pajama</strong> sets for ultimate comfort, to intricately <strong>embroidered kurta design for gents</strong> perfect for festive occasions. We understand that special moments require special attire, which is why our bespoke <strong>wedding waistcoat for men pakistan</strong> and complete 3-piece suits are tailored to perfection, ensuring you stand out on your big day.
+              </p>
+              <p>
+                Experience the convenience of <strong>custom stitching shalwar kameez online</strong>. Forget generic sizes—our digital platform allows you to submit precise measurements and select premium fabrics from the comfort of your home. Trusted as the <strong>best gents tailor in Hyderabad pakistan</strong>, we pride ourselves on delivering impeccably finished, <strong>men branded shalwar kameez online</strong> straight to your doorstep.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <Footer />
 
       {/* ── Page CSS ── */}
