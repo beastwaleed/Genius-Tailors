@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../api';
+import api from '../../api';
 import toast from 'react-hot-toast';
-import AdminLayout from '../../../components/AdminLayout';
+import AdminLayout from '../../components/AdminLayout';
 
 export default function AdminBlogs() {
   const [blogs, setBlogs] = useState([]);
