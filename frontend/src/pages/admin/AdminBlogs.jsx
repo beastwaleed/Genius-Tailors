@@ -300,7 +300,6 @@ export default function AdminBlogs() {
             )}
           </div>
         )}
-      </div>
     </AdminLayout>
   );
 }
