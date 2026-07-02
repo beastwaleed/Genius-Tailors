@@ -109,7 +109,9 @@ export default function AdminBlogs() {
     formDataUpload.append('image', file);
 
     try {
-      const res = await api.post('/api/upload', formDataUpload);
+      const res = await api.post('/api/upload', formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       const imageUrl = res.data.url;
       setFormData(prev => ({
         ...prev,
