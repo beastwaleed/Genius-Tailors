@@ -109,9 +109,7 @@ export default function AdminBlogs() {
     formDataUpload.append('image', file);
 
     try {
-      const res = await api.post('/api/upload', formDataUpload, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await api.post('/api/upload', formDataUpload);
       const imageUrl = res.data.url;
       setFormData(prev => ({
         ...prev,
@@ -119,7 +117,8 @@ export default function AdminBlogs() {
       }));
       toast.success('Image added to content!');
     } catch (error) {
-      toast.error('Failed to upload image');
+      console.error('Image upload failed:', error.response?.data || error);
+      toast.error(error.response?.data?.message || error.response?.data?.error || 'Failed to upload image');
     } finally {
       setUploadingImage(false);
       e.target.value = null;
