@@ -8,6 +8,7 @@ export default function AdminBlogs() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   
   const [formData, setFormData] = useState({
     _id: null,
@@ -99,6 +100,32 @@ export default function AdminBlogs() {
     }
   };
 
+  const handleInlineImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    const formDataUpload = new FormData();
+    formDataUpload.append('image', file);
+
+    try {
+      const res = await api.post('/api/upload', formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const imageUrl = res.data.url;
+      setFormData(prev => ({
+        ...prev,
+        content: prev.content + `\n\n![Image description](${imageUrl})\n\n`
+      }));
+      toast.success('Image added to content!');
+    } catch (error) {
+      toast.error('Failed to upload image');
+    } finally {
+      setUploadingImage(false);
+      e.target.value = null;
+    }
+  };
+
   return (
     <AdminLayout title="Blog & SEO Management">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -161,8 +188,20 @@ export default function AdminBlogs() {
                   required
                   value={formData.content} 
                   onChange={e => setFormData({...formData, content: e.target.value})} 
-                  style={{ fontFamily: 'monospace' }}
+                  style={{ fontFamily: 'monospace', marginBottom: '0.5rem' }}
                 />
+                <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '6px', border: '1px dashed #cbd5e1', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--stone)' }}>
+                    {uploadingImage ? 'Uploading...' : 'Insert Image into Content:'}
+                  </label>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleInlineImageUpload}
+                    disabled={uploadingImage}
+                    style={{ fontSize: '0.85rem' }}
+                  />
+                </div>
               </div>
             </div>
 

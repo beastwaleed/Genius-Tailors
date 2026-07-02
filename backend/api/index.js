@@ -2099,8 +2099,17 @@ app.get('/api/admin/stats', protect, admin, async (req, res) => {
 });
 
 // ==========================================
-// 14. BLOG ROUTES
+// 14. BLOG & MEDIA ROUTES
 // ==========================================
+
+// Upload Media for Blog (Admin)
+app.post('/api/upload', protect, admin, upload.single('image'), (req, res) => {
+  if (req.file && req.file.path) {
+    res.json({ url: req.file.path });
+  } else {
+    res.status(400).json({ message: 'Image upload failed' });
+  }
+});
 
 // Create a new blog post (Admin)
 app.post('/api/blogs', protect, admin, async (req, res) => {
