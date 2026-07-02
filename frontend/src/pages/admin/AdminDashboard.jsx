@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, Legend, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import api from '../../api';
 import AdminLayout from '../../components/AdminLayout';
 
@@ -45,6 +45,21 @@ export default function AdminDashboard() {
       // Format topServices for chart: [['Kameez Shalwar', 80], ...]
       const topServices = data.services.topServices ? data.services.topServices.map(s => [s._id, s.count]) : [];
 
+      // AOV Calculation
+      const aov = data.orders.total > 0 ? (data.revenue.total / data.orders.total) : 0;
+
+      // MoM Revenue Growth
+      let momGrowth = 0;
+      if (data.chartData && data.chartData.length >= 2) {
+        const currentM = data.chartData[data.chartData.length - 1].revenue;
+        const prevM = data.chartData[data.chartData.length - 2].revenue;
+        if (prevM > 0) {
+          momGrowth = Math.round(((currentM - prevM) / prevM) * 100);
+        } else if (currentM > 0) {
+          momGrowth = 100;
+        }
+      }
+
       setStats({
         totalOrders: data.orders.total || 0,
         pendingOrders: pending,
@@ -52,7 +67,10 @@ export default function AdminDashboard() {
         totalCustomers: data.customers.total || 0,
         revenue: data.revenue.total || 0,
         topServices,
-        chartData: data.chartData
+        chartData: data.chartData,
+        orderStatuses: data.orders.byStatus || [],
+        aov,
+        momGrowth
       });
 
       setRecentOrders(orders.slice(0, 8));
@@ -61,14 +79,19 @@ export default function AdminDashboard() {
       // Fallback dummy data if endpoint fails
       setStats({ 
         totalOrders: 142, pendingOrders: 28, deliveredOrders: 110, totalCustomers: 89, revenue: 450000,
+        aov: 3169, momGrowth: 24,
         topServices: [['Kameez Shalwar', 80], ['Waistcoat', 40], ['Kurta Pajama', 15], ['Kurta Shalwar', 7]],
+        orderStatuses: [
+          { _id: 'Pending', count: 12 }, { _id: 'Cutting', count: 5 }, { _id: 'Stitching', count: 8 }, 
+          { _id: 'Ready', count: 3 }, { _id: 'Delivered', count: 110 }, { _id: 'Cancelled', count: 4 }
+        ],
         chartData: [
           { name: 'Jan', revenue: 40000, orders: 15 },
           { name: 'Feb', revenue: 55000, orders: 20 },
           { name: 'Mar', revenue: 48000, orders: 18 },
           { name: 'Apr', revenue: 90000, orders: 35 },
           { name: 'May', revenue: 120000, orders: 50 },
-          { name: 'Jun', revenue: 97000, orders: 42 }
+          { name: 'Jun', revenue: 148800, orders: 42 }
         ]
       });
       setRecentOrders([]);
@@ -84,12 +107,19 @@ export default function AdminDashboard() {
       ) : (
         <>
           <div className="premium-dashboard">
-            <div className="admin-stats-grid">
+            <div className="admin-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
               <div className="premium-stat-card">
                 <div className="stat-icon" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}>💰</div>
                 <div className="stat-info">
                   <h4>Gross Revenue</h4>
-                  <p className="stat-value">Rs. {stats.revenue.toLocaleString()}</p>
+                  <p className="stat-value">Rs. {stats.revenue?.toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="premium-stat-card">
+                <div className="stat-icon" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)' }}>📈</div>
+                <div className="stat-info">
+                  <h4>Avg Order Value</h4>
+                  <p className="stat-value">Rs. {Math.round(stats.aov || 0).toLocaleString()}</p>
                 </div>
               </div>
               <div className="premium-stat-card">
@@ -107,7 +137,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="premium-stat-card">
-                <div className="stat-icon" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)' }}>👥</div>
+                <div className="stat-icon" style={{ color: '#64748b', background: 'rgba(100, 116, 139, 0.1)' }}>👥</div>
                 <div className="stat-info">
                   <h4>Registered Users</h4>
                   <p className="stat-value">{stats.totalCustomers}</p>
@@ -115,7 +145,103 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="dashboard-middle-row">
+            {/* ── Revenue & Growth Chart Row ── */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+              <div className="premium-glass-card" style={{ padding: '1.5rem', gridColumn: 'span 2' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                  <h3 className="premium-title" style={{ margin: 0 }}>Revenue Growth (LTV & MRR)</h3>
+                  <span style={{ 
+                    background: stats.momGrowth >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
+                    color: stats.momGrowth >= 0 ? '#10b981' : '#ef4444', 
+                    padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 700 
+                  }}>
+                    {stats.momGrowth >= 0 ? '+' : ''}{stats.momGrowth}% this month
+                  </span>
+                </div>
+                <div style={{ width: '100%', height: 300 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={stats.chartData || []} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dx={-10} tickFormatter={(value) => `Rs.${value/1000}k`} domain={[0, 'auto']} />
+                      <RechartsTooltip 
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                        formatter={(value) => [`Rs. ${value.toLocaleString()}`, 'Revenue']}
+                      />
+                      <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Order Status Donut Chart */}
+              <div className="premium-glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+                <h3 className="premium-title" style={{ margin: 0, marginBottom: '1rem' }}>Order Distribution</h3>
+                <div style={{ flex: 1, width: '100%', minHeight: '300px' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={stats.orderStatuses || []}
+                        dataKey="count"
+                        nameKey="_id"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={90}
+                        paddingAngle={5}
+                      >
+                        {stats.orderStatuses?.map((entry, index) => {
+                          const COLORS = {
+                            'Pending': '#f59e0b',
+                            'Cutting': '#8b5cf6',
+                            'Stitching': '#3b82f6',
+                            'Ready': '#0ea5e9',
+                            'Delivered': '#10b981',
+                            'Cancelled': '#ef4444'
+                          };
+                          return <Cell key={`cell-${index}`} fill={COLORS[entry._id] || '#cbd5e1'} />;
+                        })}
+                      </Pie>
+                      <RechartsTooltip 
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                        formatter={(value) => [`${value} Orders`, 'Count']}
+                      />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Order Volume & Services Row ── */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+              
+              {/* Monthly Orders Bar Chart */}
+              <div className="premium-glass-card" style={{ padding: '1.5rem' }}>
+                <h3 className="premium-title" style={{ margin: 0, marginBottom: '1.5rem' }}>Monthly Order Volume</h3>
+                <div style={{ width: '100%', height: 280 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={stats.chartData || []} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dy={10} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dx={-10} allowDecimals={false} />
+                      <RechartsTooltip 
+                        cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                        formatter={(value) => [`${value} Orders`, 'Volume']}
+                      />
+                      <Bar dataKey="orders" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={30} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
               {/* Service Popularity Breakdown */}
               <div className="premium-glass-card service-breakdown">
                 <h3 className="premium-title">Most Popular Services</h3>
@@ -136,48 +262,6 @@ export default function AdminDashboard() {
                     );
                   })}
                 </div>
-              </div>
-
-              {/* Quick Conversion Widget */}
-              <div className="premium-glass-card conversion-widget">
-                 <h3 className="premium-title">Fulfillment Rate</h3>
-                 <div className="fulfillment-circle" style={{ '--p': `${stats.totalOrders > 0 ? Math.round((stats.deliveredOrders / stats.totalOrders) * 100) : 0}%` }}>
-                   <div className="circle-inner">
-                     <span className="percent">{stats.totalOrders > 0 ? Math.round((stats.deliveredOrders / stats.totalOrders) * 100) : 0}%</span>
-                     <span className="label">Delivered</span>
-                   </div>
-                 </div>
-                 <div style={{ textAlign: 'center', marginTop: '1.5rem', color: '#64748b', fontSize: '0.95rem', fontWeight: 500 }}>
-                   {stats.deliveredOrders} out of {stats.totalOrders} orders successfully delivered.
-                 </div>
-              </div>
-            </div>
-
-            {/* ── Revenue & Growth Chart ── */}
-            <div className="premium-glass-card" style={{ marginBottom: '2rem', padding: '1.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h3 className="premium-title" style={{ margin: 0 }}>Revenue Growth (LTV & MRR)</h3>
-                <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 700 }}>+24% this month</span>
-              </div>
-              <div style={{ width: '100%', height: 300 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={stats.chartData || []} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dx={-10} tickFormatter={(value) => `Rs.${value/1000}k`} domain={[0, 'dataMax + 1000']} />
-                    <RechartsTooltip 
-                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
-                      formatter={(value) => [`Rs. ${value.toLocaleString()}`, 'Revenue']}
-                    />
-                    <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
-                  </AreaChart>
-                </ResponsiveContainer>
               </div>
             </div>
 
