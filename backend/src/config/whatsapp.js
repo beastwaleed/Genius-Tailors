@@ -1,41 +1,87 @@
-const axios = require('axios');
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
+const pino = require('pino');
+const fs = require('fs');
 
-/**
- * Custom WhatsApp Microservice API
- * 
- * Setup:
- * 1. Run the separate `whatsapp-microservice` Node.js server.
- * 2. Add these to your backend/.env file:
- *    WHATSAPP_MICROSERVICE_URL=http://localhost:3005
- *    WHATSAPP_MICROSERVICE_KEY=gt-super-secret-key-123
- */
+let waSocket = null;
+
+const initWhatsApp = async () => {
+    try {
+        const { state, saveCreds } = await useMultiFileAuthState('./auth_info_baileys');
+
+        const sock = makeWASocket({
+            auth: state,
+            printQRInTerminal: true,
+            logger: pino({ level: 'silent' }), // Suppress excessive logs
+            defaultQueryTimeoutMs: undefined
+        });
+
+        sock.ev.on('connection.update', (update) => {
+            const { connection, lastDisconnect, qr } = update;
+            
+            if (qr) {
+                console.log('\n\n======================================================');
+                console.log('📱 SCAN THIS QR CODE IN WHATSAPP TO LINK YOUR BOT 📱');
+                console.log('======================================================\n\n');
+            }
+
+            if (connection === 'close') {
+                const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
+                console.log('WhatsApp connection closed. Reconnecting:', shouldReconnect);
+                if (shouldReconnect) {
+                    initWhatsApp();
+                } else {
+                    console.log('You logged out of WhatsApp. You must scan the QR code again.');
+                    fs.rmSync('./auth_info_baileys', { recursive: true, force: true });
+                    initWhatsApp();
+                }
+            } else if (connection === 'open') {
+                console.log('WhatsApp connection opened successfully!');
+            }
+        });
+
+        sock.ev.on('creds.update', saveCreds);
+        
+        waSocket = sock;
+    } catch (error) {
+        console.error('Failed to initialize WhatsApp:', error);
+    }
+};
 
 const sendWhatsappMessage = async (toPhone, message) => {
-  const baseUrl = process.env.WHATSAPP_MICROSERVICE_URL || 'http://localhost:3005';
-  const apiKey = process.env.WHATSAPP_MICROSERVICE_KEY || 'gt-super-secret-key-123';
+    if (!waSocket) {
+        console.error('WhatsApp socket is not initialized');
+        return;
+    }
 
-  try {
-    const url = `${baseUrl}/send`;
-    
-    await axios.post(url, {
-      to: toPhone,
-      message: message
-    }, {
-      headers: { 
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey
-      }
-    });
+    try {
+        // Format phone number: remove '+' and spaces
+        let cleanPhone = toPhone.replace(/[\+\s\-]/g, '');
+        
+        // Pakistani numbers must include country code (e.g., 923332662110). If local format (0333...), convert it:
+        if (cleanPhone.startsWith('0')) {
+            cleanPhone = '92' + cleanPhone.substring(1);
+        }
 
-    console.log(`WhatsApp message successfully queued to ${toPhone} via custom microservice`);
-  } catch (error) {
-    console.error('WhatsApp Microservice sending failed:', error.response?.data || error.message);
-  }
+        const jid = `${cleanPhone}@s.whatsapp.net`;
+        
+        // Wait briefly to ensure socket is ready
+        await waSocket.waitForConnectionUpdate((update) => update.connection === 'open' || waSocket.user);
+        
+        // Check if number is on WhatsApp
+        const [result] = await waSocket.onWhatsApp(jid);
+        if (result && result.exists) {
+            await waSocket.sendMessage(jid, { text: message });
+            console.log(`WhatsApp message sent to ${cleanPhone}`);
+        } else {
+            console.log(`Phone number ${cleanPhone} is not registered on WhatsApp.`);
+        }
+    } catch (error) {
+        console.error('Failed to send WhatsApp message via Baileys:', error);
+    }
 };
 
 const sendWhatsappOrderConfirmation = async (customerPhone, customerName, serviceName, totalPrice, orderId) => {
   const message = `*Genius Tailors* ✂️\n\nHello ${customerName}! 🎉\n\nYour order has been placed successfully. Our tailor will review it and begin working shortly.\n\n*Garment:* ${serviceName}\n*Total Price:* Rs. ${totalPrice.toLocaleString()}\n*Order ID:* ${orderId}\n\nYou will receive a message here whenever your order status is updated!`;
-  
   await sendWhatsappMessage(customerPhone, message);
 };
 
@@ -55,7 +101,7 @@ const sendWhatsappStatusUpdate = async (customerPhone, customerName, serviceName
       statusMsg = 'Your order has been delivered. Thank you for choosing Genius Tailors! ✅';
       break;
     default:
-      return; // Don't send for Pending/Cancelled
+      return; 
   }
 
   let message = `*Genius Tailors Update* ✂️\n\nDear ${customerName},\n\n${statusMsg}\n\n*Service:* ${serviceName}\n*Status:* ${status}`;
@@ -94,7 +140,6 @@ const sendAdminAbandonedCartWhatsapp = async (customerName, serviceName, totalPr
 };
 
 const sendAdminNewOrderWhatsapp = async (customerName, serviceName, totalPrice, orderId, paymentReceiptUrl) => {
-  // Using the correct admin phone number
   const adminPhone = '+923332662110'; 
   
   let message = `*🔔 New Order Alert!*\n\n`;
@@ -113,4 +158,4 @@ const sendAdminNewOrderWhatsapp = async (customerName, serviceName, totalPrice, 
   await sendWhatsappMessage(adminPhone, message);
 };
 
-module.exports = { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp };
+module.exports = { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp };

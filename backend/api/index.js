@@ -23,7 +23,7 @@ const Blog = require('../src/models/Blog');
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/upload');
 const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
-const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp } = require('../src/config/whatsapp');
+const { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -1671,9 +1671,16 @@ module.exports = async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+  if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+      try {
+        initWhatsApp();
+      } catch (err) {
+        console.error('Failed to initialize WhatsApp bot:', err);
+      }
+    });
+  }
 }).catch((err) => {
   console.error('Failed to connect to database', err);
 });
