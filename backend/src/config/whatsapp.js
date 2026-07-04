@@ -1,6 +1,7 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const fs = require('fs');
+const qrcode = require('qrcode-terminal');
 
 let waSocket = null;
 
@@ -22,6 +23,7 @@ const initWhatsApp = async () => {
                 console.log('\n\n======================================================');
                 console.log('📱 SCAN THIS QR CODE IN WHATSAPP TO LINK YOUR BOT 📱');
                 console.log('======================================================\n\n');
+                qrcode.generate(qr, { small: true });
             }
 
             if (connection === 'close') {
@@ -65,7 +67,10 @@ const sendWhatsappMessage = async (toPhone, message) => {
         const jid = `${cleanPhone}@s.whatsapp.net`;
         
         // Wait briefly to ensure socket is ready
-        await waSocket.waitForConnectionUpdate((update) => update.connection === 'open' || waSocket.user);
+        if (!waSocket?.user) {
+            console.log('WhatsApp socket not fully ready yet. Skipping message.');
+            return;
+        }
         
         // Check if number is on WhatsApp
         const [result] = await waSocket.onWhatsApp(jid);
