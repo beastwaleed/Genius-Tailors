@@ -54,8 +54,8 @@ export default function Contact() {
                 <h3 className="text-heading-3">Reach Out</h3>
                 <p>
                   <strong>Email:</strong> info@geniustailors.com<br />
-                  <strong>Phone:</strong> +92 333 266 2110<br />
-                  <strong>WhatsApp:</strong> +92 333 266 2110
+                  <strong>Phone:</strong> +92 333 266 2110 / +92 324 304 1248<br />
+                  <strong>WhatsApp:</strong> +92 333 266 2110 / +92 324 304 1248
                 </p>
               </div>
 

@@ -1709,7 +1709,7 @@ app.post('/api/chat', async (req, res) => {
    - Cash on Delivery or Bank Transfer.
    - For Bank Transfer/JazzCash, an interactive popup with a QR code and payment details will appear. The text details are Bank: RAAST, Til ID: 980208401, Account Title: Genius Tailors. Customers must upload their payment receipt.
 6. **Social Proof**: The website displays real-time popups on the bottom right showing recent bookings by other customers.
-7. **Delivery & Support**: Standard delivery takes 5-12 working days depending on the service.
+7. **Delivery & Support**: Standard delivery takes 5-12 working days depending on the service. Customers can contact support via phone or WhatsApp at 0333-2662110 or 0324-3041248.
 
 Answer the customer's question using this context. If they ask something outside of this, kindly guide them back to our tailoring services.
 

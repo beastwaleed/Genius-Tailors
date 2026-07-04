@@ -20,7 +20,7 @@ export default function Footer() {
               Hyderabad's finest bespoke tailoring —<br />
               crafted with care since 1992.
             </p>
-            <p className="footer-contact">📞 0333-2662110</p>
+            <p className="footer-contact">📞 0333-2662110 / 0324-3041248</p>
             <p className="footer-contact">📍 Hyderabad, Sindh, Pakistan</p>
           </div>
 

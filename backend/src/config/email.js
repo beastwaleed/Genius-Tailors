@@ -69,7 +69,7 @@ const sendStatusUpdateEmail = async (customerEmail, customerName, serviceName, s
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Status:</strong> <span style="color: #27ae60;">${status}</span></p>
           ${deliveryLine}
         </div>
-        <p style="color: #777; font-size: 13px;">For any queries, feel free to contact us at your nearest visit or reply to this email or whatsapp at 03332662110.</p>
+        <p style="color: #777; font-size: 13px;">For any queries, feel free to contact us at your nearest visit or reply to this email or whatsapp at 03332662110 or 03243041248.</p>
       </div>
       <div style="background: #f0f0f0; padding: 16px; text-align: center;">
         <p style="color: #999; font-size: 12px; margin: 0;">© ${new Date().getFullYear()} Genius Tailors, Hyderabad. All rights reserved.</p>
