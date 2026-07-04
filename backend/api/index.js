@@ -23,7 +23,7 @@ const Blog = require('../src/models/Blog');
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/upload');
 const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
-const { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp } = require('../src/config/whatsapp');
+const { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -1261,8 +1261,13 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       } else {
         console.log('\n--- 🔑 DEV MODE: Password Reset Link ---\n', resetUrl, '\n---------------------------------------\n');
       }
-    } catch (emailError) {
-      console.error('Failed to send email, but token was generated. Reset link:', resetUrl);
+      
+      // Send WhatsApp message
+      if (user.phone) {
+        await sendWhatsappPasswordReset(user.phone, user.name, resetUrl);
+      }
+    } catch (msgError) {
+      console.error('Failed to send email or whatsapp. Reset link:', resetUrl);
     }
 
     res.json({ message: 'If that email exists, a reset link has been generated.' });

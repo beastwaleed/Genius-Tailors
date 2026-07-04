@@ -158,4 +158,9 @@ const sendAdminNewOrderWhatsapp = async (customerName, serviceName, totalPrice, 
   await sendWhatsappMessage(adminPhone, message);
 };
 
-module.exports = { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp };
+const sendWhatsappPasswordReset = async (customerPhone, customerName, resetUrl) => {
+  const message = `*Genius Tailors Security* 🔐\n\nHi ${customerName},\n\nWe received a request to reset your password. Please click the secure link below to create a new password:\n\n${resetUrl}\n\nIf you did not request this, please ignore this message.`;
+  await sendWhatsappMessage(customerPhone, message);
+};
+
+module.exports = { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset };
