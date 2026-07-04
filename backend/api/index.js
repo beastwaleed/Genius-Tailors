@@ -21,7 +21,7 @@ const Blog = require('../src/models/Blog');
 
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
-const { upload } = require('../src/config/cloudinary');
+const { upload } = require('../src/config/upload');
 const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
 const { sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
@@ -31,6 +31,10 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve uploaded images statically
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Ensure MongoDB is connected for Vercel Serverless Functions
 app.use(async (req, res, next) => {
