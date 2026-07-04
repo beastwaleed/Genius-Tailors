@@ -76,23 +76,18 @@ export default function AdminDashboard() {
       setRecentOrders(orders.slice(0, 8));
     } catch (error) {
       console.error('Failed to fetch admin stats', error);
-      // Fallback dummy data if endpoint fails
-      setStats({ 
-        totalOrders: 142, pendingOrders: 28, deliveredOrders: 110, totalCustomers: 89, revenue: 450000,
-        aov: 3169, momGrowth: 24,
-        topServices: [['Kameez Shalwar', 80], ['Waistcoat', 40], ['Kurta Pajama', 15], ['Kurta Shalwar', 7]],
-        orderStatuses: [
-          { _id: 'Pending', count: 12 }, { _id: 'Cutting', count: 5 }, { _id: 'Stitching', count: 8 }, 
-          { _id: 'Ready', count: 3 }, { _id: 'Delivered', count: 110 }, { _id: 'Cancelled', count: 4 }
-        ],
-        chartData: [
-          { name: 'Jan', revenue: 40000, orders: 15 },
-          { name: 'Feb', revenue: 55000, orders: 20 },
-          { name: 'Mar', revenue: 48000, orders: 18 },
-          { name: 'Apr', revenue: 90000, orders: 35 },
-          { name: 'May', revenue: 120000, orders: 50 },
-          { name: 'Jun', revenue: 148800, orders: 42 }
-        ]
+      // Removed dummy data fallback to ensure only real data is shown
+      setStats({
+        totalOrders: 0,
+        pendingOrders: 0,
+        deliveredOrders: 0,
+        totalCustomers: 0,
+        revenue: 0,
+        topServices: [],
+        chartData: [],
+        orderStatuses: [],
+        aov: 0,
+        momGrowth: 0
       });
       setRecentOrders([]);
     } finally {

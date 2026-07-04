@@ -1180,57 +1180,7 @@ app.delete('/api/admin/orders/:id/notes/:noteId', protect, admin, async (req, re
 });
 
 // ── Feature 5: Business Analytics / Stats ───────────────────────────────────
-app.get('/api/admin/stats', protect, admin, async (req, res) => {
-  try {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-    const [
-      totalOrders,
-      ordersThisMonth,
-      revenueResult,
-      revenueThisMonthResult,
-      ordersByStatus,
-      popularServices,
-      totalCustomers,
-      newCustomersThisMonth,
-      membershipBreakdown,
-      activeSeason
-    ] = await Promise.all([
-      Order.countDocuments({ status: { $ne: 'Cancelled' } }),
-      Order.countDocuments({ createdAt: { $gte: startOfMonth }, status: { $ne: 'Cancelled' } }),
-      Order.aggregate([{ $match: { status: { $ne: 'Cancelled' } } }, { $group: { _id: null, total: { $sum: '$totalPrice' } } }]),
-      Order.aggregate([{ $match: { createdAt: { $gte: startOfMonth }, status: { $ne: 'Cancelled' } } }, { $group: { _id: null, total: { $sum: '$totalPrice' } } }]),
-      Order.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
-      Order.aggregate([{ $match: { status: { $ne: 'Cancelled' } } }, { $group: { _id: '$serviceName', count: { $sum: 1 } } }, { $sort: { count: -1 } }, { $limit: 5 }]),
-      User.countDocuments({ role: 'Customer' }),
-      User.countDocuments({ role: 'Customer', createdAt: { $gte: startOfMonth } }),
-      User.aggregate([{ $match: { role: 'Customer' } }, { $group: { _id: '$membershipLevel', count: { $sum: 1 } } }]),
-      SeasonConfig.findOne({ isActive: true })
-    ]);
-
-    res.json({
-      orders: {
-        total: totalOrders,
-        thisMonth: ordersThisMonth,
-        byStatus: ordersByStatus
-      },
-      revenue: {
-        total: revenueResult[0]?.total || 0,
-        thisMonth: revenueThisMonthResult[0]?.total || 0
-      },
-      services: { topServices: popularServices },
-      customers: {
-        total: totalCustomers,
-        newThisMonth: newCustomersThisMonth,
-        byMembership: membershipBreakdown
-      },
-      activeSeason: activeSeason || null
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch stats', error: error.message });
-  }
-});
+// Legacy endpoint removed - now using the comprehensive analytics endpoint at the bottom of the file.
 
 // ── Feature 6: Password Reset via Email ─────────────────────────────────────
 const crypto = require('crypto');
