@@ -14,10 +14,16 @@ const nodemailer = require('nodemailer');
  * not your main account password.
  */
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Use SSL
   auth: {
     user: process.env.EMAIL_USER,         // e.g., geniustailors110@gmail.com
     pass: process.env.EMAIL_APP_PASSWORD  // 16-char Gmail App Password
+  },
+  tls: {
+    // do not fail on invalid certs in shared hosting environments
+    rejectUnauthorized: false
   }
 });
 
