@@ -74,6 +74,14 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  promoCode: {
+    type: String,
+    default: null
+  },
+  promoDiscount: {
+    type: Number,
+    default: 0
+  },
 
   // ── PostEx Logistics Integration ─────────────────────────────────────────
   trackingNumber: {

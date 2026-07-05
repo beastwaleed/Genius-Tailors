@@ -272,6 +272,11 @@ export default function Booking() {
   const [userPoints, setUserPoints] = useState(0);
   const [usePoints, setUsePoints] = useState(false);
 
+  const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [promoError, setPromoError] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+
   const [operationalCities, setOperationalCities] = useState([]);
   const [deliveryCity, setDeliveryCity] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
@@ -374,7 +379,17 @@ export default function Booking() {
 
   const subTotal = allGarmentsSubTotal - discountAmount + (isRush ? 1000 : 0) + deliveryCharge;
   const pointsDiscount = usePoints ? Math.min(userPoints, subTotal) : 0;
-  const totalPrice = subTotal - pointsDiscount;
+  
+  let promoDiscountAmt = 0;
+  if (appliedPromo) {
+    if (appliedPromo.discountType === 'Percentage') {
+      promoDiscountAmt = Math.round((subTotal - pointsDiscount) * (appliedPromo.discountValue / 100));
+    } else {
+      promoDiscountAmt = appliedPromo.discountValue;
+    }
+  }
+
+  const totalPrice = Math.max(subTotal - pointsDiscount - promoDiscountAmt, 0);
 
   let calculatedAdvance = 0;
   garmentsList.forEach(g => {
@@ -442,6 +457,28 @@ export default function Booking() {
 
   const handleNext = () => setStep(s => s + 1);
   const handleBack = () => setStep(s => s - 1);
+
+  const validatePromoCode = async () => {
+    if (!promoCodeInput.trim()) {
+      setPromoError('Please enter a promo code');
+      return;
+    }
+    setPromoLoading(true);
+    setPromoError('');
+    try {
+      const { data } = await api.post('/api/promos/validate', {
+        code: promoCodeInput.trim(),
+        cartTotal: allGarmentsSubTotal + deliveryCharge
+      });
+      setAppliedPromo(data);
+      setPromoCodeInput('');
+      toast.success('Promo code applied successfully!');
+    } catch (err) {
+      setPromoError(err.response?.data?.message || 'Invalid promo code');
+    } finally {
+      setPromoLoading(false);
+    }
+  };
 
   const handleAddAnother = () => {
     if (selectedFabric.name !== 'Provide my own fabric' && !selectedColor) {
@@ -561,7 +598,11 @@ export default function Booking() {
         fabricColor: selectedColor,
         basePrice,
         styleExtras,
-        effectiveFabricPrice
+        effectiveFabricPrice,
+        paymentReceiptUrl,
+        pointsUsed: usePoints ? Math.min(userPoints, subTotal) : 0,
+        promoCode: appliedPromo ? appliedPromo.code : null,
+        promoDiscount: promoDiscountAmt
       }];
 
       let remainingAdvance = advanceAmount;
@@ -575,6 +616,7 @@ export default function Booking() {
            if (isRush) gTotalPrice += 1000;
            gTotalPrice -= discountAmount;
            gTotalPrice -= pointsDiscount;
+           gTotalPrice -= promoDiscountAmt;
         }
 
         const appliedAdvance = Math.min(gTotalPrice, remainingAdvance);
@@ -595,6 +637,8 @@ export default function Booking() {
           deliveryCity,
           deliveryAddress,
           isRush: i === 0 ? isRush : false,
+          promoCode: i === 0 && appliedPromo ? appliedPromo.code : null,
+          promoDiscount: i === 0 ? promoDiscountAmt : 0,
           customerNote,
           advancePaid: appliedAdvance,
           advancePaymentStatus: 'Pending',
@@ -1241,8 +1285,56 @@ export default function Booking() {
                     <span>- Rs. {pointsDiscount.toLocaleString()}</span>
                   </div>
                 )}
+                
                 <div className="receipt-divider"></div>
-                <div className="receipt-row total" style={{ fontSize: '1.1rem' }}>
+
+                {!appliedPromo ? (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Enter Promo Code" 
+                        value={promoCodeInput}
+                        onChange={(e) => setPromoCodeInput(e.target.value)}
+                        style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                      />
+                      <button 
+                        className="btn btn-outline" 
+                        onClick={validatePromoCode}
+                        disabled={promoLoading || !promoCodeInput.trim()}
+                        style={{ padding: '0 1rem' }}
+                      >
+                        {promoLoading ? '...' : 'Apply'}
+                      </button>
+                    </div>
+                    {promoError && <p style={{ color: '#ef4444', fontSize: '0.85rem', margin: '0.5rem 0 0 0' }}>{promoError}</p>}
+                  </div>
+                ) : (
+                  <div style={{ marginBottom: '1rem', padding: '1rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <span style={{ fontWeight: 600, color: '#16a34a', display: 'block' }}>Promo Applied: {appliedPromo.code}</span>
+                      <span style={{ fontSize: '0.85rem', color: '#15803d' }}>
+                        {appliedPromo.discountType === 'Percentage' ? `${appliedPromo.discountValue}% OFF` : `Rs. ${appliedPromo.discountValue} OFF`}
+                      </span>
+                    </div>
+                    <button 
+                      onClick={() => setAppliedPromo(null)}
+                      style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '1.25rem', cursor: 'pointer' }}
+                      title="Remove Promo"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                )}
+
+                {appliedPromo && (
+                  <div className="receipt-row" style={{ color: '#16a34a', fontWeight: 500 }}>
+                    <span>Promo Discount</span>
+                    <span>- Rs. {promoDiscountAmt.toLocaleString()}</span>
+                  </div>
+                )}
+
+                <div className="receipt-row total" style={{ fontSize: '1.1rem', marginTop: '1rem' }}>
                   <span>Total Amount</span>
                   <span>Rs. {totalPrice.toLocaleString()}</span>
                 </div>

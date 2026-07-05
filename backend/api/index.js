@@ -490,7 +490,7 @@ app.get('/api/shipping/cities', async (req, res) => {
 // Place a new order (Customer)
 app.post('/api/orders', protect, async (req, res) => {
   try {
-    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, isRush, referenceImageUrl, customerNote, neededByDate, deliveryCity, deliveryAddress, advancePaid, advancePaymentStatus, fabricSelection, fabricColor, fabricImageUrl, paymentReceiptUrl } = req.body;
+    const { serviceName, styleVariations, measurementSnapshot, totalPrice, pointsUsed, promoCode, promoDiscount, isRush, referenceImageUrl, customerNote, neededByDate, deliveryCity, deliveryAddress, advancePaid, advancePaymentStatus, fabricSelection, fabricColor, fabricImageUrl, paymentReceiptUrl } = req.body;
 
     if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
     if (!measurementSnapshot || !measurementSnapshot.measurements) return res.status(400).json({ message: 'Measurement snapshot is required' });
@@ -527,6 +527,8 @@ app.post('/api/orders', protect, async (req, res) => {
       advancePaymentStatus: advancePaymentStatus || 'Pending',
       pointsEarned,
       pointsUsed: actualPointsUsed,
+      promoCode: promoCode || null,
+      promoDiscount: promoDiscount || 0,
       deliveryCity,
       deliveryAddress,
       isPriority,
