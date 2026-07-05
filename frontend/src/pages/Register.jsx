@@ -39,9 +39,19 @@ export default function Register() {
       return toast.error('Please enter a valid email address');
     }
 
-    const cleanPhone = phone.replace(/[\s-]/g, '');
+    let cleanPhone = phone.replace(/[\s-]/g, '');
+    
+    // Auto convert local 03XX format to +923XX
+    if (cleanPhone.startsWith('03') && cleanPhone.length === 11) {
+      cleanPhone = '+92' + cleanPhone.substring(1);
+    }
+    // Auto convert 923XX to +923XX
+    if (cleanPhone.startsWith('92') && cleanPhone.length === 12) {
+      cleanPhone = '+' + cleanPhone;
+    }
+
     if (!/^\+92\d{10}$/.test(cleanPhone)) {
-      return toast.error('Phone number must start with +92 followed by 10 digits (e.g., +923001234567)');
+      return toast.error('Phone number must be a valid Pakistani number (e.g., 03001234567 or +923001234567)');
     }
 
     if (!street || street.trim() === '') {
@@ -59,20 +69,14 @@ export default function Register() {
     setLoading(true);
     try {
       // Send the cleaned phone number to the backend
-      const { data } = await api.post('/api/auth/register', { 
-        name, 
-        email, 
-        password, 
-        phone: cleanPhone, 
-        street, 
-        city, 
-        country 
+      const { data } = await api.post('/api/auth/register', {
+        name, email, password, phone: cleanPhone, street, city, country
       });
       login(data, data.token);
-      toast.success('Account created successfully!');
-      // Redirection is now handled by the useEffect above
+      toast.success('Registration successful! Welcome to Genius Tailors.');
+      // Redirection is handled by useEffect
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to create account');
+      toast.error(error.response?.data?.message || 'Failed to register account');
     } finally {
       setLoading(false);
     }

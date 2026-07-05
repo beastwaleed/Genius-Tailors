@@ -122,9 +122,14 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(400).json({ message: 'We currently only operate and deliver within Pakistan. Please enter Pakistan as your country.' });
     }
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+      return res.status(400).json({ message: 'An account with this email address already exists.' });
+    }
+
+    const phoneExists = await User.findOne({ phone });
+    if (phoneExists) {
+      return res.status(400).json({ message: 'An account with this WhatsApp number already exists.' });
     }
 
     // Hash the password for security
