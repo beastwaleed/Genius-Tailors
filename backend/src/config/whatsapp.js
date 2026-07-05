@@ -82,14 +82,9 @@ const sendWhatsappMessage = async (toPhone, message) => {
             }
         }
         
-        // Check if number is on WhatsApp
-        const [result] = await waSocket.onWhatsApp(jid);
-        if (result && result.exists) {
-            await waSocket.sendMessage(jid, { text: message });
-            console.log(`WhatsApp message sent to ${cleanPhone}`);
-        } else {
-            console.log(`Phone number ${cleanPhone} is not registered on WhatsApp.`);
-        }
+        // Send message directly (bypassing onWhatsApp check which fails during initial sync)
+        await waSocket.sendMessage(jid, { text: message });
+        console.log(`WhatsApp message sent to ${cleanPhone}`);
     } catch (error) {
         console.error('Failed to send WhatsApp message via Baileys:', error);
     }
