@@ -5,7 +5,13 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    // Standard scroll to top
+    // Try scrolling the internal workspace if we are in the CustomerLayout
+    const workspace = document.querySelector('.luxury-workspace');
+    if (workspace) {
+      workspace.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    // Also scroll the main window for generic pages (Home, About, etc)
     window.scrollTo({
       top: 0,
       left: 0,
