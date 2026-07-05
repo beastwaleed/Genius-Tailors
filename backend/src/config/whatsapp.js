@@ -90,7 +90,9 @@ const sendWhatsappMessage = async (toPhone, message) => {
     }
 };
 
-const getWhatsAppQR = () => currentQR;
+const getWhatsAppQR = () => {
+    return { qr: currentQR, socketInitialized: !!waSocket, isConnected };
+};
 
 const sendWhatsappOrderConfirmation = async (customerPhone, customerName, serviceName, totalPrice, orderId) => {
   const message = `*Genius Tailors* ✂️\n\nHello ${customerName}! 🎉\n\nYour order has been placed successfully. Our tailor will review it and begin working shortly.\n\n*Garment:* ${serviceName}\n*Total Price:* Rs. ${totalPrice.toLocaleString()}\n*Order ID:* ${orderId}\n\nYou will receive a message here whenever your order status is updated!`;

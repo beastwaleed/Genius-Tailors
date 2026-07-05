@@ -23,7 +23,7 @@ const Blog = require('../src/models/Blog');
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/upload');
 const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
-const { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset } = require('../src/config/whatsapp');
+const { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -49,6 +49,35 @@ app.use(async (req, res, next) => {
 // Base Route for Vercel Health Check
 app.get('/', (req, res) => {
   res.send('Genius Tailors API is successfully running on Vercel!');
+});
+
+// View WhatsApp QR Code route
+app.get('/whatsapp/qr', (req, res) => {
+  const { qr, socketInitialized, isConnected } = getWhatsAppQR();
+  
+  if (!qr) {
+    return res.send(`
+      <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+        <h2>WhatsApp Bot Status</h2>
+        <p style="color: ${socketInitialized ? (isConnected ? 'green' : 'orange') : 'red'}; font-weight: bold;">
+          ${socketInitialized 
+            ? (isConnected ? '✅ WhatsApp Bot is connected successfully!' : '⏳ WhatsApp Bot is booting up/connecting...') 
+            : '❌ WhatsApp Bot FAILED TO INITIALIZE!'}
+        </p>
+        <p>No QR code to scan.</p>
+        <p style="font-size: 12px; color: #aaa; margin-top: 20px;">Socket Status: Initialized: ${socketInitialized}, Connected: ${isConnected}</p>
+      </div>
+    `);
+  }
+  
+  res.send(`
+    <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+      <h2>WhatsApp Bot Login</h2>
+      <p>Scan this QR code from your WhatsApp Linked Devices screen.</p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}" alt="QR Code" />
+      <p style="margin-top: 20px; font-size: 14px; color: #666;">Refresh this page if the QR code expires.</p>
+    </div>
+  `);
 });
 
 // ==========================================
@@ -1626,14 +1655,15 @@ module.exports = async (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
+  try {
+    initWhatsApp();
+  } catch (err) {
+    console.error('Failed to initialize WhatsApp bot:', err);
+  }
+
   if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
-      try {
-        initWhatsApp();
-      } catch (err) {
-        console.error('Failed to initialize WhatsApp bot:', err);
-      }
     });
   }
 }).catch((err) => {
