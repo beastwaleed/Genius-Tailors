@@ -315,7 +315,7 @@ export default function Home() {
                       inset: 0,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
-                      opacity: 0.15,
+                      opacity: 0.45,
                       zIndex: 0
                     }} />
                     <div style={{
