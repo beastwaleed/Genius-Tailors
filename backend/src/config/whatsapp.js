@@ -1,96 +1,42 @@
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
-const pino = require('pino');
-const fs = require('fs');
-const qrcode = require('qrcode-terminal');
-
-let waSocket = null;
-let currentQR = null;
-let isConnected = false;
-let messageQueue = [];
+const axios = require('axios');
 
 const initWhatsApp = async () => {
-    try {
-        const { state, saveCreds } = await useMultiFileAuthState('./auth_info_baileys');
-
-        const sock = makeWASocket({
-            auth: state,
-            printQRInTerminal: true,
-            logger: pino({ level: 'silent' }), // Suppress excessive logs
-            defaultQueryTimeoutMs: undefined
-        });
-
-        sock.ev.on('connection.update', (update) => {
-            const { connection, lastDisconnect, qr } = update;
-            
-            if (qr) {
-                console.log('\n\n======================================================');
-                console.log('📱 SCAN THIS QR CODE IN WHATSAPP TO LINK YOUR BOT 📱');
-                console.log('======================================================\n\n');
-                qrcode.generate(qr, { small: true });
-                currentQR = qr;
-            }
-
-            if (connection === 'close') {
-                isConnected = false;
-                const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-                console.log('WhatsApp connection closed. Reconnecting:', shouldReconnect);
-                if (shouldReconnect) {
-                    initWhatsApp();
-                } else {
-                    console.log('You logged out of WhatsApp. You must scan the QR code again.');
-                    fs.rmSync('./auth_info_baileys', { recursive: true, force: true });
-                    initWhatsApp();
-                }
-            } else if (connection === 'open') {
-                console.log('WhatsApp connection opened successfully!');
-                currentQR = null;
-                isConnected = true;
-                
-                // Process any queued messages
-                while (messageQueue.length > 0) {
-                    const item = messageQueue.shift();
-                    waSocket.sendMessage(item.jid, { text: item.message })
-                        .then(() => console.log(`Queued WhatsApp message sent to ${item.cleanPhone}`))
-                        .catch(err => console.error(`Failed to send queued message to ${item.cleanPhone}:`, err));
-                }
-            }
-        });
-
-        sock.ev.on('creds.update', saveCreds);
-        
-        waSocket = sock;
-    } catch (error) {
-        console.error('Failed to initialize WhatsApp:', error);
-    }
+    console.log('WhatsApp automation initialized using Ultramsg API');
 };
 
 const sendWhatsappMessage = async (toPhone, message) => {
-    // Format phone number: remove '+' and spaces
-    let cleanPhone = toPhone.replace(/[\+\s\-]/g, '');
-    
-    // Pakistani numbers must include country code (e.g., 923332662110). If local format (0333...), convert it:
-    if (cleanPhone.startsWith('0')) {
-        cleanPhone = '92' + cleanPhone.substring(1);
-    }
-
-    const jid = `${cleanPhone}@s.whatsapp.net`;
-
-    if (!waSocket || !isConnected) {
-        console.log(`WhatsApp is booting up or reconnecting. Queuing message for ${cleanPhone}...`);
-        messageQueue.push({ jid, message, cleanPhone });
-        return;
-    }
-
     try {
-        // Send message directly
-        await waSocket.sendMessage(jid, { text: message });
-        console.log(`WhatsApp message sent instantly to ${cleanPhone}`);
+        // Format phone number: remove '+' and spaces
+        let cleanPhone = toPhone.replace(/[\+\s\-]/g, '');
+        
+        // Pakistani numbers must include country code (e.g., 923332662110). If local format (0333...), convert it:
+        if (cleanPhone.startsWith('0')) {
+            cleanPhone = '92' + cleanPhone.substring(1);
+        }
+
+        const instanceId = process.env.ULTRAMSG_INSTANCE_ID;
+        const token = process.env.ULTRAMSG_TOKEN;
+
+        if (!instanceId || !token) {
+            console.error('Ultramsg credentials not found in .env');
+            return;
+        }
+
+        const url = `https://api.ultramsg.com/${instanceId}/messages/chat`;
+        
+        const response = await axios.post(url, {
+            token: token,
+            to: cleanPhone,
+            body: message
+        });
+
+        console.log(`WhatsApp message sent instantly to ${cleanPhone} via Ultramsg:`, response.data);
     } catch (error) {
-        console.error('Failed to send WhatsApp message via Baileys:', error);
+        console.error('Failed to send WhatsApp message via Ultramsg:', error.response?.data || error.message);
     }
 };
 
-const getWhatsAppQR = () => currentQR;
+const getWhatsAppQR = () => null;
 
 const sendWhatsappOrderConfirmation = async (customerPhone, customerName, serviceName, totalPrice, orderId) => {
   const message = `*Genius Tailors* ✂️\n\nHello ${customerName}! 🎉\n\nYour order has been placed successfully. Our tailor will review it and begin working shortly.\n\n*Garment:* ${serviceName}\n*Total Price:* Rs. ${totalPrice.toLocaleString()}\n*Order ID:* ${orderId}\n\nYou will receive a message here whenever your order status is updated!`;
