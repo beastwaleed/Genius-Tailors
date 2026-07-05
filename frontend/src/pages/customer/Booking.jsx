@@ -199,6 +199,12 @@ export default function Booking() {
   const initialService = searchParams.get('service') || 'Kameez Shalwar';
 
   const [step, setStep] = useState(1);
+  
+  // Scroll to top whenever step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [step]);
+
   const [serviceName, setServiceName] = useState(initialService);
   const [profiles, setProfiles] = useState([]);
   const [selectedProfileId, setSelectedProfileId] = useState('');
