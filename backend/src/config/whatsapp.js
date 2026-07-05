@@ -7,10 +7,12 @@ let waSocket = null;
 let currentQR = null;
 let isConnected = false;
 let messageQueue = [];
+let waInitError = null;
 
 const initWhatsApp = async () => {
     try {
-        const { state, saveCreds } = await useMultiFileAuthState('./auth_info_baileys');
+        const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
+        const { state, saveCreds } = await useMultiFileAuthState(authFolder);
 
         const sock = makeWASocket({
             auth: state,
@@ -38,7 +40,8 @@ const initWhatsApp = async () => {
                     initWhatsApp();
                 } else {
                     console.log('You logged out of WhatsApp. You must scan the QR code again.');
-                    fs.rmSync('./auth_info_baileys', { recursive: true, force: true });
+                    const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
+                    fs.rmSync(authFolder, { recursive: true, force: true });
                     initWhatsApp();
                 }
             } else if (connection === 'open') {
@@ -59,7 +62,9 @@ const initWhatsApp = async () => {
         sock.ev.on('creds.update', saveCreds);
         
         waSocket = sock;
+        waInitError = null;
     } catch (error) {
+        waInitError = error.message || String(error);
         console.error('Failed to initialize WhatsApp:', error);
     }
 };
@@ -91,7 +96,7 @@ const sendWhatsappMessage = async (toPhone, message) => {
 };
 
 const getWhatsAppQR = () => {
-    return { qr: currentQR, socketInitialized: !!waSocket, isConnected };
+    return { qr: currentQR, socketInitialized: !!waSocket, isConnected, error: waInitError };
 };
 
 const sendWhatsappOrderConfirmation = async (customerPhone, customerName, serviceName, totalPrice, orderId) => {

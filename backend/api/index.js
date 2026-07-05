@@ -53,7 +53,7 @@ app.get('/', (req, res) => {
 
 // View WhatsApp QR Code route
 app.get('/whatsapp/qr', (req, res) => {
-  const { qr, socketInitialized, isConnected } = getWhatsAppQR();
+  const { qr, socketInitialized, isConnected, error } = getWhatsAppQR();
   
   if (!qr) {
     return res.send(`
@@ -64,6 +64,7 @@ app.get('/whatsapp/qr', (req, res) => {
             ? (isConnected ? '✅ WhatsApp Bot is connected successfully!' : '⏳ WhatsApp Bot is booting up/connecting...') 
             : '❌ WhatsApp Bot FAILED TO INITIALIZE!'}
         </p>
+        ${error ? `<p style="color: red; background: #ffeeee; padding: 10px; border-radius: 5px;"><strong>Error:</strong> ${error}</p>` : ''}
         <p>No QR code to scan.</p>
         <p style="font-size: 12px; color: #aaa; margin-top: 20px;">Socket Status: Initialized: ${socketInitialized}, Connected: ${isConnected}</p>
       </div>
@@ -1654,13 +1655,14 @@ module.exports = async (req, res) => {
 // 2. Production Server Startup
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
-  try {
-    initWhatsApp();
-  } catch (err) {
-    console.error('Failed to initialize WhatsApp bot:', err);
-  }
+// Initialize WhatsApp immediately on startup
+try {
+  initWhatsApp();
+} catch (err) {
+  console.error('Failed to initialize WhatsApp bot:', err);
+}
 
+connectDB().then(() => {
   if (process.env.NODE_ENV !== 'test') {
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
