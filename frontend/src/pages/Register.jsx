@@ -19,7 +19,7 @@ export default function Register() {
   const { login, isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname + (location.state?.from?.search || '') || null;
+  const from = location.state?.from?.pathname ? (location.state.from.pathname + (location.state.from.search || '')) : null;
 
   useEffect(() => {
     if (isLoggedIn) {
