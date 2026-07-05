@@ -4,6 +4,7 @@ const fs = require('fs');
 const qrcode = require('qrcode-terminal');
 
 let waSocket = null;
+let currentQR = null;
 
 const initWhatsApp = async () => {
     try {
@@ -24,6 +25,7 @@ const initWhatsApp = async () => {
                 console.log('📱 SCAN THIS QR CODE IN WHATSAPP TO LINK YOUR BOT 📱');
                 console.log('======================================================\n\n');
                 qrcode.generate(qr, { small: true });
+                currentQR = qr;
             }
 
             if (connection === 'close') {
@@ -38,6 +40,7 @@ const initWhatsApp = async () => {
                 }
             } else if (connection === 'open') {
                 console.log('WhatsApp connection opened successfully!');
+                currentQR = null;
             }
         });
 
@@ -66,10 +69,17 @@ const sendWhatsappMessage = async (toPhone, message) => {
 
         const jid = `${cleanPhone}@s.whatsapp.net`;
         
-        // Wait briefly to ensure socket is ready
+        // Wait briefly to ensure socket is ready (useful on server cold-boots)
         if (!waSocket?.user) {
-            console.log('WhatsApp socket not fully ready yet. Skipping message.');
-            return;
+            console.log('WhatsApp socket not fully ready, waiting up to 5 seconds...');
+            for (let i = 0; i < 10; i++) {
+                await new Promise(r => setTimeout(r, 500));
+                if (waSocket?.user) break;
+            }
+            if (!waSocket?.user) {
+                console.log('WhatsApp socket STILL not ready after 5 seconds. Skipping message.');
+                return;
+            }
         }
         
         // Check if number is on WhatsApp
@@ -84,6 +94,8 @@ const sendWhatsappMessage = async (toPhone, message) => {
         console.error('Failed to send WhatsApp message via Baileys:', error);
     }
 };
+
+const getWhatsAppQR = () => currentQR;
 
 const sendWhatsappOrderConfirmation = async (customerPhone, customerName, serviceName, totalPrice, orderId) => {
   const message = `*Genius Tailors* ✂️\n\nHello ${customerName}! 🎉\n\nYour order has been placed successfully. Our tailor will review it and begin working shortly.\n\n*Garment:* ${serviceName}\n*Total Price:* Rs. ${totalPrice.toLocaleString()}\n*Order ID:* ${orderId}\n\nYou will receive a message here whenever your order status is updated!`;
@@ -168,4 +180,4 @@ const sendWhatsappPasswordReset = async (customerPhone, customerName, resetUrl) 
   await sendWhatsappMessage(customerPhone, message);
 };
 
-module.exports = { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset };
+module.exports = { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR };
