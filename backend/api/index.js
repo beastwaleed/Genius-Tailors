@@ -595,22 +595,22 @@ app.post('/api/orders', protect, async (req, res) => {
 
     // The 'earned' loyalty record is also created when the order becomes active
 
-    // Feature 7: Send order confirmation email (non-blocking — won't crash if email fails)
-    sendOrderConfirmationEmail(user.email, user.name, serviceName, totalPrice, createdOrder._id)
+    // Feature 7: Send order confirmation email (await to prevent Passenger from killing the thread)
+    await sendOrderConfirmationEmail(user.email, user.name, serviceName, totalPrice, createdOrder._id)
       .catch(err => console.error('Confirmation email failed:', err.message));
 
     // Send admin notification email
-    sendAdminNewOrderNotification(user.name, serviceName, totalPrice, createdOrder._id, isPriority, createdOrder.isRush, paymentReceiptUrl)
+    await sendAdminNewOrderNotification(user.name, serviceName, totalPrice, createdOrder._id, isPriority, createdOrder.isRush, paymentReceiptUrl)
       .catch(err => console.error('Admin notification email failed:', err.message));
 
     // Send WhatsApp confirmation
     if (user.phone) {
-      sendWhatsappOrderConfirmation(user.phone, user.name, serviceName, totalPrice, createdOrder._id)
+      await sendWhatsappOrderConfirmation(user.phone, user.name, serviceName, totalPrice, createdOrder._id)
         .catch(err => console.error('WhatsApp confirmation failed:', err.message));
     }
     
     // Send admin WhatsApp notification
-    sendAdminNewOrderWhatsapp(user.name, serviceName, totalPrice, createdOrder._id, paymentReceiptUrl)
+    await sendAdminNewOrderWhatsapp(user.name, serviceName, totalPrice, createdOrder._id, paymentReceiptUrl)
       .catch(err => console.error('Admin WhatsApp notification failed:', err.message));
 
     res.status(201).json(createdOrder);
@@ -760,14 +760,14 @@ app.put('/api/orders/:id/status', protect, admin, async (req, res) => {
 
     const updatedOrder = await order.save();
 
-    // Feature 7: Send email & WhatsApp to customer on meaningful status changes (non-blocking)
+    // Feature 7: Send email & WhatsApp to customer on meaningful status changes (await them)
     if (order.customer) {
       if (order.customer.email) {
-        sendStatusUpdateEmail(order.customer.email, order.customer.name, order.serviceName, status, order.estimatedDelivery)
+        await sendStatusUpdateEmail(order.customer.email, order.customer.name, order.serviceName, status, order.estimatedDelivery)
           .catch(err => console.error('Status email failed:', err.message));
       }
       if (order.customer.phone) {
-        sendWhatsappStatusUpdate(order.customer.phone, order.customer.name, order.serviceName, status, order.estimatedDelivery)
+        await sendWhatsappStatusUpdate(order.customer.phone, order.customer.name, order.serviceName, status, order.estimatedDelivery)
           .catch(err => console.error('WhatsApp status update failed:', err.message));
       }
     }
@@ -1999,8 +1999,8 @@ app.post('/api/abandoned-carts/:id/notify-admin', protect, async (req, res) => {
     if (cart.recoveryStatus !== 'Pending') return res.json({ message: 'Cart no longer pending' });
     
     // Notify admin via Email & WhatsApp
-    sendAdminAbandonedCartEmail(cart.customerName || 'Guest', cart.serviceName, cart.totalPrice, cart.dropoffStep).catch(e => console.error(e));
-    sendAdminAbandonedCartWhatsapp(cart.customerName || 'Guest', cart.serviceName, cart.totalPrice, cart.dropoffStep).catch(e => console.error(e));
+    await sendAdminAbandonedCartEmail(cart.customerName || 'Guest', cart.serviceName, cart.totalPrice, cart.dropoffStep).catch(e => console.error(e));
+    await sendAdminAbandonedCartWhatsapp(cart.customerName || 'Guest', cart.serviceName, cart.totalPrice, cart.dropoffStep).catch(e => console.error(e));
     
     res.json({ message: 'Admin notified' });
   } catch (error) {
