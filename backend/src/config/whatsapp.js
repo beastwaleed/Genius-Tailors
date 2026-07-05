@@ -5,6 +5,8 @@ const qrcode = require('qrcode-terminal');
 
 let waSocket = null;
 let currentQR = null;
+let isConnected = false;
+let messageQueue = [];
 
 const initWhatsApp = async () => {
     try {
@@ -29,6 +31,7 @@ const initWhatsApp = async () => {
             }
 
             if (connection === 'close') {
+                isConnected = false;
                 const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
                 console.log('WhatsApp connection closed. Reconnecting:', shouldReconnect);
                 if (shouldReconnect) {
@@ -41,6 +44,15 @@ const initWhatsApp = async () => {
             } else if (connection === 'open') {
                 console.log('WhatsApp connection opened successfully!');
                 currentQR = null;
+                isConnected = true;
+                
+                // Process any queued messages
+                while (messageQueue.length > 0) {
+                    const item = messageQueue.shift();
+                    waSocket.sendMessage(item.jid, { text: item.message })
+                        .then(() => console.log(`Queued WhatsApp message sent to ${item.cleanPhone}`))
+                        .catch(err => console.error(`Failed to send queued message to ${item.cleanPhone}:`, err));
+                }
             }
         });
 
@@ -53,38 +65,26 @@ const initWhatsApp = async () => {
 };
 
 const sendWhatsappMessage = async (toPhone, message) => {
-    if (!waSocket) {
-        console.error('WhatsApp socket is not initialized');
+    // Format phone number: remove '+' and spaces
+    let cleanPhone = toPhone.replace(/[\+\s\-]/g, '');
+    
+    // Pakistani numbers must include country code (e.g., 923332662110). If local format (0333...), convert it:
+    if (cleanPhone.startsWith('0')) {
+        cleanPhone = '92' + cleanPhone.substring(1);
+    }
+
+    const jid = `${cleanPhone}@s.whatsapp.net`;
+
+    if (!waSocket || !isConnected) {
+        console.log(`WhatsApp is booting up or reconnecting. Queuing message for ${cleanPhone}...`);
+        messageQueue.push({ jid, message, cleanPhone });
         return;
     }
 
     try {
-        // Format phone number: remove '+' and spaces
-        let cleanPhone = toPhone.replace(/[\+\s\-]/g, '');
-        
-        // Pakistani numbers must include country code (e.g., 923332662110). If local format (0333...), convert it:
-        if (cleanPhone.startsWith('0')) {
-            cleanPhone = '92' + cleanPhone.substring(1);
-        }
-
-        const jid = `${cleanPhone}@s.whatsapp.net`;
-        
-        // Wait briefly to ensure socket is ready (useful on server cold-boots)
-        if (!waSocket?.user) {
-            console.log('WhatsApp socket not fully ready, waiting up to 5 seconds...');
-            for (let i = 0; i < 10; i++) {
-                await new Promise(r => setTimeout(r, 500));
-                if (waSocket?.user) break;
-            }
-            if (!waSocket?.user) {
-                console.log('WhatsApp socket STILL not ready after 5 seconds. Skipping message.');
-                return;
-            }
-        }
-        
-        // Send message directly (bypassing onWhatsApp check which fails during initial sync)
+        // Send message directly
         await waSocket.sendMessage(jid, { text: message });
-        console.log(`WhatsApp message sent to ${cleanPhone}`);
+        console.log(`WhatsApp message sent instantly to ${cleanPhone}`);
     } catch (error) {
         console.error('Failed to send WhatsApp message via Baileys:', error);
     }
