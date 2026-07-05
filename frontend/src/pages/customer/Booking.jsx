@@ -601,7 +601,7 @@ export default function Booking() {
 
       setBankTransferModalOpen(false);
       toast.success('Orders placed successfully! Please complete your transfer.', { id: toastId });
-      navigate('/customer/dashboard');
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to place order', { id: toastId });
     } finally {
