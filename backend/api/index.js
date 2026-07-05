@@ -3,7 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const connectDB = require('../src/config/db');
 
@@ -33,8 +34,36 @@ app.use(cors());
 app.use(express.json());
 
 // Serve uploaded images statically
-const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+
+// TEST EMAIL ROUTE
+app.get('/api/test-email', async (req, res) => {
+  try {
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_APP_PASSWORD
+      },
+      tls: { rejectUnauthorized: false }
+    });
+    
+    await transporter.verify();
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      subject: 'Test Email Route',
+      text: 'This is a test email.'
+    });
+    
+    res.json({ success: true, message: 'Email sent successfully!', info, envUser: process.env.EMAIL_USER });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message, stack: error.stack, envUser: process.env.EMAIL_USER });
+  }
+});
 
 // Ensure MongoDB is connected for Vercel Serverless Functions
 app.use(async (req, res, next) => {

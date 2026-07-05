@@ -13,19 +13,21 @@ const nodemailer = require('nodemailer');
  * This approach is safe — it uses an app-specific password,
  * not your main account password.
  */
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // Use SSL
-  auth: {
-    user: process.env.EMAIL_USER,         // e.g., geniustailors110@gmail.com
-    pass: process.env.EMAIL_APP_PASSWORD  // 16-char Gmail App Password
-  },
-  tls: {
-    // do not fail on invalid certs in shared hosting environments
-    rejectUnauthorized: false
-  }
-});
+const getTransporter = () => {
+  return nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Use SSL
+    auth: {
+      user: process.env.EMAIL_USER,         // e.g., geniustailors110@gmail.com
+      pass: process.env.EMAIL_APP_PASSWORD  // 16-char Gmail App Password
+    },
+    tls: {
+      // do not fail on invalid certs in shared hosting environments
+      rejectUnauthorized: false
+    }
+  });
+};
 
 // ── Helper: status update email messages ────────────────────────────────────
 const statusMessages = {
@@ -83,6 +85,7 @@ const sendStatusUpdateEmail = async (customerEmail, customerName, serviceName, s
     </div>
   `;
 
+  const transporter = getTransporter();
   await transporter.sendMail({
     from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
     to: customerEmail,
@@ -118,6 +121,7 @@ const sendPasswordResetEmail = async (customerEmail, customerName, resetUrl) => 
     </div>
   `;
 
+  const transporter = getTransporter();
   await transporter.sendMail({
     from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
     to: customerEmail,
@@ -151,6 +155,7 @@ const sendOrderConfirmationEmail = async (customerEmail, customerName, serviceNa
     </div>
   `;
 
+  const transporter = getTransporter();
   await transporter.sendMail({
     from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
     to: customerEmail,
@@ -179,6 +184,7 @@ const sendContactEmail = async (name, email, subject, message) => {
     </div>
   `;
 
+  const transporter = getTransporter();
   await transporter.sendMail({
     from: `"GT Website" <${process.env.EMAIL_USER}>`,
     to: process.env.EMAIL_USER,
@@ -227,6 +233,7 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
     </div>
   `;
 
+  const transporter = getTransporter();
   await transporter.sendMail({
     from: `"GT System" <${process.env.EMAIL_USER}>`,
     to: adminEmail,
@@ -259,6 +266,7 @@ const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword
     </div>
   `;
 
+  const transporter = getTransporter();
   await transporter.sendMail({
     from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
     to: customerEmail,
@@ -292,10 +300,11 @@ const sendPromoEmail = async (customerEmail, customerName, promoCode, discountTe
     </div>
   `;
 
+  const transporter = getTransporter();
   await transporter.sendMail({
     from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
     to: customerEmail,
-    subject: `🎁 A Special Gift Just For You! (${discountText})`,
+    subject: `🎁 A special gift for you: ${promoCode}`,
     html
   });
 };
@@ -325,10 +334,11 @@ const sendAdminAbandonedCartEmail = async (customerName, serviceName, totalPrice
     </div>
   `;
 
+  const transporter = getTransporter();
   await transporter.sendMail({
     from: `"GT System" <${process.env.EMAIL_USER}>`,
     to: adminEmail,
-    subject: `🚨 Abandoned Cart Alert: ${customerName} (Rs. ${totalPrice})`,
+    subject: `🛒 Abandoned Cart Alert! [${serviceName}]`,
     html
   });
 };
