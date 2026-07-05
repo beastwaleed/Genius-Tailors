@@ -18,6 +18,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
 import Blogs from './pages/Blogs';
 import BlogDetail from './pages/BlogDetail';
+import NotFound from './pages/NotFound';
 
 // Customer pages
 import Dashboard from './pages/customer/Dashboard';
@@ -91,7 +92,7 @@ export default function App() {
       <Route path="/admin/blogs" element={<ProtectedRoute role="Admin"><AdminBlogs /></ProtectedRoute>} />
 
       {/* ── Catch All ─────────────────────────────── */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
       </Routes>
       <Chatbot />
       <SocialProofPopup />
