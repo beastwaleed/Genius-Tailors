@@ -8,14 +8,6 @@ export default function Reviews() {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const [pastReviews, setPastReviews] = useState([]);
-  
-  // Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [reviewText, setReviewText] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -43,52 +35,35 @@ export default function Reviews() {
     o => o.status === 'Delivered' && !reviewedOrderIds.includes(o._id)
   );
 
-  const handleOpenReviewModal = (order) => {
-    setSelectedOrder(order);
-    setRating(5); // Default to 5 stars!
-    setHoverRating(0);
-    // Auto-generate starting text based on the garment!
-    setReviewText(`I recently got my ${order.serviceName} stitched by Genius Tailors and the fit, fabric, and stitching quality were absolutely perfect! Highly recommended.`);
-    setIsModalOpen(true);
-  };
-
-  const handleSubmitReview = async (e) => {
-    e.preventDefault();
-    if (rating === 0) return toast.error('Please select a star rating');
-    if (!reviewText.trim()) return toast.error('Please write a review');
-
-    setSubmitting(true);
+  const handleWriteReviewDirectly = async (order) => {
+    // 1. Auto-generate text based on the garment
+    const reviewText = `I recently got my ${order.serviceName} stitched by Genius Tailors and the fit, fabric, and stitching quality were absolutely perfect! Highly recommended.`;
     
-    // Copy to clipboard so they can paste it on Google
+    // 2. Copy to clipboard
     try {
       await navigator.clipboard.writeText(reviewText);
+      toast.success('Review text copied! Please paste it on Google.', { duration: 5000, position: 'top-center' });
     } catch (err) {
       console.log('Clipboard copy failed', err);
     }
     
-    // Simulate API call to save review
+    // 3. Save as "Reviewed" locally so it disappears from the Pending list
+    const newReview = {
+      id: Date.now().toString(),
+      orderId: order._id,
+      serviceName: order.serviceName,
+      rating: 5,
+      text: reviewText,
+      date: new Date().toISOString()
+    };
+    const updatedReviews = [newReview, ...pastReviews];
+    setPastReviews(updatedReviews);
+    localStorage.setItem('gt_mock_reviews', JSON.stringify(updatedReviews));
+
+    // 4. Open Google Business Profile Link instantly
     setTimeout(() => {
-      const newReview = {
-        id: Date.now().toString(),
-        orderId: selectedOrder._id,
-        serviceName: selectedOrder.serviceName,
-        rating,
-        text: reviewText,
-        date: new Date().toISOString()
-      };
-
-      const updatedReviews = [newReview, ...pastReviews];
-      setPastReviews(updatedReviews);
-      localStorage.setItem('gt_mock_reviews', JSON.stringify(updatedReviews));
-
-      toast.success('Review copied to clipboard! Please paste it on Google.', { duration: 5000 });
-      setIsModalOpen(false);
-      setSubmitting(false);
-
-      // Redirect to Google Business Profile Review Page
-      // TODO: Replace this placeholder link with the actual Google Business review link for Genius Tailors!
-      window.open('https://search.google.com/local/writereview?placeid=YOUR_GOOGLE_PLACE_ID_HERE', '_blank');
-    }, 1000);
+      window.open('https://share.google/J0UW7AWYDNHdPMX9n', '_blank');
+    }, 800); // slight delay so they can read the toast message
   };
 
   return (
@@ -112,8 +87,8 @@ export default function Reviews() {
                         <h3>{order.serviceName}</h3>
                         <span className="subtext">Delivered on {new Date(order.updatedAt || order.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <button className="luxury-btn-primary btn-sm" onClick={() => handleOpenReviewModal(order)}>
-                        Write Review
+                      <button className="luxury-btn-primary btn-sm" onClick={() => handleWriteReviewDirectly(order)}>
+                        Write Review on Google
                       </button>
                     </div>
                   ))}
@@ -160,60 +135,7 @@ export default function Reviews() {
 
       </div>
 
-      {/* Review Modal */}
-      {isModalOpen && selectedOrder && (
-        <div className="modal-overlay">
-          <div className="modal-content luxury-card">
-            <div className="modal-header">
-              <h3>Review Your Order</h3>
-              <button className="close-btn" onClick={() => setIsModalOpen(false)}>×</button>
-            </div>
-            
-            <form onSubmit={handleSubmitReview} className="modal-body">
-              <div className="order-summary-box">
-                <span className="summary-label">Garment</span>
-                <span className="summary-value">{selectedOrder.serviceName}</span>
-              </div>
-
-              <div className="luxury-form-group" style={{ alignItems: 'center', margin: '2rem 0' }}>
-                <label style={{ marginBottom: '1rem' }}>Overall Rating</label>
-                <div className="interactive-stars">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      type="button"
-                      key={star}
-                      className={`star-btn ${(hoverRating || rating) >= star ? 'active' : ''}`}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      onClick={() => setRating(star)}
-                    >
-                      ★
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="luxury-form-group">
-                <label>Your Feedback</label>
-                <textarea 
-                  rows="4"
-                  placeholder="Tell us about the fit, fabric, and your overall experience..."
-                  value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
-                  required
-                ></textarea>
-              </div>
-
-              <div className="modal-footer">
-                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                <button type="submit" className="luxury-btn-primary btn-save" disabled={submitting}>
-                  {submitting ? 'Redirecting...' : 'Copy & Post to Google'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* The Review Modal has been completely removed to make it a 1-click process */}
 
       <style>{`
         .reviews-grid {
@@ -291,164 +213,6 @@ export default function Reviews() {
           margin: 0;
         }
 
-        /* Modal Styles */
-        .modal-overlay {
-          position: fixed;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.5);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-          padding: 1rem;
-        }
-
-        .modal-content {
-          background: #fff;
-          width: 100%;
-          max-width: 550px;
-          border-radius: var(--radius-lg);
-          display: flex;
-          flex-direction: column;
-          max-height: 90vh;
-        }
-
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.5rem 2rem;
-          border-bottom: 1px solid var(--ivory-border);
-        }
-
-        .modal-header h3 {
-          font-family: var(--font-serif);
-          font-size: 1.5rem;
-          margin: 0;
-          color: var(--onyx);
-        }
-
-        .close-btn {
-          background: none;
-          border: none;
-          font-size: 1.5rem;
-          cursor: pointer;
-          color: var(--stone);
-        }
-
-        .modal-body {
-          padding: 2rem;
-          overflow-y: auto;
-        }
-
-        .order-summary-box {
-          background: var(--ivory);
-          padding: 1rem 1.5rem;
-          border-radius: var(--radius-sm);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .summary-label {
-          color: var(--stone);
-          font-size: 0.85rem;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-
-        .summary-value {
-          font-family: var(--font-serif);
-          font-size: 1.2rem;
-          color: var(--onyx);
-        }
-
-        .luxury-form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        .luxury-form-group label {
-          font-size: 0.85rem;
-          font-weight: 500;
-          color: var(--stone);
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-
-        .luxury-form-group textarea {
-          padding: 1rem 1.25rem;
-          border: 1px solid var(--ivory-border);
-          border-radius: var(--radius-sm);
-          font-size: 1rem;
-          background: var(--ivory);
-          color: var(--onyx);
-          transition: all 0.2s ease;
-          font-family: var(--font-sans);
-          resize: vertical;
-        }
-
-        .luxury-form-group textarea:focus {
-          outline: none;
-          border-color: var(--onyx);
-          background: #ffffff;
-        }
-
-        .interactive-stars {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .star-btn {
-          background: none;
-          border: none;
-          font-size: 2.5rem;
-          color: var(--ivory-border);
-          cursor: pointer;
-          transition: transform 0.2s, color 0.2s;
-          padding: 0;
-          line-height: 1;
-        }
-
-        .star-btn:hover {
-          transform: scale(1.1);
-        }
-
-        .star-btn.active {
-          color: var(--gold);
-        }
-
-        .modal-footer {
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-          gap: 1.5rem;
-          padding-top: 1.5rem;
-          border-top: 1px solid var(--ivory-border);
-          margin-top: 2rem;
-        }
-
-        .btn-cancel {
-          background: transparent;
-          border: none;
-          color: var(--stone);
-          font-weight: 500;
-          font-size: 0.9rem;
-          cursor: pointer;
-          transition: color 0.2s;
-        }
-
-        .btn-cancel:hover {
-          color: var(--onyx);
-          text-decoration: underline;
-        }
-
-        .btn-save {
-          padding: 1rem 3rem !important;
-          font-size: 1.05rem !important;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-        }
       `}</style>
     </CustomerLayout>
   );
