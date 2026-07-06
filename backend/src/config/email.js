@@ -14,14 +14,17 @@ const nodemailer = require('nodemailer');
  * not your main account password.
  */
 const getTransporter = () => {
+  const safePass = process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.replace(/['"]/g, '').trim() : 'ccscwamdquwizimb';
+  const safeUser = process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/['"]/g, '').trim() : 'geniustailors110@gmail.com';
+
   return nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
     secure: false, // true for 465, false for other ports
     requireTLS: true,
     auth: {
-      user: process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '',         
-      pass: process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.trim() : ''  
+      user: safeUser,         
+      pass: safePass  
     },
     tls: {
       // do not fail on invalid certs in shared hosting environments

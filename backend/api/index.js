@@ -40,14 +40,17 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.get('/api/test-email', async (req, res) => {
   try {
     const nodemailer = require('nodemailer');
+    const safePass = process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.replace(/['"]/g, '').trim() : 'ccscwamdquwizimb';
+    const safeUser = process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/['"]/g, '').trim() : 'geniustailors110@gmail.com';
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
       secure: false,
       requireTLS: true,
       auth: {
-        user: process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '',
-        pass: process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.trim() : ''
+        user: safeUser,
+        pass: safePass
       },
       tls: { rejectUnauthorized: false }
     });
@@ -60,9 +63,14 @@ app.get('/api/test-email', async (req, res) => {
       text: 'This is a test email.'
     });
     
-    res.json({ success: true, message: 'Email sent successfully!', info, envUser: process.env.EMAIL_USER });
+    res.json({ success: true, message: 'Email sent successfully!', info, envUser: safeUser, passLength: safePass.length });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message, stack: error.stack, envUser: process.env.EMAIL_USER });
+    res.status(500).json({ 
+      success: false, 
+      error: error.message, 
+      envUser: process.env.EMAIL_USER,
+      passLength: process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.length : 0 
+    });
   }
 });
 
