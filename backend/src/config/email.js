@@ -17,8 +17,8 @@ const sendEmail = async ({ to, subject, html, replyTo, fromName = "Genius Tailor
         to: Array.isArray(to) ? to : [to],
         subject,
         html,
+        reply_to: replyTo || process.env.EMAIL_USER || 'geniustailors110@gmail.com'
       };
-      if (replyTo) payload.reply_to = replyTo;
 
       const { data, error } = await resend.emails.send(payload);
       if (error) throw new Error(error.message);
@@ -48,7 +48,7 @@ const sendEmail = async ({ to, subject, html, replyTo, fromName = "Genius Tailor
       to,
       subject,
       html,
-      replyTo
+      replyTo: replyTo || safeUser
     });
   } catch (error) {
     console.error('Email sending failed:', error.message);
