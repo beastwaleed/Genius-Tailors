@@ -47,7 +47,14 @@ export default function Reviews() {
       console.log('Clipboard copy failed', err);
     }
     
-    // 3. Save as "Reviewed" locally so it disappears from the Pending list
+    // 3. Hit the backend to award 5 loyalty points
+    try {
+      await api.post('/api/rewards/review');
+    } catch (error) {
+      console.log('Reward error or already claimed');
+    }
+
+    // 4. Save as "Reviewed" locally so it disappears from the Pending list
     const newReview = {
       id: Date.now().toString(),
       orderId: order._id,
@@ -60,7 +67,7 @@ export default function Reviews() {
     setPastReviews(updatedReviews);
     localStorage.setItem('gt_mock_reviews', JSON.stringify(updatedReviews));
 
-    // 4. Open Google Business Profile Link instantly
+    // 5. Open Google Business Profile Link instantly
     setTimeout(() => {
       window.open('https://share.google/J0UW7AWYDNHdPMX9n', '_blank');
     }, 800); // slight delay so they can read the toast message

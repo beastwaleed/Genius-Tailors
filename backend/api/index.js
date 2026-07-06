@@ -19,6 +19,7 @@ const Fabric = require('../src/models/Fabric');
 const Promo = require('../src/models/Promo');
 const AbandonedCart = require('../src/models/AbandonedCart');
 const Blog = require('../src/models/Blog');
+const RewardRequest = require('../src/models/RewardRequest');
 
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
@@ -1410,6 +1411,104 @@ app.post('/api/orders/:id/reorder', protect, async (req, res) => {
   }
 });
 
+
+// ── Feature: Rewards (Reviews & Social) ──────────────────────────────────────
+
+// 1. Claim Points for Google Review (Auto-approved via button click)
+app.post('/api/rewards/review', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    // Ensure they haven't claimed this recently? For now, honor system.
+    user.loyaltyPoints += 5;
+    user.membershipLevel = upgradeMembership(user.loyaltyPoints);
+    await user.save();
+
+    await LoyaltyRecord.create({
+      customer: user._id,
+      type: 'earned',
+      points: 5,
+      description: 'Earned 5 points for leaving a Google Business Review'
+    });
+
+    res.json({ message: '5 Loyalty Points awarded for your review!', points: user.loyaltyPoints });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to award points', error: error.message });
+  }
+});
+
+// 2. Submit a Social Media Follow Request (Instagram / TikTok)
+app.post('/api/rewards/social', protect, async (req, res) => {
+  try {
+    const { platform, screenshot } = req.body;
+    if (!platform || !screenshot) return res.status(400).json({ message: 'Platform and screenshot are required' });
+
+    // Check if they already have a pending or approved request for this platform
+    const existing = await RewardRequest.findOne({ customer: req.user._id, platform });
+    if (existing) {
+      if (existing.status === 'Approved') return res.status(400).json({ message: `You have already claimed points for ${platform}.` });
+      if (existing.status === 'Pending') return res.status(400).json({ message: `You already have a pending request for ${platform}. Please wait for admin approval.` });
+    }
+
+    const request = new RewardRequest({
+      customer: req.user._id,
+      platform,
+      screenshot,
+      status: 'Pending',
+      pointsAwarded: 5
+    });
+    await request.save();
+
+    res.json({ message: 'Screenshot submitted successfully! Admin will review and approve your points soon.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to submit reward request', error: error.message });
+  }
+});
+
+// 3. Admin: Get all Pending Reward Requests
+app.get('/api/admin/rewards/requests', protect, admin, async (req, res) => {
+  try {
+    const requests = await RewardRequest.find({ status: 'Pending' }).populate('customer', 'name email').sort('-createdAt');
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch reward requests', error: error.message });
+  }
+});
+
+// 4. Admin: Approve or Reject a Reward Request
+app.put('/api/admin/rewards/requests/:id', protect, admin, async (req, res) => {
+  try {
+    const { status } = req.body; // 'Approved' or 'Rejected'
+    const request = await RewardRequest.findById(req.params.id);
+    if (!request) return res.status(404).json({ message: 'Request not found' });
+
+    if (request.status !== 'Pending') {
+      return res.status(400).json({ message: 'Request is already processed' });
+    }
+
+    request.status = status;
+    await request.save();
+
+    if (status === 'Approved') {
+      const user = await User.findById(request.customer);
+      if (user) {
+        user.loyaltyPoints += request.pointsAwarded;
+        user.membershipLevel = upgradeMembership(user.loyaltyPoints);
+        await user.save();
+
+        await LoyaltyRecord.create({
+          customer: user._id,
+          type: 'earned',
+          points: request.pointsAwarded,
+          description: `Earned ${request.pointsAwarded} points for following on ${request.platform}`
+        });
+      }
+    }
+
+    res.json({ message: `Request has been ${status.toLowerCase()}.` });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to process request', error: error.message });
+  }
+});
 
 // ==========================================
 // 11. ADMIN USER ROUTES

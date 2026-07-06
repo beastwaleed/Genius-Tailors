@@ -68,6 +68,7 @@ const MEASUREMENT_TEMPLATES = {
 
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState([]);
+  const [rewardRequests, setRewardRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');
@@ -108,7 +109,29 @@ export default function AdminCustomers() {
   useEffect(() => {
     fetchCustomers();
     fetchServices();
+    fetchRewardRequests();
   }, []);
+
+  const fetchRewardRequests = async () => {
+    try {
+      const { data } = await api.get('/api/admin/rewards/requests');
+      setRewardRequests(data);
+    } catch (error) {
+      console.error('Failed to fetch reward requests', error);
+    }
+  };
+
+  const handleRewardStatus = async (id, status) => {
+    try {
+      await api.put(`/api/admin/rewards/requests/${id}`, { status });
+      toast.success(`Reward request ${status.toLowerCase()}`);
+      fetchRewardRequests();
+      // Refetch customers to update their points in the table
+      if (status === 'Approved') fetchCustomers();
+    } catch (error) {
+      toast.error('Failed to update reward request');
+    }
+  };
 
   const fetchServices = async () => {
     try {
@@ -235,6 +258,49 @@ export default function AdminCustomers() {
             </div>
           </div>
         </div>
+
+        {/* ── Pending Reward Requests ──────────────────────── */}
+        {rewardRequests.length > 0 && (
+          <div style={{ marginBottom: '3rem' }}>
+            <h2 className="premium-title" style={{ marginBottom: '1rem', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', background: '#ef4444', color: 'white', borderRadius: '50%', fontSize: '0.8rem', fontWeight: 'bold' }}>{rewardRequests.length}</span>
+              Pending Social Rewards
+            </h2>
+            <div className="admin-table-container" style={{ border: '1px solid #e2e8f0' }}>
+              <table className="premium-table">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Platform</th>
+                    <th>Screenshot</th>
+                    <th>Reward</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rewardRequests.map(req => (
+                    <tr key={req._id}>
+                      <td style={{ fontWeight: 500 }}>{req.customer?.name} ({req.customer?.email})</td>
+                      <td>
+                        <span style={{ display: 'inline-block', padding: '0.2rem 0.6rem', borderRadius: '4px', background: req.platform === 'Instagram' ? '#fce7f3' : '#f1f5f9', color: req.platform === 'Instagram' ? '#be185d' : '#0f172a', fontSize: '0.85rem', fontWeight: 600 }}>
+                          {req.platform}
+                        </span>
+                      </td>
+                      <td>
+                        <a href={`${req.screenshot.startsWith('http') ? '' : (import.meta.env.VITE_API_URL || 'http://localhost:5000')}${req.screenshot}`} target="_blank" rel="noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>View Image</a>
+                      </td>
+                      <td style={{ fontWeight: 600, color: '#f59e0b' }}>+{req.pointsAwarded} pts</td>
+                      <td style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button className="premium-btn-sm" style={{ background: '#10b981', color: 'white' }} onClick={() => handleRewardStatus(req._id, 'Approved')}>Approve</button>
+                        <button className="premium-btn-sm" style={{ background: '#ef4444', color: 'white' }} onClick={() => handleRewardStatus(req._id, 'Rejected')}>Reject</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
           <h2 className="premium-title" style={{ marginBottom: 0, fontSize: '1.5rem' }}>Customer Directory</h2>

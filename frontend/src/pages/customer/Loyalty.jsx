@@ -6,6 +6,8 @@ import api from '../../api';
 export default function Loyalty() {
   const { user, updateUser } = useAuth();
   const points = user?.loyaltyPoints || 0;
+  const [uploading, setUploading] = useState(false);
+  const [platform, setPlatform] = useState(null);
 
   useEffect(() => {
     const fetchLatestProfile = async () => {
@@ -18,6 +20,44 @@ export default function Loyalty() {
     };
     fetchLatestProfile();
   }, []);
+
+  const handleUploadScreenshot = async (e, selectedPlatform) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    setPlatform(selectedPlatform);
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      // 1. Upload the image
+      const { data } = await api.post('/api/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      // 2. Submit the reward request
+      await api.post('/api/rewards/social', {
+        platform: selectedPlatform,
+        screenshot: data.imageUrl
+      });
+
+      import('react-hot-toast').then(toast => {
+        toast.default.success(`${selectedPlatform} screenshot submitted! Admin will approve your 5 points soon.`, { duration: 5000 });
+      });
+    } catch (err) {
+      console.error(err);
+      import('react-hot-toast').then(toast => {
+        toast.default.error(err.response?.data?.message || 'Failed to submit screenshot.');
+      });
+    } finally {
+      setUploading(false);
+      setPlatform(null);
+      e.target.value = ''; // reset file input
+    }
+  };
+  
   
   // Calculate tier and progress
   let currentTier = 'Bronze';
@@ -83,6 +123,37 @@ export default function Loyalty() {
               <div className="benefit-icon">🎁</div>
               <h4>Birthday Gift</h4>
               <p>Receive an exclusive accessory tailored for you on your birthday.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="luxury-section" style={{ marginTop: '4rem' }}>
+          <h2 className="luxury-section-title">Earn More Points</h2>
+          <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>Follow us on social media and share a screenshot to earn 5 points instantly upon admin approval!</p>
+          
+          <div className="benefits-grid">
+            <div className="luxury-card benefit-card social-card">
+              <i className="fa-brands fa-instagram social-icon" style={{ color: '#E1306C' }}></i>
+              <h4>Instagram</h4>
+              <p>Follow @geniustailors</p>
+              <a href="https://instagram.com/geniustailors" target="_blank" rel="noreferrer" className="luxury-btn-outline btn-sm" style={{ marginBottom: '1rem', display: 'inline-block' }}>Visit Profile</a>
+              
+              <label className="luxury-btn-primary btn-sm" style={{ cursor: 'pointer', display: 'block' }}>
+                {uploading && platform === 'Instagram' ? 'Uploading...' : 'Upload Screenshot'}
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleUploadScreenshot(e, 'Instagram')} disabled={uploading} />
+              </label>
+            </div>
+
+            <div className="luxury-card benefit-card social-card">
+              <i className="fa-brands fa-tiktok social-icon" style={{ color: '#000000' }}></i>
+              <h4>TikTok</h4>
+              <p>Follow @geniustailors</p>
+              <a href="https://www.tiktok.com/@geniustailors" target="_blank" rel="noreferrer" className="luxury-btn-outline btn-sm" style={{ marginBottom: '1rem', display: 'inline-block' }}>Visit Profile</a>
+              
+              <label className="luxury-btn-primary btn-sm" style={{ cursor: 'pointer', display: 'block' }}>
+                {uploading && platform === 'TikTok' ? 'Uploading...' : 'Upload Screenshot'}
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleUploadScreenshot(e, 'TikTok')} disabled={uploading} />
+              </label>
             </div>
           </div>
         </div>
@@ -197,6 +268,23 @@ export default function Loyalty() {
           font-size: 0.85rem;
           color: var(--stone);
           line-height: 1.5;
+        }
+
+        .social-card {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .social-icon {
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .btn-sm {
+          padding: 0.5rem 1rem;
+          font-size: 0.85rem;
+          text-align: center;
         }
 
         @media (max-width: 768px) {
