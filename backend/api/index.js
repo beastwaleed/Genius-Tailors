@@ -46,8 +46,8 @@ app.get('/api/test-email', async (req, res) => {
       secure: false,
       requireTLS: true,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_APP_PASSWORD
+        user: process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '',
+        pass: process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.trim() : ''
       },
       tls: { rejectUnauthorized: false }
     });

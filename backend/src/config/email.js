@@ -20,8 +20,8 @@ const getTransporter = () => {
     secure: false, // true for 465, false for other ports
     requireTLS: true,
     auth: {
-      user: process.env.EMAIL_USER,         // e.g., geniustailors110@gmail.com
-      pass: process.env.EMAIL_APP_PASSWORD  // 16-char Gmail App Password
+      user: process.env.EMAIL_USER ? process.env.EMAIL_USER.trim() : '',         
+      pass: process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.trim() : ''  
     },
     tls: {
       // do not fail on invalid certs in shared hosting environments
