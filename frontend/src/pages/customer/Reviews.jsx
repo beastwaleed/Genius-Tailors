@@ -45,9 +45,10 @@ export default function Reviews() {
 
   const handleOpenReviewModal = (order) => {
     setSelectedOrder(order);
-    setRating(0);
+    setRating(5); // Default to 5 stars!
     setHoverRating(0);
-    setReviewText('');
+    // Auto-generate starting text based on the garment!
+    setReviewText(`I recently got my ${order.serviceName} stitched by Genius Tailors and the fit, fabric, and stitching quality were absolutely perfect! Highly recommended.`);
     setIsModalOpen(true);
   };
 
@@ -57,6 +58,13 @@ export default function Reviews() {
     if (!reviewText.trim()) return toast.error('Please write a review');
 
     setSubmitting(true);
+    
+    // Copy to clipboard so they can paste it on Google
+    try {
+      await navigator.clipboard.writeText(reviewText);
+    } catch (err) {
+      console.log('Clipboard copy failed', err);
+    }
     
     // Simulate API call to save review
     setTimeout(() => {
@@ -73,9 +81,13 @@ export default function Reviews() {
       setPastReviews(updatedReviews);
       localStorage.setItem('gt_mock_reviews', JSON.stringify(updatedReviews));
 
-      toast.success('Thank you! Your review has been submitted.');
+      toast.success('Review copied to clipboard! Please paste it on Google.', { duration: 5000 });
       setIsModalOpen(false);
       setSubmitting(false);
+
+      // Redirect to Google Business Profile Review Page
+      // TODO: Replace this placeholder link with the actual Google Business review link for Genius Tailors!
+      window.open('https://search.google.com/local/writereview?placeid=YOUR_GOOGLE_PLACE_ID_HERE', '_blank');
     }, 1000);
   };
 
@@ -195,7 +207,7 @@ export default function Reviews() {
               <div className="modal-footer">
                 <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>Cancel</button>
                 <button type="submit" className="luxury-btn-primary btn-save" disabled={submitting}>
-                  {submitting ? 'Submitting...' : 'Submit Review'}
+                  {submitting ? 'Redirecting...' : 'Copy & Post to Google'}
                 </button>
               </div>
             </form>
