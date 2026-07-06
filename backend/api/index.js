@@ -39,31 +39,46 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 // TEST EMAIL ROUTE
 app.get('/api/test-email', async (req, res) => {
   try {
-    const nodemailer = require('nodemailer');
-    const safePass = process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.replace(/['"]/g, '').trim() : 'ccscwamdquwizimb';
-    const safeUser = process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/['"]/g, '').trim() : 'geniustailors110@gmail.com';
+    const { sendTestEmail } = require('../src/config/email');
+    if (process.env.RESEND_API_KEY) {
+      const { Resend } = require('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY.trim());
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@geniustailors.com';
+      const { data, error } = await resend.emails.send({
+        from: `Genius Tailors <${fromEmail}>`,
+        to: process.env.EMAIL_USER || 'geniustailors110@gmail.com',
+        subject: 'Test Email via Resend API',
+        html: '<p>This is a test email sent using the Resend HTTP API!</p>'
+      });
+      if (error) throw new Error(error.message);
+      res.json({ success: true, method: 'Resend API', data });
+    } else {
+      const nodemailer = require('nodemailer');
+      const safePass = process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.replace(/['"]/g, '').trim() : 'ccscwamdquwizimb';
+      const safeUser = process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/['"]/g, '').trim() : 'geniustailors110@gmail.com';
 
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: {
-        user: safeUser,
-        pass: safePass
-      },
-      tls: { rejectUnauthorized: false }
-    });
-    
-    await transporter.verify();
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      subject: 'Test Email Route',
-      text: 'This is a test email.'
-    });
-    
-    res.json({ success: true, message: 'Email sent successfully!', info, envUser: safeUser, passLength: safePass.length });
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        auth: {
+          user: safeUser,
+          pass: safePass
+        },
+        tls: { rejectUnauthorized: false }
+      });
+      
+      await transporter.verify();
+      const info = await transporter.sendMail({
+        from: safeUser,
+        to: safeUser,
+        subject: 'Test Email Route (SMTP)',
+        text: 'This is a test email via SMTP.'
+      });
+      
+      res.json({ success: true, method: 'Nodemailer SMTP', info, envUser: safeUser, passLength: safePass.length });
+    }
   } catch (error) {
     res.status(500).json({ 
       success: false, 

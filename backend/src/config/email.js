@@ -1,36 +1,59 @@
 const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-/**
- * Nodemailer transporter using Gmail SMTP.
- *
- * Setup:
- * 1. Use your business Gmail: e.g., [EMAIL_ADDRESS]
- * 2. Enable 2-Factor Authentication on that Gmail account
- * 3. Go to Google Account → Security → App Passwords
- * 4. Create an App Password for "Mail" → copy the 16-char code
- * 5. Paste it as EMAIL_APP_PASSWORD in your .env file
- *
- * This approach is safe — it uses an app-specific password,
- * not your main account password.
- */
-const getTransporter = () => {
-  const safePass = process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.replace(/['"]/g, '').trim() : 'ccscwamdquwizimb';
-  const safeUser = process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/['"]/g, '').trim() : 'geniustailors110@gmail.com';
+// Helper function to send email via Resend (HTTP) or NodeMailer (SMTP)
+const sendEmail = async ({ to, subject, html, replyTo, fromName = "Genius Tailors" }) => {
+  try {
+    // OPTION 2: Use Resend HTTP API (Bypasses cPanel Firewall)
+    if (process.env.RESEND_API_KEY) {
+      const resend = new Resend(process.env.RESEND_API_KEY.trim());
+      
+      // Resend requires verified domain emails. 
+      // Replace info@geniustailors.com with the email you verify in Resend
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@geniustailors.com';
+      
+      const payload = {
+        from: `${fromName} <${fromEmail}>`,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html,
+      };
+      if (replyTo) payload.reply_to = replyTo;
 
-  return nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    requireTLS: true,
-    auth: {
-      user: safeUser,         
-      pass: safePass  
-    },
-    tls: {
-      // do not fail on invalid certs in shared hosting environments
-      rejectUnauthorized: false
-    }
-  });
+      const { data, error } = await resend.emails.send(payload);
+      if (error) throw new Error(error.message);
+      return data;
+    } 
+    
+    // OPTION 1: Fallback to NodeMailer (Local testing or if SMTP is somehow unblocked)
+    const safePass = process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.replace(/['"]/g, '').trim() : 'ccscwamdquwizimb';
+    const safeUser = process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/['"]/g, '').trim() : 'geniustailors110@gmail.com';
+
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      requireTLS: true,
+      auth: {
+        user: safeUser,         
+        pass: safePass  
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+
+    return await transporter.sendMail({
+      from: `"${fromName}" <${safeUser}>`,
+      to,
+      subject,
+      html,
+      replyTo
+    });
+  } catch (error) {
+    console.error('Email sending failed:', error.message);
+    throw error;
+  }
 };
 
 // ── Helper: status update email messages ────────────────────────────────────
@@ -89,9 +112,7 @@ const sendStatusUpdateEmail = async (customerEmail, customerName, serviceName, s
     </div>
   `;
 
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
     to: customerEmail,
     subject: msg.subject,
     html
@@ -125,9 +146,7 @@ const sendPasswordResetEmail = async (customerEmail, customerName, resetUrl) => 
     </div>
   `;
 
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
     to: customerEmail,
     subject: '🔑 Reset your password — Genius Tailors',
     html
@@ -159,9 +178,7 @@ const sendOrderConfirmationEmail = async (customerEmail, customerName, serviceNa
     </div>
   `;
 
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
     to: customerEmail,
     subject: `✅ Order Confirmed — ${serviceName} | Genius Tailors`,
     html
@@ -188,10 +205,9 @@ const sendContactEmail = async (name, email, subject, message) => {
     </div>
   `;
 
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"GT Website" <${process.env.EMAIL_USER}>`,
-    to: process.env.EMAIL_USER,
+  await sendEmail({
+    fromName: "GT Website",
+    to: process.env.EMAIL_USER || 'geniustailors110@gmail.com',
     replyTo: email,
     subject: `[Contact Form] ${subject}`,
     html
@@ -237,9 +253,8 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
     </div>
   `;
 
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"GT System" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
+    fromName: "GT System",
     to: adminEmail,
     subject: `🚨 New Order Alert! [${serviceName}] from ${customerName}`,
     html
@@ -304,9 +319,7 @@ const sendPromoEmail = async (customerEmail, customerName, promoCode, discountTe
     </div>
   `;
 
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
     to: customerEmail,
     subject: `🎁 A special gift for you: ${promoCode}`,
     html
@@ -338,9 +351,8 @@ const sendAdminAbandonedCartEmail = async (customerName, serviceName, totalPrice
     </div>
   `;
 
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"GT System" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
+    fromName: "GT System",
     to: adminEmail,
     subject: `🛒 Abandoned Cart Alert! [${serviceName}]`,
     html
