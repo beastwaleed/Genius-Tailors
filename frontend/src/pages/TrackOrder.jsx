@@ -47,34 +47,34 @@ export default function TrackOrder() {
       <Navbar />
       
       <main className="main-content" style={{ minHeight: 'calc(100vh - 80px)' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6rem 2rem', background: 'var(--ivory)' }}>
+        <div className="track-page-container">
           
-          <div style={{ maxWidth: '600px', width: '100%', textAlign: 'center', marginBottom: '3rem' }}>
-            <h1 className="text-heading-2" style={{ color: 'var(--onyx)', marginBottom: '1rem', fontFamily: 'var(--font-serif)' }}>Track Your Order</h1>
-            <p style={{ color: 'var(--stone)', fontSize: '1.1rem', lineHeight: 1.6 }}>
+          <div className="track-header-text">
+            <h1 className="text-heading-2">Track Your Order</h1>
+            <p className="track-subtitle">
               Enter your Tracking ID below to see the real-time status of your tailored garment.
             </p>
           </div>
 
-          <div className="luxury-card" style={{ width: '100%', maxWidth: '700px', padding: '3rem', background: '#fff', borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
+          <div className="luxury-card track-card">
             
-            <form onSubmit={handleTrack} style={{ display: 'flex', gap: '1rem', marginBottom: orderInfo ? '3rem' : '0' }}>
+            <form className="track-form" onSubmit={handleTrack} style={{ marginBottom: orderInfo ? '3rem' : '0' }}>
               <input 
                 type="text" 
                 placeholder="Enter Tracking ID (e.g. ORD-ABCD)" 
                 value={trackingId}
                 onChange={(e) => setTrackingId(e.target.value)}
-                style={{ flex: 1, padding: '1rem 1.5rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none' }}
+                className="track-input"
                 required
               />
-              <button type="submit" className="luxury-btn-primary" disabled={loading} style={{ padding: '0 2rem' }}>
+              <button type="submit" className="luxury-btn-primary track-btn" disabled={loading}>
                 {loading ? 'Searching...' : 'Track'}
               </button>
             </form>
 
             {orderInfo && (
               <div className="tracking-result fade-in" style={{ textAlign: 'left' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid #e2e8f0' }}>
+                <div className="track-result-header">
                   <div>
                     <h3 style={{ fontSize: '1.5rem', color: 'var(--onyx)', margin: '0 0 0.5rem 0' }}>{orderInfo.serviceName}</h3>
                     <p style={{ color: 'var(--stone)', margin: 0 }}>Hello {orderInfo.customerName}! Here is the status of your order.</p>
@@ -135,6 +135,74 @@ export default function TrackOrder() {
       <style>{`
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .track-page-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 6rem 2rem;
+          background: var(--ivory);
+        }
+
+        .track-header-text {
+          max-width: 600px;
+          width: 100%;
+          text-align: center;
+          margin-bottom: 3rem;
+        }
+
+        .track-header-text h1 {
+          color: var(--onyx);
+          margin-bottom: 1rem;
+          font-family: var(--font-serif);
+        }
+
+        .track-subtitle {
+          color: var(--stone);
+          font-size: 1.1rem;
+          line-height: 1.6;
+        }
+
+        .track-card {
+          width: 100%;
+          max-width: 700px;
+          padding: 3rem;
+          background: #fff;
+          border-radius: 12px;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+
+        .track-form {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .track-input {
+          flex: 1;
+          padding: 1rem 1.5rem;
+          border-radius: 8px;
+          border: 1px solid #cbd5e1;
+          font-size: 1rem;
+          outline: none;
+        }
+
+        .track-input:focus {
+          border-color: var(--gold);
+        }
+
+        .track-btn {
+          padding: 0 2rem;
+        }
+
+        .track-result-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 2rem;
+          padding-bottom: 1.5rem;
+          border-bottom: 1px solid #e2e8f0;
+        }
 
         .stepper-container {
           position: relative;
@@ -202,7 +270,7 @@ export default function TrackOrder() {
           transition: color 0.3s ease;
         }
 
-        .step-item.active .step-circle {
+          .step-item.active .step-circle {
           background: var(--onyx);
           color: #fff;
           box-shadow: 0 0 0 2px var(--gold);
@@ -213,6 +281,32 @@ export default function TrackOrder() {
         }
 
         @media (max-width: 768px) {
+          .track-page-container {
+            padding: 4rem 1.5rem;
+          }
+          
+          .track-card {
+            padding: 1.5rem;
+          }
+          
+          .track-form {
+            flex-direction: column;
+          }
+          
+          .track-btn {
+            width: 100%;
+            padding: 1rem;
+          }
+
+          .track-result-header {
+            flex-direction: column;
+            gap: 1rem;
+          }
+
+          .track-result-header > div:last-child {
+            text-align: left !important;
+          }
+
           .stepper-track, .stepper-progress {
             left: 24px;
             right: auto;
@@ -224,10 +318,9 @@ export default function TrackOrder() {
 
           .stepper-progress {
             width: 4px !important;
-            height: var(--progress-height, 0); /* Need js to properly verticalize this, so fallback gracefully */
+            height: var(--progress-height, 0); /* Fallback */
           }
           
-          /* Fallback for mobile: hide horizontal lines, just list vertically */
           .stepper-track { display: none; }
           .stepper-progress { display: none; }
           
