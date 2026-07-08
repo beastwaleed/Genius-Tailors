@@ -69,7 +69,7 @@ export default function Reviews() {
 
     // 5. Open Google Business Profile Link instantly
     setTimeout(() => {
-      window.open('https://share.google/J0UW7AWYDNHdPMX9n', '_blank');
+      window.open('https://g.page/r/CbOAKdiLA07KEBM/review', '_blank');
     }, 800); // slight delay so they can read the toast message
   };
 
