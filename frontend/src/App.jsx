@@ -16,6 +16,7 @@ import Contact from './pages/Contact';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TrackOrder from './pages/TrackOrder';
 import TermsConditions from './pages/TermsConditions';
 import Blogs from './pages/Blogs';
 import BlogDetail from './pages/BlogDetail';
@@ -64,6 +65,7 @@ export default function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/track" element={<TrackOrder />} />
       <Route path="/terms-conditions" element={<TermsConditions />} />
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />

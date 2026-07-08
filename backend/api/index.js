@@ -37,6 +37,28 @@ app.use(express.json());
 // Serve uploaded images statically
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
+// Public Order Tracking Route
+app.get('/api/orders/track/:id', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).populate('customer', 'name');
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+    
+    // Return only non-sensitive data
+    res.json({
+      orderNumber: order.orderNumber || order._id,
+      serviceName: order.serviceName,
+      status: order.status,
+      estimatedDelivery: order.estimatedDelivery,
+      trackingNumber: order.trackingNumber,
+      createdAt: order.createdAt,
+      customerName: order.customer ? order.customer.name.split(' ')[0] : 'Customer' // Only first name
+    });
+  } catch (error) {
+    // If id is invalid object id, it throws. Handle gracefully.
+    res.status(404).json({ message: 'Order not found' });
+  }
+});
+
 // TEST EMAIL ROUTE
 app.get('/api/test-email', async (req, res) => {
   try {

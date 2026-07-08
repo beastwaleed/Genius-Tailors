@@ -49,6 +49,7 @@ export default function Navbar() {
               <Link to="/about" className={`nav-link ${isActive('/about') ? 'nav-link-active' : ''}`}>About</Link>
               <Link to="/blogs" className={`nav-link ${isActive('/blogs') ? 'nav-link-active' : ''}`}>Journal</Link>
               <Link to="/contact" className={`nav-link ${isActive('/contact') ? 'nav-link-active' : ''}`}>Contact</Link>
+              <Link to="/track" className={`nav-link ${isActive('/track') ? 'nav-link-active' : ''}`} style={{ color: 'var(--gold)', fontWeight: 600 }}>Track Order</Link>
 
 
 
@@ -134,6 +135,7 @@ export default function Navbar() {
           <Link to="/about" className="mobile-link">About</Link>
           <Link to="/blogs" className="mobile-link">Journal</Link>
           <Link to="/contact" className="mobile-link">Contact</Link>
+          <Link to="/track" className="mobile-link" style={{ color: 'var(--gold)', fontWeight: 600 }}>Track Order</Link>
 
           {isLoggedIn && !isAdmin && (
             <>
