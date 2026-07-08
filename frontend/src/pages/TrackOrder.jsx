@@ -94,7 +94,7 @@ export default function TrackOrder() {
                 {orderInfo.status !== 'Cancelled' && (
                   <div className="stepper-container">
                     <div className="stepper-track"></div>
-                    <div className="stepper-progress" style={{ width: \`\${Math.min(100, ((currentStep - 1) / 5) * 100)}%\` }}></div>
+                    <div className="stepper-progress" style={{ width: `${Math.min(100, ((currentStep - 1) / 5) * 100)}%` }}></div>
                     
                     <div className="stepper-steps">
                       {[
@@ -105,7 +105,7 @@ export default function TrackOrder() {
                         { step: 5, label: 'Ready', icon: '🌟' },
                         { step: 6, label: 'Delivered', icon: '📦' }
                       ].map((item) => (
-                        <div key={item.step} className={\`step-item \${currentStep >= item.step ? 'active' : ''}\`}>
+                        <div key={item.step} className={`step-item ${currentStep >= item.step ? 'active' : ''}`}>
                           <div className="step-circle">
                             {item.icon}
                           </div>
