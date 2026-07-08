@@ -114,10 +114,9 @@ export default function AdminBlogs() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       const imageUrl = res.data.url;
-      const altText = window.prompt("Enter SEO alt text for this image:", "Image description") || "Image description";
       setFormData(prev => ({
         ...prev,
-        content: prev.content + `\n\n![${altText}](${imageUrl})\n\n`
+        content: prev.content + `\n\n![Image description](${imageUrl})\n\n`
       }));
       toast.success('Image added to content!');
     } catch (error) {
