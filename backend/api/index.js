@@ -40,7 +40,14 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 // Public Order Tracking Route
 app.get('/api/orders/track/:id', async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate('customer', 'name');
+    const trackingId = req.params.id.trim();
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(trackingId);
+    
+    const query = isObjectId 
+      ? { _id: trackingId } 
+      : { orderNumber: new RegExp('^' + trackingId + '$', 'i') };
+
+    const order = await Order.findOne(query).populate('customer', 'name');
     if (!order) return res.status(404).json({ message: 'Order not found' });
     
     // Return only non-sensitive data
