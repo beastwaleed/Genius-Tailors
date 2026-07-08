@@ -245,11 +245,11 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).lean();
 
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({
-        _id: user.id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
@@ -274,7 +274,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/profile', protect, async (req, res) => {
   try {
     // req.user is already set by the protect middleware (without password)
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.user._id).select('-password -adminNotes').lean();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -698,7 +698,10 @@ app.post('/api/orders', protect, async (req, res) => {
 // Get logged-in customer's full order history
 app.get('/api/orders/myorders', protect, async (req, res) => {
   try {
-    const orders = await Order.find({ customer: req.user._id }).sort({ createdAt: -1 });
+    const orders = await Order.find({ customer: req.user._id })
+      .select('-adminNotes -measurementSnapshot') // Exclude heavy data not needed in the list
+      .sort({ createdAt: -1 })
+      .lean();
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch orders', error: error.message });
@@ -779,8 +782,10 @@ app.get('/api/admin/orders/labels', protect, admin, async (req, res) => {
 app.get('/api/orders', protect, admin, async (req, res) => {
   try {
     const orders = await Order.find({})
+      .select('-measurementSnapshot')
       .populate('customer', 'name email membershipLevel loyaltyPoints tags')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     // Optional filter by customer membership level for VIP priority view
     const { membership } = req.query;
@@ -1538,7 +1543,7 @@ app.put('/api/admin/rewards/requests/:id', protect, admin, async (req, res) => {
 
 app.get('/api/admin/users', protect, admin, async (req, res) => {
   try {
-    const users = await User.find().select('-password').sort({ createdAt: -1 });
+    const users = await User.find().select('-password').sort({ createdAt: -1 }).lean();
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch users', error: error.message });
