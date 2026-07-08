@@ -9,6 +9,7 @@ export default function AdminBlogs() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingFeaturedImage, setUploadingFeaturedImage] = useState(false);
   
   const [formData, setFormData] = useState({
     _id: null,
@@ -123,6 +124,28 @@ export default function AdminBlogs() {
       toast.error(error.response?.data?.message || error.response?.data?.error || 'Failed to upload image');
     } finally {
       setUploadingImage(false);
+      e.target.value = null;
+    }
+  };
+
+  const handleFeaturedImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingFeaturedImage(true);
+    const formDataUpload = new FormData();
+    formDataUpload.append('image', file);
+
+    try {
+      const res = await api.post('/api/upload', formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData(prev => ({ ...prev, featuredImage: res.data.url }));
+      toast.success('Featured image uploaded!');
+    } catch (error) {
+      toast.error('Failed to upload featured image');
+    } finally {
+      setUploadingFeaturedImage(false);
       e.target.value = null;
     }
   };
@@ -262,7 +285,27 @@ export default function AdminBlogs() {
                   className="form-input" 
                   value={formData.featuredImage} 
                   onChange={e => setFormData({...formData, featuredImage: e.target.value})} 
+                  placeholder="Paste URL or upload below"
                 />
+                
+                <div style={{ marginTop: '0.5rem' }}>
+                  <label className="btn btn-outline" style={{ padding: '0.5rem', width: '100%', display: 'flex', justifyContent: 'center', cursor: 'pointer' }}>
+                    {uploadingFeaturedImage ? 'Uploading...' : 'Upload Featured Image'}
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleFeaturedImageUpload}
+                      disabled={uploadingFeaturedImage}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                </div>
+                
+                {formData.featuredImage && (
+                  <div style={{ marginTop: '1rem', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                    <img src={formData.featuredImage} alt="Featured Preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                  </div>
+                )}
               </div>
               <div className="form-group">
                 <label className="form-label">Image Alt Text (SEO)</label>
