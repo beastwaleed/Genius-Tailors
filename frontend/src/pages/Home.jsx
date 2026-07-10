@@ -55,21 +55,24 @@ const STATS = [
 const TESTIMONIALS = [
   {
     name: 'Ahmed R.',
-    role: 'Regular Customer',
+    time: '2 months ago',
     text: 'The measurement profiles feature is a game changer. I saved my office fit once, and now I just click order. Perfect fit every time.',
     stars: 5,
+    avatarColor: '#4285F4'
   },
   {
     name: 'Bilal M.',
-    role: 'Event Goer',
+    time: '3 weeks ago',
     text: 'Got my Kurta Pajama stitched here. The layer preview helped me visualize the collar perfectly. Highly recommended for special events.',
     stars: 5,
+    avatarColor: '#0F9D58'
   },
   {
     name: 'Usman T.',
-    role: 'Gold Member',
+    time: '1 month ago',
     text: 'The Eid priority system for Gold members saved me this year. Delivered 3 days before Eid while other tailors stopped taking orders.',
     stars: 5,
+    avatarColor: '#F4B400'
   }
 ];
 
@@ -454,29 +457,45 @@ export default function Home() {
 
 
 
-          {/* ── Testimonials ────────────────────────────────── */}
-          <section className="section testimonials-section">
+          {/* ── Google Reviews ────────────────────────────────── */}
+          <section className="section testimonials-section" style={{ background: '#f8f9fa' }}>
             <div className="container">
-              <div className="section-header">
-                <span className="text-label">What They Say</span>
-                <h2 className="text-heading-2">Trusted by Gentlemen</h2>
-                <p className="text-subtitle" style={{ maxWidth: '540px', margin: '0 auto' }}>
-                  From regular office wear to once-in-a-lifetime weddings, our customers trust us for the perfect fit.
-                </p>
+              <div className="section-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Logo" style={{ width: '28px', height: '28px' }} />
+                  <h2 className="text-heading-2" style={{ margin: 0, fontFamily: 'var(--font-sans)', fontWeight: 600, color: '#202124', letterSpacing: '-0.5px' }}>Google Reviews</h2>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                  <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#202124' }}>5.0</span>
+                  <span style={{ color: '#fbbc04', fontSize: '1.25rem', letterSpacing: '2px' }}>★★★★★</span>
+                  <span style={{ color: '#5f6368', fontSize: '0.85rem' }}>(150+ reviews)</span>
+                </div>
+                <a href="https://g.page/r/CbOAKdiLA07KEBM/review" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ background: '#1a73e8', borderColor: '#1a73e8', borderRadius: '4px', padding: '0.6rem 1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Write a review
+                </a>
               </div>
               <div className="testi-grid animate-children">
                 {TESTIMONIALS.map((t, i) => (
-                  <div key={i} className="testi-card animate-fade-in">
-                    <div className="svc-stars-row" style={{ marginBottom: '1rem' }}>
-                      <span className="svc-stars">
-                        {'★'.repeat(t.stars)}{'☆'.repeat(5 - t.stars)}
-                      </span>
+                  <div key={i} className="testi-card animate-fade-in" style={{ background: 'white', borderRadius: '8px', padding: '1.5rem', border: '1px solid #e8eaed', boxShadow: '0 1px 2px rgba(60,64,67,0.1)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: t.avatarColor || '#4285F4', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontWeight: 500 }}>
+                        {t.name.charAt(0)}
+                      </div>
+                      <div>
+                        <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#202124', fontFamily: 'var(--font-sans)', fontWeight: 500 }}>{t.name}</h4>
+                        <span style={{ fontSize: '0.8rem', color: '#70757a' }}>{t.time}</span>
+                      </div>
+                      <div style={{ marginLeft: 'auto' }}>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="G" style={{ width: '16px', height: '16px', opacity: 0.8 }} />
+                      </div>
                     </div>
-                    <p className="testi-text">"{t.text}"</p>
-                    <div className="testi-author">
-                      <h4 className="testi-name">{t.name}</h4>
-                      <span className="testi-role">{t.role}</span>
+                    <div style={{ marginBottom: '0.5rem', color: '#fbbc04', fontSize: '1.25rem', letterSpacing: '2px' }}>
+                      {'★'.repeat(t.stars)}
                     </div>
+                    <p style={{ margin: 0, color: '#3c4043', fontSize: '0.9rem', lineHeight: 1.6, fontFamily: 'var(--font-sans)' }}>
+                      {t.text}
+                    </p>
                   </div>
                 ))}
               </div>
