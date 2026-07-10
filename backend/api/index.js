@@ -4,6 +4,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const axios = require('axios');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const connectDB = require('../src/config/db');
@@ -36,6 +37,36 @@ app.use(express.json());
 
 // Serve uploaded images statically
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+
+// --- GOOGLE REVIEWS ---
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    const placeId = process.env.GOOGLE_PLACE_ID;
+
+    if (!apiKey || !placeId) {
+      return res.status(500).json({ error: 'Google API Key or Place ID missing in .env' });
+    }
+
+    const response = await axios.get(`https://maps.googleapis.com/maps/api/place/details/json`, {
+      params: {
+        place_id: placeId,
+        fields: 'name,rating,reviews,user_ratings_total',
+        key: apiKey,
+        reviews_sort: 'newest'
+      }
+    });
+
+    if (response.data.status === 'OK') {
+      res.json(response.data.result);
+    } else {
+      res.status(400).json({ error: response.data.error_message || 'Failed to fetch reviews' });
+    }
+  } catch (error) {
+    console.error('Error fetching reviews:', error.message);
+    res.status(500).json({ error: 'Server error fetching reviews' });
+  }
+});
 
 // Public Order Tracking Route
 app.get('/api/orders/track/:id', async (req, res) => {
