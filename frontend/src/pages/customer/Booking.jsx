@@ -265,6 +265,7 @@ export default function Booking() {
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [bankTransferModalOpen, setBankTransferModalOpen] = useState(false);
   const [paymentReceiptUrl, setPaymentReceiptUrl] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('Transfer');
 
   const [selectedDesignModal, setSelectedDesignModal] = useState(null);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
@@ -399,6 +400,7 @@ export default function Booking() {
   });
 
   const isOwnFabric = selectedFabric.name === 'Provide my own fabric';
+  const isAllOwnFabric = isOwnFabric && garmentsList.every(g => g.fabricSelection.name === 'Provide my own fabric');
   const currentCalculatedAdvance = isOwnFabric
     ? Math.ceil(currentGarmentSubTotal / 2)
     : Math.max(effectiveFabricPrice, Math.ceil(currentGarmentSubTotal / 2));
@@ -556,8 +558,11 @@ export default function Booking() {
     if (!deliveryCity) return toast.error('Please select a delivery city');
     if (!deliveryAddress || deliveryAddress.trim().length < 5) return toast.error('Please provide a complete delivery address');
 
-    // Stop here and open the Bank Transfer Modal first
-    setBankTransferModalOpen(true);
+    if (isAllOwnFabric && paymentMethod === 'COD') {
+      executeBankTransferOrder(true);
+    } else {
+      setBankTransferModalOpen(true);
+    }
   };
 
   const compressImage = (file) => {
@@ -626,8 +631,8 @@ export default function Booking() {
     }
   };
 
-  const executeBankTransferOrder = async () => {
-    if (!paymentReceiptUrl) {
+  const executeBankTransferOrder = async (isCod = false) => {
+    if (isCod !== true && !paymentReceiptUrl) {
       return toast.error('Please upload your payment receipt to confirm the order');
     }
 
@@ -645,13 +650,13 @@ export default function Booking() {
         basePrice,
         styleExtras,
         effectiveFabricPrice,
-        paymentReceiptUrl,
+        paymentReceiptUrl: isCod === true ? '' : paymentReceiptUrl,
         pointsUsed: usePoints ? Math.min(userPoints, subTotal) : 0,
         promoCode: appliedPromo ? appliedPromo.code : null,
         promoDiscount: promoDiscountAmt
       }];
 
-      let remainingAdvance = advanceAmount;
+      let remainingAdvance = isCod === true ? 0 : advanceAmount;
 
       for (let i = 0; i < allGarmentsToOrder.length; i++) {
         const g = allGarmentsToOrder[i];
@@ -687,8 +692,8 @@ export default function Booking() {
           promoDiscount: i === 0 ? promoDiscountAmt : 0,
           customerNote,
           advancePaid: appliedAdvance,
-          advancePaymentStatus: 'Pending',
-          paymentReceiptUrl
+          advancePaymentStatus: isCod === true ? 'COD' : 'Pending',
+          paymentReceiptUrl: isCod === true ? '' : paymentReceiptUrl
         };
 
         await api.post('/api/orders', payload);
@@ -701,7 +706,7 @@ export default function Booking() {
       }
 
       setBankTransferModalOpen(false);
-      toast.success('Orders placed successfully! Please complete your transfer.', { id: toastId });
+      toast.success(isCod === true ? 'Orders placed successfully!' : 'Orders placed successfully! Please complete your transfer.', { id: toastId });
       navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to place order', { id: toastId });
@@ -1387,22 +1392,46 @@ export default function Booking() {
                 <div className="receipt-divider" style={{ borderStyle: 'dashed' }}></div>
                 <div className="receipt-row" style={{ color: '#0f172a', fontWeight: 600 }}>
                   <span>Advance Required</span>
-                  <span>Rs. {advanceAmount.toLocaleString()}</span>
+                  <span>Rs. {(isAllOwnFabric && paymentMethod === 'COD') ? '0' : advanceAmount.toLocaleString()}</span>
                 </div>
                 <div className="receipt-row" style={{ color: '#64748b', fontSize: '0.95rem' }}>
                   <span>Cash on Delivery (Remaining)</span>
-                  <span>Rs. {(totalPrice - advanceAmount).toLocaleString()}</span>
+                  <span>Rs. {(isAllOwnFabric && paymentMethod === 'COD') ? totalPrice.toLocaleString() : (totalPrice - advanceAmount).toLocaleString()}</span>
                 </div>
               </div>
 
-              <div style={{ marginTop: '2rem', padding: '1.25rem', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', fontSize: '0.9rem', color: '#0369a1' }}>
-                <strong>Bank Transfer Required:</strong> An advance payment {isOwnFabric ? 'of 50%' : 'for the fabric'} is required to confirm your custom tailoring order. Our admin will verify your transfer and begin processing. The remaining balance will be collected by PostEx upon delivery.
-              </div>
+              {isAllOwnFabric && (
+                <div style={{ marginTop: '2rem', padding: '1.25rem', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                  <h4 style={{ margin: '0 0 1rem 0', color: '#0f172a', fontSize: '1.05rem' }}>Select Payment Method</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem', border: paymentMethod === 'COD' ? '2px solid #0f172a' : '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer', background: paymentMethod === 'COD' ? '#f8fafc' : '#fff' }}>
+                      <input type="radio" name="paymentMethod" value="COD" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} style={{ transform: 'scale(1.2)', accentColor: '#0f172a' }} />
+                      <div>
+                        <div style={{ fontWeight: 600, color: '#0f172a' }}>Cash on Delivery (COD)</div>
+                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Pay Rs. {totalPrice.toLocaleString()} at your doorstep upon delivery.</div>
+                      </div>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem', border: paymentMethod === 'Transfer' ? '2px solid #0f172a' : '1px solid #cbd5e1', borderRadius: '8px', cursor: 'pointer', background: paymentMethod === 'Transfer' ? '#f8fafc' : '#fff' }}>
+                      <input type="radio" name="paymentMethod" value="Transfer" checked={paymentMethod === 'Transfer'} onChange={() => setPaymentMethod('Transfer')} style={{ transform: 'scale(1.2)', accentColor: '#0f172a' }} />
+                      <div>
+                        <div style={{ fontWeight: 600, color: '#0f172a' }}>Online Bank Transfer</div>
+                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Pay Rs. {advanceAmount.toLocaleString()} in advance to confirm order.</div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {(!isAllOwnFabric || paymentMethod === 'Transfer') && (
+                <div style={{ marginTop: '2rem', padding: '1.25rem', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', fontSize: '0.9rem', color: '#0369a1' }}>
+                  <strong>Bank Transfer Required:</strong> An advance payment {isOwnFabric ? 'of 50%' : 'for the fabric'} is required to confirm your custom tailoring order. Our admin will verify your transfer and begin processing. The remaining balance will be collected by PostEx upon delivery.
+                </div>
+              )}
 
               <div className="wizard-actions split">
                 <button className="btn btn-outline btn-lg" onClick={handleBack} disabled={loading}>&larr; Edit Order</button>
                 <button className="btn btn-primary btn-lg" onClick={handlePlaceOrder} disabled={loading} style={{ background: '#0f172a', border: 'none' }}>
-                  {loading ? 'Processing...' : 'Place Order & View Bank Details'}
+                  {loading ? 'Processing...' : (isAllOwnFabric && paymentMethod === 'COD' ? 'Place Order (COD)' : 'Place Order & View Bank Details')}
                 </button>
               </div>
 
@@ -1453,7 +1482,7 @@ export default function Booking() {
                     </div>
 
                     <button
-                      onClick={executeBankTransferOrder}
+                      onClick={() => executeBankTransferOrder(false)}
                       disabled={loading || !paymentReceiptUrl}
                       style={{ width: '100%', padding: '1rem', background: (!paymentReceiptUrl || loading) ? '#e2e8f0' : '#0f172a', color: (!paymentReceiptUrl || loading) ? '#94a3b8' : 'white', border: 'none', borderRadius: '12px', fontSize: '1.1rem', fontWeight: 600, cursor: (!paymentReceiptUrl || loading) ? 'not-allowed' : 'pointer', transition: 'all 0.2s', boxShadow: (!paymentReceiptUrl || loading) ? 'none' : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}
                     >
