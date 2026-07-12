@@ -96,6 +96,8 @@ export default function AdminCustomers() {
     profileId: '',
     totalPrice: '',
     isRush: false,
+    deliveryCity: '',
+    deliveryAddress: '',
     styleVariations: {
       collar: 'Ban Collar',
       collarSub: '0.9 inch',
@@ -647,13 +649,15 @@ export default function AdminCustomers() {
                   },
                   styleVariations: orderForm.styleVariations,
                   totalPrice: Number(orderForm.totalPrice),
-                  isRush: orderForm.isRush
+                  isRush: orderForm.isRush,
+                  deliveryCity: orderForm.deliveryCity,
+                  deliveryAddress: orderForm.deliveryAddress
                 });
                 
                 toast.success('Order placed successfully');
                 setShowOrderModal(false);
                 setOrderForm({ 
-                  serviceName: '', profileId: '', totalPrice: '', isRush: false,
+                  serviceName: '', profileId: '', totalPrice: '', isRush: false, deliveryCity: '', deliveryAddress: '',
                   styleVariations: { collar: 'Ban Collar', collarSub: '0.9 inch', cuff: 'Round Cuff', pockets: '2 Side Pockets', bottomPocket: 'No Pocket', bottomDesign: 'No Design' }
                 });
                 setViewCustomer(null);
@@ -706,6 +710,16 @@ export default function AdminCustomers() {
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Total Price (Rs.) *</label>
                 <input type="number" style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={orderForm.totalPrice} onChange={(e) => setOrderForm({...orderForm, totalPrice: e.target.value})} required min="1" />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Delivery City (Optional)</label>
+                <input type="text" placeholder="e.g. Hyderabad" style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={orderForm.deliveryCity} onChange={(e) => setOrderForm({...orderForm, deliveryCity: e.target.value})} />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Delivery Address (Optional)</label>
+                <input type="text" placeholder="e.g. Shop # 1, GT Road" style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={orderForm.deliveryAddress} onChange={(e) => setOrderForm({...orderForm, deliveryAddress: e.target.value})} />
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>

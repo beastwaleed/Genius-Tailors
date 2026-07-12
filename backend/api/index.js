@@ -1680,7 +1680,7 @@ app.post('/api/admin/users/:id/measurements', protect, admin, async (req, res) =
 // Admin Places an Order on Behalf of a Customer
 app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
   try {
-    const { customerId, serviceName, styleVariations, measurementSnapshot, totalPrice, isRush, customerNote, neededByDate, fabricSelection, fabricColor, fabricImageUrl } = req.body;
+    const { customerId, serviceName, styleVariations, measurementSnapshot, totalPrice, isRush, customerNote, neededByDate, fabricSelection, fabricColor, fabricImageUrl, deliveryCity, deliveryAddress } = req.body;
 
     if (!customerId) return res.status(400).json({ message: 'Customer ID is required' });
     if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
@@ -1710,6 +1710,8 @@ app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
       season: activeSeason ? activeSeason.name : '',
       customerNote: customerNote || '',
       neededByDate: neededByDate || null,
+      deliveryCity: deliveryCity || 'Hyderabad',
+      deliveryAddress: deliveryAddress || 'In-store pickup',
       adminNotes: [{ text: 'Order placed by admin on behalf of customer.' }]
     });
 
@@ -1738,6 +1740,38 @@ app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
     
     sendAdminNewOrderNotification(user.name, serviceName, totalPrice, createdOrder._id, isPriority, createdOrder.isRush)
       .catch(err => console.error('Admin notification email failed:', err.message));
+
+    // ── POSTEX INTEGRATION: PUSH ORDER TO 3PL ──────────────────────────────
+    try {
+      const postexService = require('../src/services/postexService');
+      const postexPayload = {
+        cityName: deliveryCity || 'Hyderabad',
+        customerName: user.name,
+        customerPhone: user.phone || '03000000000',
+        deliveryAddress: deliveryAddress || 'GT Shop, Hyderabad',
+        invoicePayment: totalPrice, // For admin orders, we might collect full COD if not paid
+        orderRefNumber: createdOrder.orderNumber,
+        invoiceDivision: 1,
+        items: 1,
+        orderType: 'Normal',
+        pickupAddressCode: process.env.POSTEX_PICKUP_ADDRESS_CODE || '001'
+      };
+      
+      const postexRes = await postexService.createOrder(postexPayload);
+      if (postexRes && postexRes.statusCode === '200' && postexRes.dist) {
+        createdOrder.trackingNumber = postexRes.dist.trackingNumber;
+        createdOrder.postexSyncStatus = 'Synced';
+      } else {
+        createdOrder.postexSyncStatus = 'Failed';
+        console.error('PostEx returned an error status:', postexRes);
+      }
+      await createdOrder.save();
+    } catch (postexErr) {
+      console.error('Graceful Degradation: PostEx Order Creation Failed:', postexErr.message);
+      createdOrder.postexSyncStatus = 'Failed';
+      await createdOrder.save();
+    }
+    // ───────────────────────────────────────────────────────────────────────
 
     res.status(201).json(createdOrder);
   } catch (error) {
