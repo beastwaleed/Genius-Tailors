@@ -155,7 +155,7 @@ const sendPasswordResetEmail = async (customerEmail, customerName, resetUrl) => 
 
 // ── Email 3: Order Confirmation ──────────────────────────────────────────────
 const sendOrderConfirmationEmail = async (customerEmail, customerName, serviceName, totalPrice, orderId) => {
-  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.vercel.app';
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
   const orderUrl = `${baseUrl}/customer/orders/${orderId}`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -225,7 +225,7 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
   
   const priorityBadge = isRush ? '<span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">Rush</span>' : '';
   const VIPBadge = isPriority ? '<span style="background: #f1c40f; color: #333; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">VIP/Gold Member</span>' : '';
-  const baseUrl = process.env.NODE_ENV === 'production' || process.env.VERCEL ? 'https://geniustailors.vercel.app' : 'https://geniustailors.vercel.app'; // Enforce production URL
+  const baseUrl = process.env.NODE_ENV === 'production' || process.env.VERCEL ? 'https://geniustailors.com' : 'https://geniustailors.com'; // Enforce production URL
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -268,7 +268,7 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
 
 // ── Email 6: Account Creation Notification ──────────────────────────────────
 const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword) => {
-  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.vercel.app';
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
   const loginUrl = `${baseUrl}/login`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
