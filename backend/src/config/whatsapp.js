@@ -101,7 +101,7 @@ const getWhatsAppQR = () => {
 
 const sendWhatsappOrderConfirmation = async (customerPhone, customerName, serviceName, totalPrice, orderId) => {
   const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
-  const orderUrl = `${baseUrl}/customer/orders/${orderId}`;
+  const orderUrl = `${baseUrl}/my-orders/${orderId}`;
   const message = `*Genius Tailors* ✂️\n\nHello ${customerName}! 🎉\n\nYour order has been placed successfully. Our tailor will review it and begin working shortly.\n\n*Garment:* ${serviceName}\n*Total Price:* Rs. ${totalPrice.toLocaleString()}\n*Order ID:* ${orderId}\n\n*Preview Your Order:*\n${orderUrl}\n\nYou will receive a message here whenever your order status is updated!`;
   await sendWhatsappMessage(customerPhone, message);
 };

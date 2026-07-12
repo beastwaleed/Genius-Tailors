@@ -156,7 +156,7 @@ const sendPasswordResetEmail = async (customerEmail, customerName, resetUrl) => 
 // ── Email 3: Order Confirmation ──────────────────────────────────────────────
 const sendOrderConfirmationEmail = async (customerEmail, customerName, serviceName, totalPrice, orderId) => {
   const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
-  const orderUrl = `${baseUrl}/customer/orders/${orderId}`;
+  const orderUrl = `${baseUrl}/my-orders/${orderId}`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
       <div style="background: #1a1a2e; padding: 24px; text-align: center;">
