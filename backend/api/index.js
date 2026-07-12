@@ -1729,6 +1729,12 @@ app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
 
     sendOrderConfirmationEmail(user.email, user.name, serviceName, totalPrice, createdOrder._id)
       .catch(err => console.error('Confirmation email failed:', err.message));
+      
+    if (user.phone) {
+      const { sendWhatsappOrderConfirmation } = require('../src/config/whatsapp');
+      sendWhatsappOrderConfirmation(user.phone, user.name, serviceName, totalPrice, createdOrder._id)
+        .catch(err => console.error('Whatsapp confirmation failed:', err.message));
+    }
     
     sendAdminNewOrderNotification(user.name, serviceName, totalPrice, createdOrder._id, isPriority, createdOrder.isRush)
       .catch(err => console.error('Admin notification email failed:', err.message));

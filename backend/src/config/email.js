@@ -155,6 +155,8 @@ const sendPasswordResetEmail = async (customerEmail, customerName, resetUrl) => 
 
 // ── Email 3: Order Confirmation ──────────────────────────────────────────────
 const sendOrderConfirmationEmail = async (customerEmail, customerName, serviceName, totalPrice, orderId) => {
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.vercel.app';
+  const orderUrl = `${baseUrl}/customer/orders/${orderId}`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
       <div style="background: #1a1a2e; padding: 24px; text-align: center;">
@@ -169,6 +171,9 @@ const sendOrderConfirmationEmail = async (customerEmail, customerName, serviceNa
           <p style="margin: 0; color: #333;"><strong>Garment:</strong> ${serviceName}</p>
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Total Price:</strong> Rs. ${totalPrice.toLocaleString()}</p>
           <p style="margin: 8px 0 0 0; color: #777; font-size: 13px;">Order ID: ${orderId}</p>
+        </div>
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${orderUrl}" style="display: inline-block; background: #ffd700; color: #1a1a2e; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Preview Your Order</a>
         </div>
         <p style="color: #555;">You will receive an email notification each time your order status is updated. You can also track your order from your dashboard.</p>
       </div>
@@ -263,6 +268,8 @@ const sendAdminNewOrderNotification = async (customerName, serviceName, totalPri
 
 // ── Email 6: Account Creation Notification ──────────────────────────────────
 const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword) => {
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.vercel.app';
+  const loginUrl = `${baseUrl}/login`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
       <div style="background: #1a1a2e; padding: 24px; text-align: center;">
@@ -274,7 +281,8 @@ const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword
         <p style="color: #333;">Dear <strong>${customerName}</strong>,</p>
         <p style="color: #555;">Our staff has successfully created your digital account. You can now log in to track your orders, view your measurement profiles, and easily place new orders online!</p>
         <div style="background: #f9f9f9; border-left: 4px solid #ffd700; padding: 16px; margin: 20px 0; border-radius: 4px;">
-          <p style="margin: 0; color: #333;"><strong>Email:</strong> ${customerEmail}</p>
+          <p style="margin: 0; color: #333;"><strong>Login URL:</strong> <a href="${loginUrl}" style="color: #2563eb;">${loginUrl}</a></p>
+          <p style="margin: 8px 0 0 0; color: #333;"><strong>Email:</strong> ${customerEmail}</p>
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Temporary Password:</strong> ${rawPassword}</p>
         </div>
         <p style="color: #999; font-size: 13px;">For your security, we strongly recommend changing your password from your profile settings after you log in.</p>

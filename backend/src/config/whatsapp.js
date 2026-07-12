@@ -100,7 +100,9 @@ const getWhatsAppQR = () => {
 };
 
 const sendWhatsappOrderConfirmation = async (customerPhone, customerName, serviceName, totalPrice, orderId) => {
-  const message = `*Genius Tailors* ✂️\n\nHello ${customerName}! 🎉\n\nYour order has been placed successfully. Our tailor will review it and begin working shortly.\n\n*Garment:* ${serviceName}\n*Total Price:* Rs. ${totalPrice.toLocaleString()}\n*Order ID:* ${orderId}\n\nYou will receive a message here whenever your order status is updated!`;
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.vercel.app';
+  const orderUrl = `${baseUrl}/customer/orders/${orderId}`;
+  const message = `*Genius Tailors* ✂️\n\nHello ${customerName}! 🎉\n\nYour order has been placed successfully. Our tailor will review it and begin working shortly.\n\n*Garment:* ${serviceName}\n*Total Price:* Rs. ${totalPrice.toLocaleString()}\n*Order ID:* ${orderId}\n\n*Preview Your Order:*\n${orderUrl}\n\nYou will receive a message here whenever your order status is updated!`;
   await sendWhatsappMessage(customerPhone, message);
 };
 
@@ -134,7 +136,9 @@ const sendWhatsappStatusUpdate = async (customerPhone, customerName, serviceName
 };
 
 const sendWhatsappAccountCreation = async (customerPhone, customerName, email, rawPassword) => {
-  const message = `*Genius Tailors* ✂️\n\nWelcome ${customerName}! 🎉\n\nYour account has been created successfully by our staff.\n\nYou can now log in to your dashboard to track your orders, view measurements, and place new orders online.\n\n*Email:* ${email}\n*Password:* ${rawPassword}\n\nFor your security, please change your password after your first login.`;
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.vercel.app';
+  const loginUrl = `${baseUrl}/login`;
+  const message = `*Genius Tailors* ✂️\n\nWelcome ${customerName}! 🎉\n\nYour account has been created successfully by our staff.\n\nYou can now log in to your dashboard to track your orders, view measurements, and place new orders online.\n\n*Login Link:*\n${loginUrl}\n\n*Email:* ${email}\n*Password:* ${rawPassword}\n\nFor your security, please change your password after your first login.`;
   await sendWhatsappMessage(customerPhone, message);
 };
 
