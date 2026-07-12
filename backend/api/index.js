@@ -1680,7 +1680,7 @@ app.post('/api/admin/users/:id/measurements', protect, admin, async (req, res) =
 // Admin Places an Order on Behalf of a Customer
 app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
   try {
-    const { customerId, serviceName, styleVariations, measurementSnapshot, totalPrice, isRush, customerNote, neededByDate, fabricSelection, fabricColor, fabricImageUrl, deliveryCity, deliveryAddress } = req.body;
+    const { customerId, serviceName, styleVariations, measurementSnapshot, totalPrice, isRush, customerNote, neededByDate, fabricSelection, fabricColor, fabricImageUrl, deliveryCity, deliveryAddress, adminNote } = req.body;
 
     if (!customerId) return res.status(400).json({ message: 'Customer ID is required' });
     if (!serviceName) return res.status(400).json({ message: 'Service name is required' });
@@ -1694,6 +1694,11 @@ app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
     const isGoldMember = user.membershipLevel === 'Gold';
     const isPriority = activeSeason ? isGoldMember : false;
     const pointsEarned = Math.floor(totalPrice / 100);
+
+    const initialNotes = [{ text: 'Order placed by admin on behalf of customer.' }];
+    if (adminNote && adminNote.trim() !== '') {
+      initialNotes.push({ text: adminNote.trim() });
+    }
 
     const order = new Order({
       customer: customerId,
@@ -1712,7 +1717,7 @@ app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
       neededByDate: neededByDate || null,
       deliveryCity: deliveryCity || 'Hyderabad',
       deliveryAddress: deliveryAddress || 'In-store pickup',
-      adminNotes: [{ text: 'Order placed by admin on behalf of customer.' }]
+      adminNotes: initialNotes
     });
 
     const createdOrder = await order.save();

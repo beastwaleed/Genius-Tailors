@@ -96,6 +96,7 @@ export default function AdminCustomers() {
     profileId: '',
     totalPrice: '',
     isRush: false,
+    adminNote: '',
     deliveryCity: '',
     deliveryAddress: '',
     styleVariations: {
@@ -650,6 +651,7 @@ export default function AdminCustomers() {
                   styleVariations: orderForm.styleVariations,
                   totalPrice: Number(orderForm.totalPrice),
                   isRush: orderForm.isRush,
+                  adminNote: orderForm.adminNote,
                   deliveryCity: orderForm.deliveryCity,
                   deliveryAddress: orderForm.deliveryAddress
                 });
@@ -657,7 +659,7 @@ export default function AdminCustomers() {
                 toast.success('Order placed successfully');
                 setShowOrderModal(false);
                 setOrderForm({ 
-                  serviceName: '', profileId: '', totalPrice: '', isRush: false, deliveryCity: '', deliveryAddress: '',
+                  serviceName: '', profileId: '', totalPrice: '', isRush: false, adminNote: '', deliveryCity: '', deliveryAddress: '',
                   styleVariations: { collar: 'Ban Collar', collarSub: '0.9 inch', cuff: 'Round Cuff', pockets: '2 Side Pockets', bottomPocket: 'No Pocket', bottomDesign: 'No Design' }
                 });
                 setViewCustomer(null);
@@ -725,6 +727,11 @@ export default function AdminCustomers() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
                 <input type="checkbox" id="isRush" checked={orderForm.isRush} onChange={(e) => setOrderForm({...orderForm, isRush: e.target.checked})} />
                 <label htmlFor="isRush" style={{ fontWeight: 500, color: '#475569', cursor: 'pointer' }}>Mark as Priority/Rush Order</label>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Admin Note (Optional)</label>
+                <textarea placeholder="e.g. Needs special attention to sleeves, customer requested fast track, etc." style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem', minHeight: '80px', resize: 'vertical' }} value={orderForm.adminNote} onChange={(e) => setOrderForm({...orderForm, adminNote: e.target.value})}></textarea>
               </div>
 
               <div>
