@@ -293,16 +293,46 @@ const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword
     </div>
   `;
 
-  const transporter = getTransporter();
-  await transporter.sendMail({
-    from: `"Genius Tailors" <${process.env.EMAIL_USER}>`,
+  await sendEmail({
     to: customerEmail,
     subject: `🎉 Welcome to Genius Tailors - Your Account Details`,
     html
   });
 };
 
-// ── Email 7: Promo Code Campaign ─────────────────────────────────────────────
+// ── Email 7: Welcome Email (Self-Registration) ──────────────────────────────
+const sendWelcomeEmail = async (customerEmail, customerName) => {
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
+  const dashboardUrl = `${baseUrl}/my-orders`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background: #1a1a2e; padding: 24px; text-align: center;">
+        <h1 style="color: #ffd700; margin: 0; font-size: 24px; letter-spacing: 1px;">GENIUS TAILORS</h1>
+      </div>
+      <div style="padding: 32px; background: #ffffff;">
+        <h2 style="color: #1a1a2e; margin-top: 0;">Welcome to Genius Tailors! 🎉</h2>
+        <p style="color: #333;">Dear <strong>${customerName}</strong>,</p>
+        <p style="color: #555;">Thank you for creating an account with us. You can now easily track your tailored orders, manage your measurement profiles, and experience premium tailoring from the comfort of your home.</p>
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${dashboardUrl}" style="display: inline-block; background: #ffd700; color: #1a1a2e; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Go to My Dashboard</a>
+        </div>
+        <p style="color: #555;">We look forward to serving you with the perfect fit!</p>
+      </div>
+      <div style="background: #f0f0f0; padding: 16px; text-align: center;">
+        <p style="color: #777; font-size: 12px; margin: 0;">&copy; ${new Date().getFullYear()} Genius Tailors. All rights reserved.</p>
+      </div>
+    </div>
+  `;
+
+  await sendEmail({
+    fromName: "Genius Tailors",
+    to: customerEmail,
+    subject: "Welcome to Genius Tailors! 🎉",
+    html
+  });
+};
+
+// ── Email 8: Promo Code Campaign ─────────────────────────────────────────────
 const sendPromoEmail = async (customerEmail, customerName, promoCode, discountText, minSpend, expiryDate) => {
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -334,7 +364,7 @@ const sendPromoEmail = async (customerEmail, customerName, promoCode, discountTe
   });
 };
 
-// ── Email 8: Admin Abandoned Cart Alert ───────────────────────────────────────
+// ── Email 9: Admin Abandoned Cart Alert ───────────────────────────────────────
 const sendAdminAbandonedCartEmail = async (customerName, serviceName, totalPrice, dropoffStep) => {
   const adminEmail = 'geniustailors110@gmail.com';
   
@@ -367,4 +397,14 @@ const sendAdminAbandonedCartEmail = async (customerName, serviceName, totalPrice
   });
 };
 
-module.exports = { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail };
+module.exports = { 
+  sendStatusUpdateEmail, 
+  sendPasswordResetEmail, 
+  sendOrderConfirmationEmail, 
+  sendContactEmail, 
+  sendAdminNewOrderNotification, 
+  sendAccountCreationEmail, 
+  sendWelcomeEmail,
+  sendPromoEmail, 
+  sendAdminAbandonedCartEmail 
+};

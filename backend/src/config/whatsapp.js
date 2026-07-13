@@ -142,6 +142,13 @@ const sendWhatsappAccountCreation = async (customerPhone, customerName, email, r
   await sendWhatsappMessage(customerPhone, message);
 };
 
+const sendWelcomeWhatsapp = async (customerPhone, customerName) => {
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
+  const dashboardUrl = `${baseUrl}/my-orders`;
+  const message = `*Genius Tailors* ✂️\n\nWelcome to Genius Tailors, ${customerName}! 🎉\n\nThank you for creating an account with us. You can now track your tailored orders, manage your measurements, and experience premium tailoring from the comfort of your home.\n\n*Your Dashboard:*\n${dashboardUrl}\n\nWe look forward to serving you!`;
+  await sendWhatsappMessage(customerPhone, message);
+};
+
 const sendPromoWhatsapp = async (customerPhone, customerName, promoCode, discountText, minSpend, expiryDate) => {
   let message = `*Exclusive Offer from Genius Tailors!* ✂️🎉\n\nHi ${customerName},\n\nWe have a special discount just for you! Use the promo code *${promoCode}* to get *${discountText}* on your next order.\n\n`;
   if (minSpend > 0) message += `*Minimum Spend:* Rs. ${minSpend}\n`;
@@ -186,4 +193,4 @@ const sendWhatsappPasswordReset = async (customerPhone, customerName, resetUrl) 
   await sendWhatsappMessage(customerPhone, message);
 };
 
-module.exports = { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR };
+module.exports = { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR };

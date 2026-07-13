@@ -25,8 +25,8 @@ const RewardRequest = require('../src/models/RewardRequest');
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/upload');
-const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
-const { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR } = require('../src/config/whatsapp');
+const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendWelcomeEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
+const { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -257,6 +257,22 @@ app.post('/api/auth/register', async (req, res) => {
       phone,
       location: { street, city, country }
     });
+
+    try {
+      await sendWelcomeEmail(user.email, user.name);
+      console.log('Welcome email sent to:', user.email);
+    } catch (err) {
+      console.error('Welcome email failed:', err.message);
+    }
+
+    if (user.phone) {
+      try {
+        await sendWelcomeWhatsapp(user.phone, user.name);
+        console.log('Welcome whatsapp sent to:', user.phone);
+      } catch (err) {
+        console.error('Welcome whatsapp failed:', err.message);
+      }
+    }
 
     res.status(201).json({
       _id: user.id,
