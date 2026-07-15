@@ -85,6 +85,15 @@ export default function MyOrders() {
                   {order.isRush && <div className="rush-tag">⚡ Rush Delivery</div>}
                   {order.isPriority && <div className="priority-tag">⭐ Priority Gold</div>}
 
+                  {order.trackingNumber && (
+                    <div style={{ marginTop: '0.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '0.85rem', color: '#64748b' }}>PostEx:</span>
+                      <a href={`https://postex.pk/tracking`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: '#C9A96E', textDecoration: 'underline', fontWeight: 600 }}>
+                        {order.trackingNumber}
+                      </a>
+                    </div>
+                  )}
+
                   {order.status !== 'Cancelled' && (
                     <div className="status-progress-wrapper">
                       <div className="progress-bar-bg">

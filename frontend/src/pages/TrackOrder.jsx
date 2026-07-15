@@ -122,6 +122,9 @@ export default function TrackOrder() {
                     <p style={{ margin: 0, color: 'var(--stone)', fontSize: '0.9rem' }}>
                       Your package has been handed over to the courier. Tracking Number: <strong style={{ color: 'var(--gold)' }}>{orderInfo.trackingNumber}</strong>
                     </p>
+                    <a href={`https://postex.pk/tracking`} target="_blank" rel="noopener noreferrer" className="luxury-btn-primary" style={{ display: 'inline-block', marginTop: '1rem', padding: '0.5rem 1.5rem', fontSize: '0.85rem' }}>
+                      Track on PostEx Website
+                    </a>
                   </div>
                 )}
               </div>

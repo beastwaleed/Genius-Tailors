@@ -89,6 +89,18 @@ const sendStatusUpdateEmail = async (customerEmail, customerName, serviceName, s
     ? `<p style="color:#555;">📅 <strong>Estimated Delivery:</strong> ${new Date(estimatedDelivery).toLocaleDateString('en-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>`
     : '';
 
+  let reviewSnippet = '';
+  if (status === 'Delivered') {
+    const reviewUrl = `${process.env.FRONTEND_URL || 'https://geniustailors.com'}/reviews`;
+    reviewSnippet = `
+      <div style="background: #fdfbf7; border: 1px solid #f1c40f; padding: 16px; margin: 24px 0; border-radius: 6px; text-align: center;">
+        <h3 style="color: #1a1a2e; margin: 0 0 8px 0;">We'd love your feedback!</h3>
+        <p style="color: #555; margin: 0 0 16px 0;">Leave a review and earn 5 Loyalty Points.</p>
+        <a href="${reviewUrl}" style="display: inline-block; background: #1a1a2e; color: #ffd700; padding: 10px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Write a Review</a>
+      </div>
+    `;
+  }
+
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
       <div style="background: #1a1a2e; padding: 24px; text-align: center;">
@@ -104,6 +116,7 @@ const sendStatusUpdateEmail = async (customerEmail, customerName, serviceName, s
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Status:</strong> <span style="color: #27ae60;">${status}</span></p>
           ${deliveryLine}
         </div>
+        ${reviewSnippet}
         <p style="color: #777; font-size: 13px;">For any queries, feel free to contact us at your nearest visit or reply to this email or whatsapp at 03332662110 or 03243041248.</p>
       </div>
       <div style="background: #f0f0f0; padding: 16px; text-align: center;">
@@ -303,6 +316,7 @@ const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword
 // ── Email 7: Welcome Email (Self-Registration) ──────────────────────────────
 const sendWelcomeEmail = async (customerEmail, customerName) => {
   const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
+  const orderPageUrl = `${baseUrl}/services`;
   const dashboardUrl = `${baseUrl}/my-orders`;
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -313,6 +327,13 @@ const sendWelcomeEmail = async (customerEmail, customerName) => {
         <h2 style="color: #1a1a2e; margin-top: 0;">Welcome to Genius Tailors! 🎉</h2>
         <p style="color: #333;">Dear <strong>${customerName}</strong>,</p>
         <p style="color: #555;">Thank you for creating an account with us. You can now easily track your tailored orders, manage your measurement profiles, and experience premium tailoring from the comfort of your home.</p>
+        
+        <div style="background: #fdfbf7; border: 1px solid #f1c40f; padding: 20px; margin: 24px 0; border-radius: 8px; text-align: center;">
+          <h3 style="color: #1a1a2e; margin: 0 0 10px 0;">Get 10% off on your first order!</h3>
+          <p style="color: #555; margin: 0 0 16px 0;">Start your bespoke journey today.</p>
+          <a href="${orderPageUrl}" style="display: inline-block; background: #1a1a2e; color: #ffd700; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 15px;">Place Your Order</a>
+        </div>
+
         <div style="text-align: center; margin: 32px 0;">
           <a href="${dashboardUrl}" style="display: inline-block; background: #ffd700; color: #1a1a2e; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Go to My Dashboard</a>
         </div>

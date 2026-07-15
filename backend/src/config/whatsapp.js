@@ -132,6 +132,11 @@ const sendWhatsappStatusUpdate = async (customerPhone, customerName, serviceName
     message += `\n*Estimated Delivery:* ${delDate}`;
   }
 
+  if (status === 'Delivered') {
+    const reviewUrl = `${process.env.FRONTEND_URL || 'https://geniustailors.com'}/reviews`;
+    message += `\n\n*We'd love your feedback!*\nLeave a review and earn 5 Loyalty Points: ${reviewUrl}`;
+  }
+
   await sendWhatsappMessage(customerPhone, message);
 };
 
@@ -144,8 +149,9 @@ const sendWhatsappAccountCreation = async (customerPhone, customerName, email, r
 
 const sendWelcomeWhatsapp = async (customerPhone, customerName) => {
   const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
+  const orderPageUrl = `${baseUrl}/services`;
   const dashboardUrl = `${baseUrl}/my-orders`;
-  const message = `*Genius Tailors* ✂️\n\nWelcome to Genius Tailors, ${customerName}! 🎉\n\nThank you for creating an account with us. You can now track your tailored orders, manage your measurements, and experience premium tailoring from the comfort of your home.\n\n*Your Dashboard:*\n${dashboardUrl}\n\nWe look forward to serving you!`;
+  const message = `*Genius Tailors* ✂️\n\nWelcome to Genius Tailors, ${customerName}! 🎉\n\nThank you for creating an account with us. You can now track your tailored orders, manage your measurements, and experience premium tailoring from the comfort of your home.\n\n*Get 10% off on your first order!*\nPlace your order now: ${orderPageUrl}\n\n*Your Dashboard:*\n${dashboardUrl}\n\nWe look forward to serving you!`;
   await sendWhatsappMessage(customerPhone, message);
 };
 
