@@ -88,9 +88,10 @@ export default function MyOrders() {
                   {order.trackingNumber && (
                     <div style={{ marginTop: '0.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span style={{ fontSize: '0.85rem', color: '#64748b' }}>PostEx:</span>
-                      <a href={`https://postex.pk/tracking`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: '#C9A96E', textDecoration: 'underline', fontWeight: 600 }}>
+                      <span style={{ fontSize: '0.85rem', color: '#C9A96E', fontWeight: 600 }}>
                         {order.trackingNumber}
-                      </a>
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '0.25rem' }}>(Click View Details for live tracking)</span>
                     </div>
                   )}
 

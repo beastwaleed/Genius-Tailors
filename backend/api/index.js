@@ -81,6 +81,19 @@ app.get('/api/orders/track/:id', async (req, res) => {
     const order = await Order.findOne(query).populate('customer', 'name');
     if (!order) return res.status(404).json({ message: 'Order not found' });
     
+    let trackingHistory = [];
+    if (order.trackingNumber) {
+      try {
+        const trackRes = await postexService.trackBulkOrders([order.trackingNumber]);
+        if (trackRes && trackRes.dist && trackRes.dist.length > 0) {
+          const trackingData = trackRes.dist[0].trackingResponse || {};
+          trackingHistory = trackingData.transactionStatusHistory || [];
+        }
+      } catch (err) {
+        console.error('Failed to fetch PostEx tracking for public view:', err.message);
+      }
+    }
+
     // Return only non-sensitive data
     res.json({
       orderNumber: order.orderNumber || order._id,
@@ -88,6 +101,7 @@ app.get('/api/orders/track/:id', async (req, res) => {
       status: order.status,
       estimatedDelivery: order.estimatedDelivery,
       trackingNumber: order.trackingNumber,
+      trackingHistory: trackingHistory,
       createdAt: order.createdAt,
       customerName: order.customer ? order.customer.name.split(' ')[0] : 'Customer' // Only first name
     });

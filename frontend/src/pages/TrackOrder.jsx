@@ -118,13 +118,30 @@ export default function TrackOrder() {
                 
                 {orderInfo.trackingNumber && (
                   <div style={{ marginTop: '3rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                    <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--onyx)' }}>Courier Tracking</h4>
-                    <p style={{ margin: 0, color: 'var(--stone)', fontSize: '0.9rem' }}>
+                    <h4 style={{ margin: '0 0 1rem 0', color: 'var(--onyx)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'var(--font-serif)' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                      Live Courier Tracking
+                    </h4>
+                    <p style={{ margin: '0 0 1.5rem 0', color: 'var(--stone)', fontSize: '0.9rem' }}>
                       Your package has been handed over to the courier. Tracking Number: <strong style={{ color: 'var(--gold)' }}>{orderInfo.trackingNumber}</strong>
                     </p>
-                    <a href={`https://postex.pk/tracking`} target="_blank" rel="noopener noreferrer" className="luxury-btn-primary" style={{ display: 'inline-block', marginTop: '1rem', padding: '0.5rem 1.5rem', fontSize: '0.85rem' }}>
-                      Track on PostEx Website
-                    </a>
+                    
+                    {orderInfo.trackingHistory && orderInfo.trackingHistory.length > 0 ? (
+                      <div className="tracking-timeline" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                        {orderInfo.trackingHistory.map((event, idx) => (
+                          <div key={idx} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                            <div style={{ minWidth: '12px', height: '12px', borderRadius: '50%', background: idx === 0 ? '#C9A96E' : '#e2e8f0', marginTop: '4px', boxShadow: idx === 0 ? '0 0 0 4px rgba(201, 169, 110, 0.2)' : 'none' }}></div>
+                            <div>
+                              <p style={{ fontSize: '0.95rem', fontWeight: idx === 0 ? '600' : '500', color: idx === 0 ? '#1e293b' : '#64748b', margin: 0 }}>
+                                {event.transactionStatusMessage}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p style={{ fontSize: '0.9rem', color: '#94a3b8', fontStyle: 'italic' }}>No tracking events recorded by courier yet.</p>
+                    )}
                   </div>
                 )}
               </div>
