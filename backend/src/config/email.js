@@ -298,6 +298,13 @@ const sendAccountCreationEmail = async (customerEmail, customerName, rawPassword
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Email:</strong> ${customerEmail}</p>
           <p style="margin: 8px 0 0 0; color: #333;"><strong>Temporary Password:</strong> ${rawPassword}</p>
         </div>
+        
+        <div style="background: #fdfbf7; border: 1px solid #f1c40f; padding: 20px; margin: 24px 0; border-radius: 8px; text-align: center;">
+          <h3 style="color: #1a1a2e; margin: 0 0 10px 0;">Get 10% off on your first order!</h3>
+          <p style="color: #555; margin: 0 0 16px 0;">Start your bespoke journey today.</p>
+          <a href="${baseUrl}/services" style="display: inline-block; background: #1a1a2e; color: #ffd700; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 15px;">Place Your Order</a>
+        </div>
+        
         <p style="color: #999; font-size: 13px;">For your security, we strongly recommend changing your password from your profile settings after you log in.</p>
       </div>
       <div style="background: #f0f0f0; padding: 16px; text-align: center;">

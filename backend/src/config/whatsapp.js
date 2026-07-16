@@ -143,7 +143,8 @@ const sendWhatsappStatusUpdate = async (customerPhone, customerName, serviceName
 const sendWhatsappAccountCreation = async (customerPhone, customerName, email, rawPassword) => {
   const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
   const loginUrl = `${baseUrl}/login`;
-  const message = `*Genius Tailors* ✂️\n\nWelcome ${customerName}! 🎉\n\nYour account has been created successfully by our staff.\n\nYou can now log in to your dashboard to track your orders, view measurements, and place new orders online.\n\n*Login Link:*\n${loginUrl}\n\n*Email:* ${email}\n*Password:* ${rawPassword}\n\nFor your security, please change your password after your first login.`;
+  const orderPageUrl = `${baseUrl}/services`;
+  const message = `*Genius Tailors* ✂️\n\nWelcome ${customerName}! 🎉\n\nYour account has been created successfully by our staff.\n\nYou can now log in to your dashboard to track your orders, view measurements, and place new orders online.\n\n*Get 10% off on your first order!*\nPlace your order now: ${orderPageUrl}\n\n*Login Link:*\n${loginUrl}\n\n*Email:* ${email}\n*Password:* ${rawPassword}\n\nFor your security, please change your password after your first login.`;
   await sendWhatsappMessage(customerPhone, message);
 };
 
