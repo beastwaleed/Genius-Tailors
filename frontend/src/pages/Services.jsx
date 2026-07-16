@@ -34,6 +34,8 @@ import WaistcoatV from '../assets/V collar waistcoat.jpeg';
 import WaistcoatRound from '../assets/round neck collar waistcoat.jpeg';
 import WaistcoatSherwani from '../assets/sherwani collar waistcoat.jpeg';
 
+import ShirtMain from '../assets/service_shirt.png';
+
 // Close-up gallery images
 import closeupCollar from '../assets/closeup_collar.png';
 import closeupCuff from '../assets/closeup_cuff.png';
@@ -42,6 +44,7 @@ import closeupButtons from '../assets/closeup_buttons.png';
 
 const gallery = [closeupCollar, closeupCuff, closeupFabric, closeupButtons];
 const waistcoatGallery = [WaistcoatV, WaistcoatRound, WaistcoatSherwani];
+const shirtGallery = [ShirtMain, closeupCollar, closeupCuff, closeupButtons];
 
 import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
 import ShalwarKameezGallery1 from '../assets/ShalwarKameezGallery1.jpeg';
@@ -183,6 +186,24 @@ export const ALL_SERVICES = [
     features: ['Matching fabric 3-piece', 'Perfectly coordinated look', 'Zardari style cut', 'Premium inner lining'],
     occasions: ['Weddings', 'Political events', 'High-profile gatherings'],
     images: [urbanCoreMain, urbanCore01, urbanCore02, royalSlateClassicMain, royalSlateClassic01],
+  },
+  {
+    id: 'shirt',
+    name: 'Shirt',
+    urdu: 'شرٹ',
+    tagline: 'The Perfect Bespoke Fit',
+    desc: 'A perfectly tailored bespoke dress shirt for a crisp, professional look. Built to your exact measurements for unparalleled comfort and style.',
+    price: 'From Rs. 1,200',
+    deliveryDays: '4–6 working days',
+    img: ShirtMain,
+    badge: 'New',
+    badgeColor: '#E67E22',
+    stars: 5,
+    reviews: 12,
+    category: 'Formal',
+    features: ['Custom collar (Normal / Arrow)', 'Double or Single cuffs', 'Pocket preferences', 'Perfect body fit'],
+    occasions: ['Office wear', 'Formal events', 'Business meetings'],
+    images: shirtGallery,
   }
 ];
 

@@ -16,7 +16,8 @@ const IMAGE_MAP = {
   'Kurta Shalwar': imgKameez,
   'Kurta Pajama': imgKurta,
   'Waistcoat': imgWaistcoat,
-  'Zardari Suit': imgZardari
+  'Zardari Suit': imgZardari,
+  'Shirt': imgKameez
 };
 
 const SERVICE_FIELDS = {
@@ -40,6 +41,10 @@ const SERVICE_FIELDS = {
     top: { label: 'Kameez', fields: ['Length', 'Shoulder', 'Sleeves', 'Chest', 'Abdomen', 'Hips', 'Collar'] },
     bottom: { label: 'Shalwar', fields: ['Length', 'Bottom', 'Crotch Depth'] },
     outer: { label: 'Waistcoat', fields: ['Length', 'Shoulder', 'Collar', 'Chest', 'Abdomen', 'Hips'] }
+  },
+  'Shirt': {
+    top: { label: 'Shirt', fields: ['Length', 'Shoulder', 'Sleeves', 'Chest', 'Abdomen', 'Hips', 'Collar'] },
+    bottom: { label: null, fields: [] }
   }
 };
 
@@ -125,12 +130,18 @@ const STANDARD_SIZES = {
       'Shalwar Length': '42', 'Shalwar Bottom': '8.5', 'Shalwar Crotch Depth': '17',
       'Waistcoat Length': '30.5', 'Waistcoat Shoulder': '18', 'Waistcoat Collar': '18', 'Waistcoat Chest': '26', 'Waistcoat Abdomen': '25', 'Waistcoat Hip': '27'
     }
+  },
+  'Shirt': {
+    'S': { 'Shirt Length': '28', 'Shirt Shoulder': '17.5', 'Shirt Sleeves': '23.5', 'Shirt Chest': '20', 'Shirt Abdomen': '19', 'Shirt Hips': '21', 'Shirt Collar': '15' },
+    'M': { 'Shirt Length': '29', 'Shirt Shoulder': '18.5', 'Shirt Sleeves': '24.5', 'Shirt Chest': '22', 'Shirt Abdomen': '21', 'Shirt Hips': '23', 'Shirt Collar': '16' },
+    'L': { 'Shirt Length': '30', 'Shirt Shoulder': '19.5', 'Shirt Sleeves': '25.5', 'Shirt Chest': '24', 'Shirt Abdomen': '23', 'Shirt Hips': '25', 'Shirt Collar': '17' },
+    'XL': { 'Shirt Length': '31', 'Shirt Shoulder': '20.5', 'Shirt Sleeves': '26', 'Shirt Chest': '26', 'Shirt Abdomen': '25', 'Shirt Hips': '27', 'Shirt Collar': '18' }
   }
 };
 
 function getMeasurementVisualConfig(fieldKey) {
   if (!fieldKey) return null;
-  const isTop = fieldKey.includes('Kameez') || fieldKey.includes('Kurta') || fieldKey.includes('Waistcoat');
+  const isTop = fieldKey.includes('Kameez') || fieldKey.includes('Kurta') || fieldKey.includes('Waistcoat') || fieldKey.includes('Shirt');
   const isBottom = fieldKey.includes('Shalwar') || fieldKey.includes('Pajama');
 
   if (fieldKey.includes('Length')) {
@@ -243,6 +254,7 @@ export default function Measurements() {
     else if (keys.some(k => k.includes('Kurta'))) guessedService = 'Kurta Shalwar';
     else if (keys.some(k => k.includes('Waistcoat')) && keys.some(k => k.includes('Kameez'))) guessedService = 'Zardari Suit';
     else if (keys.some(k => k.includes('Waistcoat'))) guessedService = 'Waistcoat';
+    else if (keys.some(k => k.includes('Shirt'))) guessedService = 'Shirt';
 
     setSelectedService(guessedService);
 
