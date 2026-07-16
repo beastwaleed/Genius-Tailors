@@ -25,16 +25,16 @@ import eliteAura01 from '../assets/EliteAura01.jpeg'
 import eliteAura02 from '../assets/EliteAura02.jpeg'
 import eliteAura03 from '../assets/EliteAura03.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
-
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
 import angularEdge01 from '../assets/AngularEdge01.jpeg'
 import angularEdge02 from '../assets/AngularEdge02.jpeg'
-
 import WaistcoatV from '../assets/V collar waistcoat.jpeg';
 import WaistcoatRound from '../assets/round neck collar waistcoat.jpeg';
 import WaistcoatSherwani from '../assets/sherwani collar waistcoat.jpeg';
 
 import ShirtMain from '../assets/service_shirt.png';
+import ShirtCollar from '../assets/service_shirt_collar.png';
+import ShirtCuff from '../assets/service_shirt_cuff.png';
 
 // Close-up gallery images
 import closeupCollar from '../assets/closeup_collar.png';
@@ -44,7 +44,7 @@ import closeupButtons from '../assets/closeup_buttons.png';
 
 const gallery = [closeupCollar, closeupCuff, closeupFabric, closeupButtons];
 const waistcoatGallery = [WaistcoatV, WaistcoatRound, WaistcoatSherwani];
-const shirtGallery = [ShirtMain, closeupCollar, closeupCuff, closeupButtons];
+const shirtGallery = [ShirtMain, ShirtCollar, ShirtCuff];
 
 import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
 import ShalwarKameezGallery1 from '../assets/ShalwarKameezGallery1.jpeg';
