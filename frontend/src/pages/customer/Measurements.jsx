@@ -665,75 +665,75 @@ export default function Measurements() {
 
                   {/* Overlay dynamic pointers */}
                   {showMobileGuide ? (
-                    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 20 }}>
+                    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 20, filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.5))' }}>
                       <defs>
                         <marker id="arrowHead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.5" markerHeight="3.5" orient="auto-start-reverse">
-                          <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f172a" />
+                          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffffff" />
                         </marker>
                       </defs>
 
                       {/* 1. Top Length */}
                       <g className="infographic-fade-in" style={{ animationDelay: '0ms' }}>
-                        <line x1="38%" y1="30%" x2="38%" y2="65%" stroke="#0f172a" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
-                        <circle cx="22%" cy="47.5%" r="9" fill="#0f172a" />
-                        <text x="22%" y="47.5%" fill="white" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">1</text>
-                        <text x="16%" y="47.5%" fill="#0f172a" fontSize="9px" textAnchor="end" dy=".3em" fontWeight="700">Top Length</text>
+                        <line x1="38%" y1="30%" x2="38%" y2="65%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
+                        <circle cx="22%" cy="47.5%" r="9" fill="#ffffff" />
+                        <text x="22%" y="47.5%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">1</text>
+                        <text x="16%" y="47.5%" fill="#ffffff" fontSize="9px" textAnchor="end" dy=".3em" fontWeight="700">Top Length</text>
                       </g>
 
                       {/* 2. Shoulder */}
                       <g className="infographic-fade-in" style={{ animationDelay: '100ms' }}>
-                        <line x1="35%" y1="27%" x2="65%" y2="27%" stroke="#0f172a" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
-                        <circle cx="75%" cy="27%" r="9" fill="#0f172a" />
-                        <text x="75%" y="27%" fill="white" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">2</text>
-                        <text x="80%" y="27%" fill="#0f172a" fontSize="9px" dy=".3em" fontWeight="700">Shoulder</text>
+                        <line x1="35%" y1="27%" x2="65%" y2="27%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
+                        <circle cx="75%" cy="27%" r="9" fill="#ffffff" />
+                        <text x="75%" y="27%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">2</text>
+                        <text x="80%" y="27%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Shoulder</text>
                       </g>
 
                       {/* 3. Sleeves */}
                       <g className="infographic-fade-in" style={{ animationDelay: '200ms' }}>
-                        <line x1="68%" y1="26%" x2="68%" y2="51%" stroke="#0f172a" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
-                        <circle cx="80%" cy="38.5%" r="9" fill="#0f172a" />
-                        <text x="80%" y="38.5%" fill="white" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">3</text>
-                        <text x="85%" y="38.5%" fill="#0f172a" fontSize="9px" dy=".3em" fontWeight="700">Sleeves</text>
+                        <line x1="68%" y1="26%" x2="68%" y2="51%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
+                        <circle cx="80%" cy="38.5%" r="9" fill="#ffffff" />
+                        <text x="80%" y="38.5%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">3</text>
+                        <text x="85%" y="38.5%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Sleeves</text>
                       </g>
 
                       {/* 4. Chest */}
                       <g className="infographic-fade-in" style={{ animationDelay: '300ms' }}>
-                        <ellipse cx="50%" cy="32%" rx="15%" ry="2.5%" fill="none" stroke="#0f172a" strokeWidth="1.2" strokeDasharray="3,2" />
-                        <circle cx="72%" cy="32%" r="9" fill="#0f172a" />
-                        <text x="72%" y="32%" fill="white" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">4</text>
-                        <text x="77%" y="32%" fill="#0f172a" fontSize="9px" dy=".3em" fontWeight="700">Chest</text>
+                        <ellipse cx="50%" cy="32%" rx="15%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
+                        <circle cx="72%" cy="32%" r="9" fill="#ffffff" />
+                        <text x="72%" y="32%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">4</text>
+                        <text x="77%" y="32%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Chest</text>
                       </g>
 
                       {/* 5. Waist */}
                       <g className="infographic-fade-in" style={{ animationDelay: '400ms' }}>
-                        <ellipse cx="50%" cy="44%" rx="14%" ry="2.5%" fill="none" stroke="#0f172a" strokeWidth="1.2" strokeDasharray="3,2" />
-                        <circle cx="70%" cy="44%" r="9" fill="#0f172a" />
-                        <text x="70%" y="44%" fill="white" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">5</text>
-                        <text x="75%" y="44%" fill="#0f172a" fontSize="9px" dy=".3em" fontWeight="700">Waist</text>
+                        <ellipse cx="50%" cy="44%" rx="14%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
+                        <circle cx="70%" cy="44%" r="9" fill="#ffffff" />
+                        <text x="70%" y="44%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">5</text>
+                        <text x="75%" y="44%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Waist</text>
                       </g>
 
                       {/* 6. Hips */}
                       <g className="infographic-fade-in" style={{ animationDelay: '500ms' }}>
-                        <ellipse cx="50%" cy="58%" rx="16%" ry="2.5%" fill="none" stroke="#0f172a" strokeWidth="1.2" strokeDasharray="3,2" />
-                        <circle cx="72%" cy="58%" r="9" fill="#0f172a" />
-                        <text x="72%" y="58%" fill="white" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">6</text>
-                        <text x="77%" y="58%" fill="#0f172a" fontSize="9px" dy=".3em" fontWeight="700">Hips</text>
+                        <ellipse cx="50%" cy="58%" rx="16%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
+                        <circle cx="72%" cy="58%" r="9" fill="#ffffff" />
+                        <text x="72%" y="58%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">6</text>
+                        <text x="77%" y="58%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Hips</text>
                       </g>
 
                       {/* 7. Bottom Length */}
                       <g className="infographic-fade-in" style={{ animationDelay: '600ms' }}>
-                        <line x1="60%" y1="56%" x2="60%" y2="84%" stroke="#0f172a" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
-                        <circle cx="74%" cy="70%" r="9" fill="#0f172a" />
-                        <text x="74%" y="70%" fill="white" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">7</text>
-                        <text x="79%" y="70%" fill="#0f172a" fontSize="9px" dy=".3em" fontWeight="700">Bottom Length</text>
+                        <line x1="60%" y1="56%" x2="60%" y2="84%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
+                        <circle cx="74%" cy="70%" r="9" fill="#ffffff" />
+                        <text x="74%" y="70%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">7</text>
+                        <text x="79%" y="70%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Bottom Length</text>
                       </g>
 
                       {/* 8. Pancha */}
                       <g className="infographic-fade-in" style={{ animationDelay: '700ms' }}>
-                        <ellipse cx="60%" cy="84%" rx="7%" ry="1.5%" fill="none" stroke="#0f172a" strokeWidth="1.2" strokeDasharray="3,2" />
-                        <circle cx="77%" cy="84%" r="9" fill="#0f172a" />
-                        <text x="77%" y="84%" fill="white" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">8</text>
-                        <text x="82%" y="84%" fill="#0f172a" fontSize="9px" dy=".3em" fontWeight="700">Ankle (Pancha)</text>
+                        <ellipse cx="60%" cy="84%" rx="7%" ry="1.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
+                        <circle cx="77%" cy="84%" r="9" fill="#ffffff" />
+                        <text x="77%" y="84%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">8</text>
+                        <text x="82%" y="84%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Ankle (Pancha)</text>
                       </g>
                     </svg>
                   ) : (
