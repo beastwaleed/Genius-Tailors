@@ -664,31 +664,69 @@ export default function Measurements() {
                   <img src={IMAGE_MAP[selectedService] || imgKameez} alt="Tailor Model" className="mannequin-img" />
 
                   {/* Overlay dynamic pointers */}
-                  {(() => {
-                    const config = getMeasurementVisualConfig(activeField);
-                    if (!config) return null;
-                    return (
-                      <div
-                        className="mannequin-indicator"
-                        style={{
-                          top: config.top,
-                          left: config.left,
-                          width: config.width,
-                          height: config.height,
-                          transform: config.transform
-                        }}
-                      >
-                        <div className="mannequin-tooltip">
-                          {config.label}
+                  {showMobileGuide ? (
+                    (() => {
+                      const configs = [];
+                      const srv = SERVICE_FIELDS[selectedService];
+                      if (srv) {
+                        ['top', 'bottom', 'outer'].forEach(part => {
+                          if (srv[part]) {
+                            srv[part].fields.forEach(f => {
+                              const key = `${srv[part].label} ${f}`;
+                              const cfg = getMeasurementVisualConfig(key);
+                              if (cfg) configs.push({ ...cfg, key });
+                            });
+                          }
+                        });
+                      }
+                      return configs.map((config) => (
+                        <div
+                          key={config.key}
+                          className="mannequin-indicator"
+                          style={{
+                            top: config.top,
+                            left: config.left,
+                            width: config.width,
+                            height: config.height,
+                            transform: config.transform,
+                            animation: 'fadeSlideIn 0.5s ease-out forwards'
+                          }}
+                        >
+                          <div className="mannequin-tooltip" style={{ display: 'block', opacity: 1 }}>
+                            {config.label}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })()}
+                      ));
+                    })()
+                  ) : (
+                    (() => {
+                      const config = getMeasurementVisualConfig(activeField);
+                      if (!config) return null;
+                      return (
+                        <div
+                          className="mannequin-indicator"
+                          style={{
+                            top: config.top,
+                            left: config.left,
+                            width: config.width,
+                            height: config.height,
+                            transform: config.transform
+                          }}
+                        >
+                          <div className="mannequin-tooltip">
+                            {config.label}
+                          </div>
+                        </div>
+                      );
+                    })()
+                  )}
                 </div>
                 <p style={{ textAlign: 'center', marginTop: '1rem', color: '#64748b', fontSize: '0.85rem' }}>
-                  {activeField
-                    ? `Enter the exact ${activeField.toLowerCase()} measurement in inches.`
-                    : 'Click on any measurement field to see where to measure.'}
+                  {showMobileGuide
+                    ? 'Measurement Reference Guide'
+                    : (activeField
+                      ? `Enter the exact ${activeField.toLowerCase()} measurement in inches.`
+                      : 'Click on any measurement field to see where to measure.')}
                 </p>
               </div>
             </div>
