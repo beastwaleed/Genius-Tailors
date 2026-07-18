@@ -4,6 +4,7 @@ import CustomerLayout from '../../components/CustomerLayout';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
+import { SERVICE_FIELDS } from './Measurements';
 
 import imgBanCollar from '../../assets/styles/ban_collar.jpg';
 import imgShirtCollar from '../../assets/styles/shirt_collar.jpg';
@@ -281,6 +282,67 @@ export default function Booking() {
   const [operationalCities, setOperationalCities] = useState([]);
   const [deliveryCity, setDeliveryCity] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
+
+  // Inline Measurement State
+  const [inlineMeasurementModalOpen, setInlineMeasurementModalOpen] = useState(false);
+  const [inlineMeasurements, setInlineMeasurements] = useState({});
+  const [inlineProfileName, setInlineProfileName] = useState('');
+  const [savingInlineProfile, setSavingInlineProfile] = useState(false);
+  const [inlineServiceKey, setInlineServiceKey] = useState('Kameez Shalwar');
+
+  const getMeasurementServiceKey = (srv) => {
+    if (!srv) return 'Kameez Shalwar';
+    if (srv.includes('Kameez Shalwar')) return 'Kameez Shalwar';
+    if (srv.includes('Kurta Shalwar')) return 'Kurta Shalwar';
+    if (srv.includes('Kurta Pajama')) return 'Kurta Pajama';
+    if (srv.includes('Waistcoat')) return 'Waistcoat';
+    if (srv.includes('Shirt')) return 'Shirt';
+    return 'Kameez Shalwar';
+  };
+
+  const handleOpenInlineMeasurement = () => {
+    const mappedKey = getMeasurementServiceKey(serviceName);
+    setInlineServiceKey(mappedKey);
+    const config = SERVICE_FIELDS[mappedKey] || SERVICE_FIELDS['Kameez Shalwar'];
+    const initial = {};
+    if (config.top) config.top.fields.forEach(f => initial[`${config.top.label} ${f}`] = '');
+    if (config.bottom) config.bottom.fields.forEach(f => initial[`${config.bottom.label} ${f}`] = '');
+    if (config.outer) config.outer.fields.forEach(f => initial[`${config.outer.label} ${f}`] = '');
+    
+    setInlineMeasurements(initial);
+    setInlineProfileName(`${serviceName} - ${new Date().toLocaleDateString().replace(/\//g, '-')}`);
+    setInlineMeasurementModalOpen(true);
+  };
+
+  const handleSaveInlineProfile = async (e) => {
+    e.preventDefault();
+    if (!inlineProfileName.trim()) return toast.error('Please enter a profile name');
+    
+    // Filter empty
+    const filteredMeasurements = Object.fromEntries(
+      Object.entries(inlineMeasurements).filter(([_, v]) => v.trim() !== '')
+    );
+    if (Object.keys(filteredMeasurements).length === 0) {
+      return toast.error('Please provide at least one measurement');
+    }
+
+    setSavingInlineProfile(true);
+    const toastId = toast.loading('Saving measurement profile...');
+    try {
+      const { data } = await api.post('/api/measurements', {
+        profileName: inlineProfileName,
+        measurements: filteredMeasurements
+      });
+      setProfiles([...profiles, data]);
+      setSelectedProfileId(data._id);
+      setInlineMeasurementModalOpen(false);
+      toast.success('Measurement profile saved and selected!', { id: toastId });
+    } catch (error) {
+      toast.error('Failed to save measurement profile', { id: toastId });
+    } finally {
+      setSavingInlineProfile(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = () => {
@@ -810,9 +872,9 @@ export default function Booking() {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <h2 className="step-title" style={{ margin: 0 }}>Select Measurement Profile</h2>
-                <Link to="/measurements" className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '14px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <button type="button" onClick={handleOpenInlineMeasurement} className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <i className="fa-solid fa-plus"></i> New Profile
-                </Link>
+                </button>
               </div>
               {isFetchingData ? (
                 <div style={{ padding: '2rem', textAlign: 'center', background: '#faf9f6', borderRadius: '8px' }}>
@@ -844,7 +906,7 @@ export default function Booking() {
               ) : (
                 <div style={{ padding: '2rem', textAlign: 'center', background: '#faf9f6', borderRadius: '8px' }}>
                   <p style={{ color: 'var(--stone)' }}>You do not have any saved profiles for {serviceName}.</p>
-                  <Link to="/measurements" className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>Create Profile</Link>
+                  <button type="button" onClick={handleOpenInlineMeasurement} className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>Create Profile</button>
                 </div>
               )}
 
@@ -1543,7 +1605,161 @@ export default function Booking() {
 
         </div>
 
-        <style>{`
+        {inlineMeasurementModalOpen && (
+        <div className="modal-overlay" onClick={() => setInlineMeasurementModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px', width: '95%' }}>
+            <div className="modal-header">
+              <h3>Create Measurement Profile</h3>
+              <button className="close-btn" onClick={() => setInlineMeasurementModalOpen(false)}>&times;</button>
+            </div>
+            <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+              <form id="inline-measurement-form" onSubmit={handleSaveInlineProfile}>
+                <div className="luxury-form-group">
+                  <label>Profile Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={inlineProfileName}
+                    onChange={(e) => setInlineProfileName(e.target.value)}
+                    placeholder="e.g. My Eid Fit"
+                  />
+                </div>
+
+                {SERVICE_FIELDS[inlineServiceKey]?.top && SERVICE_FIELDS[inlineServiceKey].top.fields.length > 0 && (
+                  <div style={{ marginTop: '1.5rem' }}>
+                    <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--onyx)', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                      {SERVICE_FIELDS[inlineServiceKey].top.label} Measurements (Inches)
+                    </h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
+                      {SERVICE_FIELDS[inlineServiceKey].top.fields.map(field => {
+                        const key = `${SERVICE_FIELDS[inlineServiceKey].top.label} ${field}`;
+                        return (
+                          <div className="luxury-form-group" key={key} style={{ marginBottom: 0 }}>
+                            <label>{field}</label>
+                            <input
+                              type="number"
+                              step="0.25"
+                              placeholder="e.g. 38"
+                              value={inlineMeasurements[key] || ''}
+                              onChange={(e) => setInlineMeasurements({ ...inlineMeasurements, [key]: e.target.value })}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {SERVICE_FIELDS[inlineServiceKey]?.bottom && SERVICE_FIELDS[inlineServiceKey].bottom.fields.length > 0 && (
+                  <div style={{ marginTop: '1.5rem' }}>
+                    <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--onyx)', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                      {SERVICE_FIELDS[inlineServiceKey].bottom.label} Measurements (Inches)
+                    </h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
+                      {SERVICE_FIELDS[inlineServiceKey].bottom.fields.map(field => {
+                        const key = `${SERVICE_FIELDS[inlineServiceKey].bottom.label} ${field}`;
+                        return (
+                          <div className="luxury-form-group" key={key} style={{ marginBottom: 0 }}>
+                            <label>{field}</label>
+                            <input
+                              type="number"
+                              step="0.25"
+                              placeholder="e.g. 38"
+                              value={inlineMeasurements[key] || ''}
+                              onChange={(e) => setInlineMeasurements({ ...inlineMeasurements, [key]: e.target.value })}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {SERVICE_FIELDS[inlineServiceKey]?.outer && SERVICE_FIELDS[inlineServiceKey].outer.fields.length > 0 && (
+                  <div style={{ marginTop: '1.5rem' }}>
+                    <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--onyx)', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                      {SERVICE_FIELDS[inlineServiceKey].outer.label} Measurements (Inches)
+                    </h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem' }}>
+                      {SERVICE_FIELDS[inlineServiceKey].outer.fields.map(field => {
+                        const key = `${SERVICE_FIELDS[inlineServiceKey].outer.label} ${field}`;
+                        return (
+                          <div className="luxury-form-group" key={key} style={{ marginBottom: 0 }}>
+                            <label>{field}</label>
+                            <input
+                              type="number"
+                              step="0.25"
+                              placeholder="e.g. 38"
+                              value={inlineMeasurements[key] || ''}
+                              onChange={(e) => setInlineMeasurements({ ...inlineMeasurements, [key]: e.target.value })}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </form>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-outline" style={{ border: 'none' }} onClick={() => setInlineMeasurementModalOpen(false)}>Cancel</button>
+              <button form="inline-measurement-form" type="submit" className="btn btn-primary" disabled={savingInlineProfile}>
+                {savingInlineProfile ? 'Saving...' : 'Save Profile'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        .modal-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(0,0,0,0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 1rem;
+        }
+        .modal-content {
+          background: #fff;
+          border-radius: var(--radius-lg);
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.5rem 2rem;
+          border-bottom: 1px solid var(--ivory-border);
+        }
+        .modal-header h3 {
+          font-family: var(--font-serif);
+          font-size: 1.5rem;
+          margin: 0;
+          color: var(--onyx);
+        }
+        .close-btn {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: var(--stone);
+        }
+        .modal-body {
+          padding: 2rem;
+        }
+        .modal-footer {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 1.5rem;
+          padding: 1.5rem 2rem;
+          border-top: 1px solid var(--ivory-border);
+        }
         .booking-wizard {
           max-width: 800px;
           margin: 0 auto;

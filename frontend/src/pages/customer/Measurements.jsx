@@ -20,7 +20,7 @@ const IMAGE_MAP = {
   'Shirt': imgKameez
 };
 
-const SERVICE_FIELDS = {
+export const SERVICE_FIELDS = {
   'Kameez Shalwar': {
     top: { label: 'Kameez', fields: ['Length', 'Shoulder', 'Sleeves', 'Chest', 'Abdomen', 'Hips', 'Collar'] },
     bottom: { label: 'Shalwar', fields: ['Length', 'Bottom', 'Crotch Depth'] }
