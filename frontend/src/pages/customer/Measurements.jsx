@@ -157,7 +157,7 @@ export function getMeasurementVisualConfig(fieldKey) {
     return { top: '27%', left: '50%', width: '30%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Shoulder to Shoulder' };
   }
   if (fieldKey.includes('Sleeves')) {
-    if (fieldKey.includes('Shirt')) return { top: '34%', left: '76%', height: '14%', width: '3px', transform: 'rotate(-5deg)', label: 'Sleeve Length' };
+    if (fieldKey.includes('Shirt')) return { top: '34%', left: '76%', height: '74%', width: '3px', transform: 'rotate(-5deg)', label: 'Sleeve Length' };
     return { top: '26%', left: '68%', height: '25%', width: '3px', transform: 'rotate(-0deg)', label: 'Arm Length' };
   }
   if (fieldKey.includes('Chest')) {
@@ -169,7 +169,7 @@ export function getMeasurementVisualConfig(fieldKey) {
     return { top: '44%', left: '50%', width: '28%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Stomach/Waist' };
   }
   if (fieldKey.includes('Hips') && isTop) {
-    if (fieldKey.includes('Shirt')) return { top: '73%', left: '50%', width: '46%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Hips/Bottom Hem' };
+    if (fieldKey.includes('Shirt')) return { top: '53%', left: '50%', width: '46%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Hips/Bottom Hem' };
     return { top: '52%', left: '50%', width: '32%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Hips Circumference' };
   }
   if (fieldKey.includes('Hips') && isBottom) {
@@ -451,11 +451,11 @@ export default function Measurements() {
             <h2 className="luxury-section-title" style={{ marginBottom: '0.5rem' }}>Measurement Profiles</h2>
             <p style={{ color: 'var(--stone)' }}>Manage your saved measurements for bespoke orders.</p>
           </div>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <Link to="/services" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', padding: '0 1.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 500, height: '42px' }}>Browse Services</Link>
-              <Link to="/book" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', padding: '0 1.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 500, height: '42px' }}>Place an Order</Link>
-              <button className="luxury-btn-primary" onClick={handleOpenCreate} style={{ height: '42px' }}>Add New Profile</button>
-            </div>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <Link to="/services" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', padding: '0 1.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 500, height: '42px' }}>Browse Services</Link>
+            <Link to="/book" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', padding: '0 1.5rem', borderRadius: '4px', textDecoration: 'none', fontWeight: 500, height: '42px' }}>Place an Order</Link>
+            <button className="luxury-btn-primary" onClick={handleOpenCreate} style={{ height: '42px' }}>Add New Profile</button>
+          </div>
         </div>
 
         {loading ? (
@@ -585,7 +585,7 @@ export default function Measurements() {
                   <div style={{ marginTop: '2rem' }}>
                     <div className="mobile-guide-btn-wrapper">
                       <button type="button" className="btn btn-outline" style={{ width: '100%', borderColor: '#64748b', color: '#475569' }} onClick={() => setShowMobileGuide(true)}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '0.5rem' }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '0.5rem' }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
                         View Measurement Guide
                       </button>
                     </div>
