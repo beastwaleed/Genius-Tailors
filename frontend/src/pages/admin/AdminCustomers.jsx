@@ -49,6 +49,17 @@ const ADMIN_STYLE_CONFIGS = {
   },
   'Zardari Suit': {
     designs: ['Royal Slate Classic', 'Urban Core']
+  },
+  'Shirt': {
+    collarTypes: ['Normal Style', 'Arrow Collar'],
+    collarSubs: {
+      'Normal Style': ['2.5 inch'],
+      'Arrow Collar': ['2.5 notch']
+    },
+    cuffs: ['Square Cuff', 'Double Cuff'],
+    pockets: ['1 Pocket', 'No Pocket'],
+    bottomPockets: [],
+    bottomDesigns: ['Round Bottom', 'Square with Side Chalk']
   }
 };
 
@@ -63,7 +74,8 @@ const MEASUREMENT_TEMPLATES = {
     'Kameez Length': '', 'Kameez Shoulder': '', 'Kameez Sleeves': '', 'Kameez Chest': '', 'Kameez Abdomen': '', 'Kameez Hips': '', 'Kameez Collar': '',
     'Shalwar Length': '', 'Shalwar Bottom': '', 'Shalwar Crotch Depth': '',
     'Waistcoat Length': '', 'Waistcoat Shoulder': '', 'Waistcoat Collar': '', 'Waistcoat Chest': '', 'Waistcoat Abdomen': '', 'Waistcoat Hip': '' 
-  }
+  },
+  'Shirt': { 'Shirt Length': '', 'Shirt Shoulder': '', 'Shirt Sleeves': '', 'Shirt Chest': '', 'Shirt Abdomen': '', 'Shirt Hips': '', 'Shirt Collar': '' }
 };
 
 export default function AdminCustomers() {
