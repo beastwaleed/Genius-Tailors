@@ -199,6 +199,7 @@ export default function Measurements() {
   const [selectedService, setSelectedService] = useState('Kameez Shalwar');
   const [measurements, setMeasurements] = useState({});
   const [activeField, setActiveField] = useState(null);
+  const [showMobileGuide, setShowMobileGuide] = useState(false);
 
   useEffect(() => {
     fetchProfiles();
@@ -573,6 +574,12 @@ export default function Measurements() {
                   )}
 
                   <div style={{ marginTop: '2rem' }}>
+                    <div className="mobile-guide-btn-wrapper">
+                      <button type="button" className="btn btn-outline" style={{ width: '100%', borderColor: '#64748b', color: '#475569' }} onClick={() => setShowMobileGuide(true)}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '0.5rem' }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        View Measurement Guide
+                      </button>
+                    </div>
                     <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--onyx)', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
                       {SERVICE_FIELDS[selectedService].top.label} Measurements (Inches)
                     </h4>
@@ -651,7 +658,8 @@ export default function Measurements() {
               </div>
 
               {/* Right Side: Interactive Visual Model */}
-              <div key={activeField || 'empty'} className={`interactive-visual-side ${activeField ? 'has-active-field' : ''}`}>
+              <div key={activeField || 'empty'} className={`interactive-visual-side ${showMobileGuide ? 'show-mobile-guide' : ''}`}>
+                <button type="button" className="mobile-guide-close" onClick={() => setShowMobileGuide(false)}>✕</button>
                 <div className="mannequin-container">
                   <img src={IMAGE_MAP[selectedService] || imgKameez} alt="Tailor Model" className="mannequin-img" />
 
@@ -957,6 +965,28 @@ export default function Measurements() {
             gap: 0.5rem;
           }
 
+          .mobile-guide-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #f1f5f9;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: #475569;
+            cursor: pointer;
+            display: none;
+          }
+
+          .mobile-guide-btn-wrapper {
+            display: none;
+          }
+
         @media (max-width: 768px) {
           .interactive-body { display: block; overflow-y: auto; }
           .interactive-form-side { 
@@ -973,6 +1003,15 @@ export default function Measurements() {
           .ai-scanner-btns button {
             width: 100%;
           }
+
+          .mobile-guide-btn-wrapper {
+            display: block;
+            margin-bottom: 1.5rem;
+          }
+
+          .mobile-guide-close {
+            display: flex;
+          }
           
           /* Visual model floats above as a temporary popup on mobile */
           .interactive-visual-side { 
@@ -982,20 +1021,22 @@ export default function Measurements() {
             transform: translate(-50%, -50%);
             z-index: 9999;
             background: white;
-            padding: 1.5rem;
+            padding: 2rem 1.5rem 1.5rem;
             border-radius: 1.5rem;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             border: 1px solid #e2e8f0;
             display: none; /* hidden by default */
             flex-direction: column;
             align-items: center;
+            width: 90%;
+            max-width: 350px;
           }
           
-          /* Only show when there is an active field, and animate it! */
-          .interactive-visual-side.has-active-field {
+          /* Only show when user clicks the guide button! */
+          .interactive-visual-side.show-mobile-guide {
             display: flex;
-            animation: mobilePopup 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            pointer-events: none; /* don't block taps */
+            animation: mobileModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            pointer-events: auto;
           }
 
           .mannequin-container { max-width: 180px; }
@@ -1012,11 +1053,9 @@ export default function Measurements() {
           }
         }
 
-        @keyframes mobilePopup {
+        @keyframes mobileModalIn {
           0% { opacity: 0; transform: translate(-50%, -45%) scale(0.95); }
-          10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-          85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(0.95); display: none; }
+          100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
         .modal-header {
