@@ -11,7 +11,7 @@ import imgKurta from '../../assets/model_kurta_pajama.png';
 import imgWaistcoat from '../../assets/model_waistcoat.png';
 import imgZardari from '../../assets/model_zardari_suit.png';
 import imgShirt from '../../assets/service_shirt.png';
-import imgShirtStraight from '../../assets/shirt_straight_model.png';
+import imgShirtStraight from '../../assets/shirtMeasurementImage.png';
 
 export const IMAGE_MAP = {
   'Kameez Shalwar': imgKameez,
