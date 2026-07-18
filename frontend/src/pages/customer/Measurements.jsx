@@ -18,7 +18,7 @@ export const IMAGE_MAP = {
   'Kurta Pajama': imgKurta,
   'Waistcoat': imgWaistcoat,
   'Zardari Suit': imgZardari,
-  'Shirt': imgShirt
+  'Shirt': mannequinImg
 };
 
 export const SERVICE_FIELDS = {
