@@ -10,6 +10,7 @@ import imgKameez from '../../assets/model_kameez_shalwar.png';
 import imgKurta from '../../assets/model_kurta_pajama.png';
 import imgWaistcoat from '../../assets/model_waistcoat.png';
 import imgZardari from '../../assets/model_zardari_suit.png';
+import imgShirt from '../../assets/service_shirt.png';
 
 const IMAGE_MAP = {
   'Kameez Shalwar': imgKameez,
@@ -17,7 +18,7 @@ const IMAGE_MAP = {
   'Kurta Pajama': imgKurta,
   'Waistcoat': imgWaistcoat,
   'Zardari Suit': imgZardari,
-  'Shirt': imgKameez
+  'Shirt': imgShirt
 };
 
 export const SERVICE_FIELDS = {
