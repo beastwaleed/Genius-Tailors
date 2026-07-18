@@ -82,7 +82,8 @@ const SERVICES_PRICES = {
   'Waistcoat': 3500,
   'Kameez Shalwar Design': 2200,
   'Kurta Shalwar Design': 2200,
-  'Zardari Suit': 5300
+  'Zardari Suit': 5300,
+  'Shirt': 1200
 };
 
 const STYLE_CONFIGS = {
@@ -179,6 +180,25 @@ const STYLE_CONFIGS = {
     designs: [
       { name: 'Royal Slate Classic', img: royalSlateClassicMain, price: 5500, gallery: [royalSlateClassicMain, royalSlateClassic01] },
       { name: 'Urban Core', img: urbanCoreMain, price: 5300, gallery: [urbanCoreMain, urbanCore01, urbanCore02] }
+    ]
+  },
+  'Shirt': {
+    collarTypes: [
+      { name: 'Normal Style', img: shirtCollarSK, subs: ['2.5 inch'] },
+      { name: 'Arrow Collar', img: shirtCollarSK, subs: ['2.5 notch'] }
+    ],
+    cuffs: [
+      { name: 'Square Cuff', img: imgSingleCuff, price: 0 },
+      { name: 'Double Cuff', img: doubleCuffSK, price: 0 }
+    ],
+    pockets: [
+      { name: '1 Pocket', img: imgFrontSidePockets },
+      { name: 'No Pocket', img: imgSidePockets }
+    ],
+    bottomPockets: [],
+    bottomDesigns: [
+      { name: 'Round Bottom', img: imgShalwarNoDesign, price: 0 },
+      { name: 'Square with Side Chalk', img: imgShalwarNoDesign, price: 0 }
     ]
   }
 };
@@ -803,6 +823,10 @@ export default function Booking() {
 
     if (serviceName === 'Kurta Pajama') {
       return (keysStr.includes('kurta') || keysStr.includes('pajama') || hasOldBottom || isOldGeneric) && !hasWaistcoat;
+    }
+
+    if (serviceName === 'Shirt') {
+      return (keysStr.includes('shirt') || isOldGeneric) && !hasWaistcoat && !hasOldBottom;
     }
 
     return true; // Fallback
