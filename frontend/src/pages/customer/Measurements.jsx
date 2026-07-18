@@ -147,29 +147,36 @@ export function getMeasurementVisualConfig(fieldKey) {
   const isBottom = fieldKey.includes('Shalwar') || fieldKey.includes('Pajama');
 
   if (fieldKey.includes('Length')) {
+    if (fieldKey.includes('Shirt')) return { top: '32%', left: '38%', height: '42%', width: '3px', transform: 'translateX(-50%)', label: 'Shirt Length' };
     if (fieldKey.includes('Waistcoat')) return { top: '30%', left: '38%', height: '20%', width: '3px', transform: 'translateX(-50%)', label: 'Waistcoat Length' };
     if (isTop) return { top: '30%', left: '38%', height: '35%', width: '3px', transform: 'translateX(-50%)', label: 'Top Length (Shoulder to Knee)' };
     if (isBottom) return { top: '56%', left: '60%', height: '28%', width: '3px', transform: 'translateX(-50%)', label: 'Bottom Length (Waist to Ankle)' };
   }
   if (fieldKey.includes('Shoulder')) {
+    if (fieldKey.includes('Shirt')) return { top: '33%', left: '50%', width: '48%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Shoulder to Shoulder' };
     return { top: '27%', left: '50%', width: '30%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Shoulder to Shoulder' };
   }
   if (fieldKey.includes('Sleeves')) {
+    if (fieldKey.includes('Shirt')) return { top: '34%', left: '76%', height: '14%', width: '3px', transform: 'rotate(-5deg)', label: 'Sleeve Length' };
     return { top: '26%', left: '68%', height: '25%', width: '3px', transform: 'rotate(-0deg)', label: 'Arm Length' };
   }
   if (fieldKey.includes('Chest')) {
+    if (fieldKey.includes('Shirt')) return { top: '45%', left: '50%', width: '44%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Chest Circumference' };
     return { top: '32%', left: '50%', width: '30%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Chest Circumference' };
   }
   if (fieldKey.includes('Abdomen')) {
+    if (fieldKey.includes('Shirt')) return { top: '60%', left: '50%', width: '42%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Stomach/Waist' };
     return { top: '44%', left: '50%', width: '28%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Stomach/Waist' };
   }
   if (fieldKey.includes('Hips') && isTop) {
+    if (fieldKey.includes('Shirt')) return { top: '73%', left: '50%', width: '46%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Hips/Bottom Hem' };
     return { top: '52%', left: '50%', width: '32%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Hips Circumference' };
   }
   if (fieldKey.includes('Hips') && isBottom) {
     return { top: '56%', left: '50%', width: '32%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Bottom Hips' };
   }
   if (fieldKey.includes('Collar')) {
+    if (fieldKey.includes('Shirt')) return { top: '29%', left: '50%', width: '14%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Neck/Collar Base' };
     return { top: '25%', left: '50%', width: '10%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Neck/Collar Base' };
   }
   if (fieldKey.includes('Bottom')) {
