@@ -83,7 +83,6 @@ export default function Home() {
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeCard, setActiveCard] = useState(0);
   const [showPromo, setShowPromo] = useState(false);
-  const [touchStartX, setTouchStartX] = useState(null);
   const [realReviews, setRealReviews] = useState(null);
 
   useEffect(() => {
@@ -100,26 +99,12 @@ export default function Home() {
     fetchGmbReviews();
   }, []);
 
-  const handleTouchStart = (e) => {
-    setTouchStartX(e.touches[0].clientX);
-  };
-
-  const handleTouchEnd = (e) => {
-    if (touchStartX === null) return;
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
-
-    if (Math.abs(diff) > 40) { // Threshold for swipe
-      if (diff > 0) {
-        // Swiped left, go to next card (loop)
-        setActiveCard(prev => (prev + 1) % GARMENTS.length);
-      } else {
-        // Swiped right, go to previous card (loop)
-        setActiveCard(prev => (prev - 1 + GARMENTS.length) % GARMENTS.length);
-      }
-    }
-    setTouchStartX(null);
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveCard(prev => (prev + 1) % GARMENTS.length);
+    }, 3000); // Change card every 3 seconds
+    return () => clearInterval(timer);
+  }, []);
 
   const [isBannerVisible, setIsBannerVisible] = useState(() => {
     return !sessionStorage.getItem('gt_banner_dismissed');
@@ -261,11 +246,7 @@ export default function Home() {
                 </div>
 
                 <div className="hero-visual animate-fade-in" style={{ animationDelay: '200ms' }}>
-                  <div 
-                    className="garment-stack"
-                    onTouchStart={handleTouchStart}
-                    onTouchEnd={handleTouchEnd}
-                  >
+                  <div className="garment-stack">
                     {GARMENTS.map((g, i) => {
                       const isActive = i === activeCard;
                       
@@ -287,7 +268,6 @@ export default function Home() {
                               ? 'translate(0, 0) rotate(-2deg) scale(1.05)'
                               : `translate(${offset * 35}px, ${Math.abs(offset) * 12}px) rotate(${offset * 4}deg) scale(${1 - Math.abs(offset) * 0.04})`,
                           }}
-                          onMouseEnter={() => setActiveCard(i)}
                         >
                           <img src={g.img} alt={g.name} className="garment-card-img" />
                           <div className="garment-card-label">
