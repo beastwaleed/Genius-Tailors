@@ -303,7 +303,7 @@ export default function Booking() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
 
   const handleOpenInlineMeasurement = () => {
-    navigate('/customer/measurements');
+    navigate('/measurements');
   };
 
   useEffect(() => {
