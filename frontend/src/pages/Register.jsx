@@ -15,7 +15,7 @@ export default function Register() {
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('Pakistan');
   const [loading, setLoading] = useState(false);
-  
+
   const { login, isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,7 +40,7 @@ export default function Register() {
     }
 
     let cleanPhone = phone.replace(/[\s-]/g, '');
-    
+
     // Auto convert local 03XX format to +923XX
     if (cleanPhone.startsWith('03') && cleanPhone.length === 11) {
       cleanPhone = '+92' + cleanPhone.substring(1);
@@ -89,15 +89,15 @@ export default function Register() {
         <div className="auth-form-container">
           <Link to="/" className="auth-logo-mobile">GT</Link>
           <h1 className="text-heading-2" style={{ marginBottom: '0.5rem', color: 'var(--onyx)' }}>Create Account</h1>
-          <p className="text-subtitle" style={{ color: 'var(--stone)', marginBottom: '2.5rem' }}>Join Genius Tailors to manage your bespoke journey.</p>
+          <p className="text-subtitle" style={{ color: 'var(--stone)', marginBottom: '2.5rem' }}>Join Genius Tailors to manage your tailoring journey.</p>
 
           <form onSubmit={handleSubmit} className="form-layout">
             <div className="form-group">
               <label className="form-label">Full Name</label>
-              <input 
-                type="text" 
-                className="form-input" 
-                required 
+              <input
+                type="text"
+                className="form-input"
+                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -105,10 +105,10 @@ export default function Register() {
 
             <div className="form-group">
               <label className="form-label">Email Address</label>
-              <input 
-                type="email" 
-                className="form-input" 
-                required 
+              <input
+                type="email"
+                className="form-input"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -116,11 +116,11 @@ export default function Register() {
 
             <div className="form-group">
               <label className="form-label">Phone (WhatsApp)</label>
-              <input 
-                type="tel" 
-                className="form-input" 
+              <input
+                type="tel"
+                className="form-input"
                 placeholder="e.g. +92 300 1234567"
-                required 
+                required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
@@ -128,11 +128,11 @@ export default function Register() {
 
             <div className="form-group">
               <label className="form-label">Street Address</label>
-              <input 
-                type="text" 
-                className="form-input" 
+              <input
+                type="text"
+                className="form-input"
                 placeholder="House #, Street, Block"
-                required 
+                required
                 value={street}
                 onChange={(e) => setStreet(e.target.value)}
               />
@@ -141,10 +141,10 @@ export default function Register() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div className="form-group">
                 <label className="form-label">City</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  required 
+                <input
+                  type="text"
+                  className="form-input"
+                  required
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                 />
@@ -152,9 +152,9 @@ export default function Register() {
 
               <div className="form-group">
                 <label className="form-label">Country</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
+                <input
+                  type="text"
+                  className="form-input"
                   readOnly
                   value="Pakistan"
                   style={{ backgroundColor: '#f1f5f9', color: '#64748b', cursor: 'not-allowed', borderColor: '#e2e8f0' }}
@@ -164,10 +164,10 @@ export default function Register() {
 
             <div className="form-group">
               <label className="form-label">Password</label>
-              <input 
-                type="password" 
-                className="form-input" 
-                required 
+              <input
+                type="password"
+                className="form-input"
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />

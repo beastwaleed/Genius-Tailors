@@ -12,7 +12,7 @@ import imgWaistcoat from '../../assets/model_waistcoat.png';
 import imgZardari from '../../assets/model_zardari_suit.png';
 import imgShirt from '../../assets/service_shirt.png';
 
-const IMAGE_MAP = {
+export const IMAGE_MAP = {
   'Kameez Shalwar': imgKameez,
   'Kurta Shalwar': imgKameez,
   'Kurta Pajama': imgKurta,
@@ -49,7 +49,7 @@ export const SERVICE_FIELDS = {
   }
 };
 
-const STANDARD_SIZES = {
+export const STANDARD_SIZES = {
   'Kameez Shalwar': {
     'S': {
       'Kameez Length': '38', 'Kameez Shoulder': '17.5', 'Kameez Sleeves': '23.5', 'Kameez Chest': '20', 'Kameez Abdomen': '19', 'Kameez Hips': '21', 'Kameez Collar': '15',
@@ -140,7 +140,7 @@ const STANDARD_SIZES = {
   }
 };
 
-function getMeasurementVisualConfig(fieldKey) {
+export function getMeasurementVisualConfig(fieldKey) {
   if (!fieldKey) return null;
   const isTop = fieldKey.includes('Kameez') || fieldKey.includes('Kurta') || fieldKey.includes('Waistcoat') || fieldKey.includes('Shirt');
   const isBottom = fieldKey.includes('Shalwar') || fieldKey.includes('Pajama');
