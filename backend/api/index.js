@@ -2541,11 +2541,13 @@ app.get('/api/popups', async (req, res) => {
   }
 });
 
-app.post('/api/popups', protect, admin, upload.single('image'), async (req, res) => {
+app.post('/api/popups', protect, admin, upload.any(), async (req, res) => {
   try {
     const popupData = { ...req.body };
-    if (req.file) {
-      popupData.imageUrl = req.file.path || req.file.secure_url || req.file.url;
+    const files = req.files || [];
+    const imageFile = files.find(f => f.fieldname === 'image') || files[0];
+    if (imageFile) {
+      popupData.imageUrl = imageFile.path || imageFile.secure_url || imageFile.url;
     }
     const popup = new Popup(popupData);
     await popup.save();
@@ -2555,11 +2557,13 @@ app.post('/api/popups', protect, admin, upload.single('image'), async (req, res)
   }
 });
 
-app.put('/api/popups/:id', protect, admin, upload.single('image'), async (req, res) => {
+app.put('/api/popups/:id', protect, admin, upload.any(), async (req, res) => {
   try {
     const updateData = { ...req.body };
-    if (req.file) {
-      updateData.imageUrl = req.file.path || req.file.secure_url || req.file.url;
+    const files = req.files || [];
+    const imageFile = files.find(f => f.fieldname === 'image') || files[0];
+    if (imageFile) {
+      updateData.imageUrl = imageFile.path || imageFile.secure_url || imageFile.url;
     }
     const popup = await Popup.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!popup) return res.status(404).json({ message: 'Popup not found' });

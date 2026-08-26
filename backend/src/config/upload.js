@@ -1,9 +1,15 @@
 const multer = require('multer');
-const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 
-// Use memory storage so we can process the image buffer with sharp before saving
+let sharp = null;
+try {
+  sharp = require('sharp');
+} catch (err) {
+  console.warn('Sharp module optional load warning:', err.message);
+}
+
+// Use memory storage so we can process the image buffer
 const storage = multer.memoryStorage();
 const uploadMiddleware = multer({
   storage,
@@ -23,27 +29,30 @@ const optimizeAndSave = async (req, res, next) => {
   
   try {
     await Promise.all(files.map(async (file) => {
-      // Only process images
-      if (!file.mimetype.startsWith('image/')) return;
+      if (!file.mimetype || !file.mimetype.startsWith('image/')) return;
       
-      const filename = `${Date.now()}-${Math.round(Math.random() * 1E9)}.webp`;
+      const ext = file.originalname ? path.extname(file.originalname) : '.jpg';
+      const filename = `${Date.now()}-${Math.round(Math.random() * 1E9)}${sharp ? '.webp' : ext}`;
       const filepath = path.join(uploadDir, filename);
       
-      // Use sharp to resize and compress to WebP
-      await sharp(file.buffer)
-        .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
-        .webp({ quality: 80 })
-        .toFile(filepath);
+      if (sharp) {
+        try {
+          await sharp(file.buffer)
+            .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+            .webp({ quality: 80 })
+            .toFile(filepath);
+        } catch (sharpErr) {
+          console.warn('Sharp compression warning, falling back to raw buffer write:', sharpErr.message);
+          fs.writeFileSync(filepath, file.buffer);
+        }
+      } else {
+        fs.writeFileSync(filepath, file.buffer);
+      }
         
-      // Instead of relying on req.protocol which might be http behind Cloudflare, 
-      // we generate an absolute URL dynamically if needed, or simply return the relative path.
-      // Many modern frontends can handle relative paths if served on the same domain.
-      // However, to ensure absolute URL works in all cases, we use a basic fallback:
       const host = req.get('host');
       const protocol = req.headers['x-forwarded-proto'] || req.protocol;
       const baseUrl = `${protocol}://${host}`;
       
-      // The frontend uses secure_url and path depending on the component
       file.path = `${baseUrl}/uploads/${filename}`;
       file.secure_url = `${baseUrl}/uploads/${filename}`;
       file.url = `${baseUrl}/uploads/${filename}`;
@@ -51,8 +60,8 @@ const optimizeAndSave = async (req, res, next) => {
     
     next();
   } catch (error) {
-    console.error('Image optimization failed:', error);
-    res.status(500).json({ message: 'Failed to process and save image', error: error.message });
+    console.error('Image save warning:', error.message);
+    next();
   }
 };
 
