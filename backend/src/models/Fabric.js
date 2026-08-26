@@ -13,7 +13,9 @@ const fabricSchema = new mongoose.Schema({
   category: { type: String, default: 'General' },
   imageUrl: { type: String, default: '' },
   colors: [colorSchema],
-  allowedServices: [{ type: String }]
+  allowedServices: [{ type: String }],
+  displayOrder: { type: Number, default: 0 },
+  featuredColor: { type: String, default: '' }
 }, { timestamps: true });
 
 module.exports = mongoose.models.Fabric || mongoose.model('Fabric', fabricSchema);

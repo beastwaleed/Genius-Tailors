@@ -18,6 +18,8 @@ export default function AdminFabrics() {
     desc: '',
     category: 'General',
     imageUrl: '',
+    displayOrder: 0,
+    featuredColor: '',
     colors: [{ name: '', hex: '#000000', imageUrl: '' }],
     allowedServices: []
   });
@@ -47,6 +49,46 @@ export default function AdminFabrics() {
     }
   };
 
+  const handleAutoSortByPrice = async () => {
+    if (!fabrics || fabrics.length === 0) return;
+    try {
+      const sorted = [...fabrics].sort((a, b) => Number(a.price) - Number(b.price));
+      const reorderedItems = sorted.map((item, index) => ({
+        id: item._id,
+        displayOrder: index + 1
+      }));
+      const { data } = await api.put('/api/fabrics/reorder', { items: reorderedItems });
+      setFabrics(data);
+      toast.success('Fabrics auto-sorted by price (Lowest to Highest)!');
+    } catch (error) {
+      toast.error('Failed to auto-sort fabrics by price');
+    }
+  };
+
+  const handleMoveOrder = async (index, direction) => {
+    const newFabrics = [...fabrics];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newFabrics.length) return;
+
+    // Swap elements
+    const temp = newFabrics[index];
+    newFabrics[index] = newFabrics[targetIndex];
+    newFabrics[targetIndex] = temp;
+
+    const reorderedItems = newFabrics.map((item, idx) => ({
+      id: item._id,
+      displayOrder: idx + 1
+    }));
+
+    try {
+      const { data } = await api.put('/api/fabrics/reorder', { items: reorderedItems });
+      setFabrics(data);
+      toast.success('Display order updated');
+    } catch (error) {
+      toast.error('Failed to update order');
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this fabric?')) return;
     try {
@@ -70,12 +112,18 @@ export default function AdminFabrics() {
 
   const removeColor = (index) => {
     const newColors = [...formData.colors];
+    const removedColor = newColors[index];
     newColors.splice(index, 1);
-    setFormData({ ...formData, colors: newColors });
+    
+    let updatedFeatured = formData.featuredColor;
+    if (removedColor && removedColor.name === formData.featuredColor) {
+      updatedFeatured = newColors[0]?.name || '';
+    }
+
+    setFormData({ ...formData, colors: newColors, featuredColor: updatedFeatured });
     
     const newColorFiles = { ...colorImageFiles };
     delete newColorFiles[index];
-    // Re-index remaining files
     const reindexedFiles = {};
     Object.keys(newColorFiles).forEach(key => {
       const k = parseInt(key);
@@ -105,6 +153,8 @@ export default function AdminFabrics() {
       payload.append('price', formData.price);
       payload.append('desc', formData.desc);
       payload.append('category', formData.category);
+      payload.append('displayOrder', formData.displayOrder || 0);
+      payload.append('featuredColor', formData.featuredColor || '');
       payload.append('colors', JSON.stringify(formData.colors));
       payload.append('allowedServices', JSON.stringify(formData.allowedServices));
       
@@ -115,7 +165,6 @@ export default function AdminFabrics() {
         payload.append('image', imageFile);
       }
 
-      // Append color variant images
       Object.keys(colorImageFiles).forEach(index => {
         if (colorImageFiles[index]) {
           payload.append(`colorImage_${index}`, colorImageFiles[index]);
@@ -131,7 +180,7 @@ export default function AdminFabrics() {
       }
       setShowModal(false);
       setEditingId(null);
-      setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000', imageUrl: '' }], allowedServices: [] });
+      setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', displayOrder: 0, featuredColor: '', colors: [{ name: '', hex: '#000000', imageUrl: '' }], allowedServices: [] });
       setImageFile(null);
       setColorImageFiles({});
       fetchFabrics();
@@ -143,65 +192,131 @@ export default function AdminFabrics() {
 
   return (
     <AdminLayout title="Manage Fabrics">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h2 className="admin-section-title" style={{ marginBottom: 0 }}>Fabric Catalog</h2>
-        <button className="admin-btn-primary" onClick={() => { setShowModal(true); setEditingId(null); setImageFile(null); setColorImageFiles({}); setFormData({ name: '', price: '', desc: '', category: 'General', imageUrl: '', colors: [{ name: '', hex: '#000000', imageUrl: '' }], allowedServices: [] }); }}>+ Add New Fabric</button>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button 
+            type="button" 
+            className="btn btn-outline" 
+            onClick={handleAutoSortByPrice}
+            style={{ background: '#f8fafc', borderColor: '#cbd5e1', color: '#0f172a', fontWeight: 600, fontSize: '0.9rem' }}
+            title="Automatically index fabrics from lowest price to highest price"
+          >
+            🏷️ Auto-Sort by Price (Lowest to Highest)
+          </button>
+          <button 
+            className="admin-btn-primary" 
+            onClick={() => { 
+              setShowModal(true); 
+              setEditingId(null); 
+              setImageFile(null); 
+              setColorImageFiles({}); 
+              setFormData({ 
+                name: '', 
+                price: '', 
+                desc: '', 
+                category: 'General', 
+                imageUrl: '', 
+                displayOrder: (fabrics.length + 1) * 10,
+                featuredColor: '', 
+                colors: [{ name: '', hex: '#000000', imageUrl: '' }], 
+                allowedServices: [] 
+              }); 
+            }}
+          >
+            + Add New Fabric
+          </button>
+        </div>
       </div>
 
       {loading ? (
         <p>Loading fabrics...</p>
       ) : (
         <div className="services-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
-          {fabrics.map(fabric => (
-            <div key={fabric._id} className="admin-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ height: '140px', background: '#f3f4f6', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden' }}>
-                {fabric.imageUrl ? (
-                  <img src={fabric.imageUrl} alt={fabric.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af' }}>No Image</div>
-                )}
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                <h3 style={{ margin: 0 }}>{fabric.name}</h3>
-                <span style={{ background: '#f3f4f6', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' }}>Rs. {fabric.price}</span>
-              </div>
-              <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '0.5rem', flex: 1 }}>{fabric.desc}</p>
-              
-              {fabric.allowedServices && fabric.allowedServices.length > 0 && (
-                <div style={{ marginBottom: '1rem', fontSize: '0.85rem' }}>
-                  <strong>For:</strong> {fabric.allowedServices.join(', ')}
-                </div>
-              )}
-
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                {fabric.colors.map((c, i) => (
-                  <div key={c._id || i} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: c.hex, border: '1px solid #d1d5db' }} title={c.name} />
-                    {c.imageUrl && <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>(img)</span>}
+          {fabrics.map((fabric, idx) => {
+            const featuredObj = fabric.colors?.find(c => c.name === fabric.featuredColor);
+            return (
+              <div key={fabric._id} className="admin-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                
+                {/* Order Badge & Reorder Controls */}
+                <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 2, display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(15,23,42,0.85)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', backdropFilter: 'blur(4px)' }}>
+                  <span>Order #{fabric.displayOrder || idx + 1}</span>
+                  <div style={{ display: 'flex', gap: '2px', marginLeft: '4px' }}>
+                    <button type="button" onClick={() => handleMoveOrder(idx, 'up')} disabled={idx === 0} style={{ background: 'transparent', border: 'none', color: idx === 0 ? '#64748b' : '#38bdf8', cursor: idx === 0 ? 'default' : 'pointer', padding: 0, fontSize: '0.8rem' }}>⬆️</button>
+                    <button type="button" onClick={() => handleMoveOrder(idx, 'down')} disabled={idx === fabrics.length - 1} style={{ background: 'transparent', border: 'none', color: idx === fabrics.length - 1 ? '#64748b' : '#38bdf8', cursor: idx === fabrics.length - 1 ? 'default' : 'pointer', padding: 0, fontSize: '0.8rem' }}>⬇️</button>
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
-                <button className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', color: '#3b82f6', borderColor: '#93c5fd' }} onClick={() => {
-                  setEditingId(fabric._id);
-                  setFormData({
-                    name: fabric.name || '',
-                    price: fabric.price || '',
-                    desc: fabric.desc || '',
-                    category: fabric.category || 'General',
-                    imageUrl: fabric.imageUrl || '',
-                    colors: fabric.colors && fabric.colors.length > 0 ? fabric.colors : [{ name: '', hex: '#000000', imageUrl: '' }],
-                    allowedServices: fabric.allowedServices || []
-                  });
-                  setImageFile(null);
-                  setColorImageFiles({});
-                  setShowModal(true);
-                }}>Edit</button>
-                <button className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', color: '#dc2626', borderColor: '#fca5a5' }} onClick={() => handleDelete(fabric._id)}>Delete</button>
+                {/* Featured Color Tag if set */}
+                {fabric.featuredColor && (
+                  <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 2, background: 'linear-gradient(135deg, #d97706, #b45309)', color: 'white', padding: '0.2rem 0.6rem', borderRadius: '20px', fontSize: '0.7rem', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+                    ⭐ {fabric.featuredColor}
+                  </div>
+                )}
+
+                <div style={{ height: '140px', background: '#f3f4f6', marginBottom: '1rem', borderRadius: '8px', overflow: 'hidden', position: 'relative' }}>
+                  {featuredObj?.imageUrl || fabric.imageUrl ? (
+                    <img src={featuredObj?.imageUrl || fabric.imageUrl} alt={fabric.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af' }}>No Image</div>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                  <h3 style={{ margin: 0 }}>{fabric.name}</h3>
+                  <span style={{ background: '#f3f4f6', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' }}>Rs. {fabric.price}</span>
+                </div>
+                <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '0.5rem', flex: 1 }}>{fabric.desc}</p>
+                
+                {fabric.allowedServices && fabric.allowedServices.length > 0 && (
+                  <div style={{ marginBottom: '1rem', fontSize: '0.85rem' }}>
+                    <strong>For:</strong> {fabric.allowedServices.join(', ')}
+                  </div>
+                )}
+
+                {/* Color preview swatches */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>Colors ({fabric.colors?.length || 0}):</span>
+                  {fabric.colors.map((c, i) => (
+                    <div 
+                      key={c._id || i} 
+                      style={{ 
+                        width: '20px', 
+                        height: '20px', 
+                        borderRadius: '50%', 
+                        backgroundColor: c.hex, 
+                        border: c.name === fabric.featuredColor ? '2px solid #d97706' : '1px solid #d1d5db',
+                        boxShadow: c.name === fabric.featuredColor ? '0 0 0 2px rgba(217, 119, 6, 0.3)' : 'none',
+                        cursor: 'pointer'
+                      }} 
+                      title={`${c.name}${c.name === fabric.featuredColor ? ' (Featured)' : ''}`} 
+                    />
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.5rem', borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
+                  <button className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', color: '#3b82f6', borderColor: '#93c5fd' }} onClick={() => {
+                    setEditingId(fabric._id);
+                    setFormData({
+                      name: fabric.name || '',
+                      price: fabric.price || '',
+                      desc: fabric.desc || '',
+                      category: fabric.category || 'General',
+                      imageUrl: fabric.imageUrl || '',
+                      displayOrder: fabric.displayOrder || (idx + 1) * 10,
+                      featuredColor: fabric.featuredColor || '',
+                      colors: fabric.colors && fabric.colors.length > 0 ? fabric.colors : [{ name: '', hex: '#000000', imageUrl: '' }],
+                      allowedServices: fabric.allowedServices || []
+                    });
+                    setImageFile(null);
+                    setColorImageFiles({});
+                    setShowModal(true);
+                  }}>Edit</button>
+                  <button className="btn btn-outline" style={{ flex: 1, padding: '0.5rem', color: '#dc2626', borderColor: '#fca5a5' }} onClick={() => handleDelete(fabric._id)}>Delete</button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {fabrics.length === 0 && <p style={{ color: '#6b7280' }}>No fabrics found. Add one to get started.</p>}
         </div>
       )}
@@ -215,14 +330,35 @@ export default function AdminFabrics() {
                 <label>Fabric Name</label>
                 <input type="text" className="form-control" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
               </div>
+
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <div style={{ flex: 1 }}>
                   <label>Price (Rs.)</label>
                   <input type="number" className="form-control" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} required />
                 </div>
                 <div style={{ flex: 1 }}>
+                  <label>Display Order Sequence #</label>
+                  <input type="number" className="form-control" value={formData.displayOrder} onChange={(e) => setFormData({...formData, displayOrder: e.target.value})} placeholder="e.g. 1 (Lowest comes first)" />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ flex: 1 }}>
                   <label>Category</label>
                   <input type="text" className="form-control" value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} placeholder="e.g. Cotton, Silk" />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontWeight: 600, color: '#d97706' }}>Featured Highlight Color</label>
+                  <select 
+                    className="form-control" 
+                    value={formData.featuredColor} 
+                    onChange={(e) => setFormData({...formData, featuredColor: e.target.value})}
+                  >
+                    <option value="">-- Select Featured Color --</option>
+                    {formData.colors.filter(c => c.name.trim()).map((c, i) => (
+                      <option key={i} value={c.name}>{c.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>

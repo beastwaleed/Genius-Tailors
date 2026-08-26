@@ -1824,10 +1824,27 @@ app.post('/api/admin/orders/place', protect, admin, async (req, res) => {
 
 app.get('/api/fabrics', async (req, res) => {
   try {
-    const fabrics = await Fabric.find();
+    const fabrics = await Fabric.find().sort({ displayOrder: 1, price: 1, createdAt: -1 });
     res.json(fabrics);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch fabrics', error: error.message });
+  }
+});
+
+// Bulk Reorder Fabrics (Admin)
+app.put('/api/fabrics/reorder', protect, admin, async (req, res) => {
+  try {
+    const { items } = req.body; // Array of { id, displayOrder }
+    if (Array.isArray(items)) {
+      const updatePromises = items.map(item => 
+        Fabric.findByIdAndUpdate(item.id, { displayOrder: Number(item.displayOrder) || 0 })
+      );
+      await Promise.all(updatePromises);
+    }
+    const updatedFabrics = await Fabric.find().sort({ displayOrder: 1, price: 1, createdAt: -1 });
+    res.json(updatedFabrics);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to reorder fabrics', error: error.message });
   }
 });
 
@@ -1860,6 +1877,10 @@ app.post('/api/fabrics', protect, admin, upload.any(), async (req, res) => {
 
     if (typeof req.body.allowedServices === 'string') {
       req.body.allowedServices = JSON.parse(req.body.allowedServices);
+    }
+
+    if (req.body.displayOrder !== undefined) {
+      req.body.displayOrder = Number(req.body.displayOrder) || 0;
     }
 
     const fabric = new Fabric(req.body);
@@ -1899,6 +1920,10 @@ app.put('/api/fabrics/:id', protect, admin, upload.any(), async (req, res) => {
 
     if (typeof req.body.allowedServices === 'string') {
       req.body.allowedServices = JSON.parse(req.body.allowedServices);
+    }
+
+    if (req.body.displayOrder !== undefined) {
+      req.body.displayOrder = Number(req.body.displayOrder) || 0;
     }
 
     const fabric = await Fabric.findByIdAndUpdate(req.params.id, req.body, { new: true });

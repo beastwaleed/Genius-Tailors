@@ -929,47 +929,99 @@ export default function Booking() {
 
               <div className="style-section" style={{ marginBottom: '2rem' }}>
                 <div className="fabric-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                  {fabricList.map(opt => (
-                    <div
-                      key={opt._id || opt.name}
-                      className={`fabric-card ${selectedFabric.name === opt.name ? 'selected' : ''}`}
-                      onClick={() => {
-                        if (opt.name === 'Provide my own fabric') {
-                          setSelectedFabric(opt);
-                          setSelectedColor('');
-                        } else {
-                          setViewingFabric(opt);
-                          if (!selectedColor || selectedFabric.name !== opt.name) {
-                            setSelectedColor('Shade No 01');
-                          }
-                        }
-                      }}
-                      style={{
-                        border: selectedFabric.name === opt.name ? '2px solid var(--onyx)' : '1px solid #e2e8f0',
-                        borderRadius: '8px', cursor: 'pointer', overflow: 'hidden', transition: 'all 0.2s',
-                        boxShadow: selectedFabric.name === opt.name ? '0 10px 15px -3px rgba(0,0,0,0.1)' : 'none',
-                        position: 'relative'
-                      }}
-                    >
-                      <div className="fabric-img-wrapper" style={{ height: '220px', overflow: 'hidden', background: '#f1f5f9' }}>
-                        <img src={opt.imageUrl || opt.img} alt={opt.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      </div>
-                      <div className="fabric-info" style={{ padding: '1rem', textAlign: 'center' }}>
-                        <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.05rem', color: 'var(--onyx)' }}>{opt.name}</h4>
-                        <span style={{ fontWeight: '600', fontSize: '0.9rem', color: opt.price === 0 ? 'var(--stone)' : 'var(--primary)' }}>
-                          {opt.price === 0 ? 'Free' : `+Rs. ${opt.price}`}
-                        </span>
-                        {serviceName === 'Kameez Shalwar' && opt.name !== 'Provide my own fabric' && (
-                          <div style={{ fontSize: '0.725rem', color: '#D97706', fontWeight: 700, marginTop: '0.35rem', background: '#FEF3C7', padding: '0.2rem 0.4rem', borderRadius: '4px', display: 'inline-block' }}>
-                            🔥 Includes Rs. 1,099 Stitching Offer
+                  {[...fabricList]
+                    .sort((a, b) => {
+                      if (a.name === 'Provide my own fabric') return -1;
+                      if (b.name === 'Provide my own fabric') return 1;
+                      const orderA = a.displayOrder !== undefined ? Number(a.displayOrder) : 999;
+                      const orderB = b.displayOrder !== undefined ? Number(b.displayOrder) : 999;
+                      if (orderA !== orderB) return orderA - orderB;
+                      return Number(a.price) - Number(b.price);
+                    })
+                    .map(opt => {
+                      const featuredObj = opt.colors?.find(c => c.name === opt.featuredColor);
+                      const thumbnailImg = featuredObj?.imageUrl || opt.imageUrl || opt.img;
+
+                      return (
+                        <div
+                          key={opt._id || opt.name}
+                          className={`fabric-card ${selectedFabric.name === opt.name ? 'selected' : ''}`}
+                          onClick={() => {
+                            if (opt.name === 'Provide my own fabric') {
+                              setSelectedFabric(opt);
+                              setSelectedColor('');
+                            } else {
+                              setViewingFabric(opt);
+                              if (!selectedColor || selectedFabric.name !== opt.name) {
+                                setSelectedColor(opt.featuredColor || opt.colors?.[0]?.name || 'Shade No 01');
+                              }
+                            }
+                          }}
+                          style={{
+                            border: selectedFabric.name === opt.name ? '2px solid var(--onyx)' : '1px solid #e2e8f0',
+                            borderRadius: '8px', cursor: 'pointer', overflow: 'hidden', transition: 'all 0.2s',
+                            boxShadow: selectedFabric.name === opt.name ? '0 10px 15px -3px rgba(0,0,0,0.1)' : 'none',
+                            position: 'relative',
+                            background: '#ffffff'
+                          }}
+                        >
+                          {/* Featured Color Highlight Badge */}
+                          {opt.featuredColor && opt.name !== 'Provide my own fabric' && (
+                            <div style={{ position: 'absolute', top: '8px', left: '8px', zIndex: 2, background: 'linear-gradient(135deg, #d97706, #b45309)', color: 'white', padding: '0.15rem 0.5rem', borderRadius: '12px', fontSize: '0.675rem', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+                              ⭐ {opt.featuredColor}
+                            </div>
+                          )}
+
+                          <div className="fabric-img-wrapper" style={{ height: '200px', overflow: 'hidden', background: '#f1f5f9', position: 'relative' }}>
+                            <img src={thumbnailImg} alt={opt.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           </div>
-                        )}
-                      </div>
-                      {selectedFabric.name === opt.name && selectedFabric.name !== 'Provide my own fabric' && (
-                        <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>✓</div>
-                      )}
-                    </div>
-                  ))}
+
+                          <div className="fabric-info" style={{ padding: '1rem', textAlign: 'center' }}>
+                            <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.05rem', color: 'var(--onyx)' }}>{opt.name}</h4>
+                            <span style={{ fontWeight: '600', fontSize: '0.9rem', color: opt.price === 0 ? 'var(--stone)' : 'var(--primary)' }}>
+                              {opt.price === 0 ? 'Free' : `+Rs. ${opt.price}`}
+                            </span>
+
+                            {/* Color Options Preview Swatches */}
+                            {opt.colors && opt.colors.length > 0 && opt.name !== 'Provide my own fabric' && (
+                              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.35rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
+                                {opt.colors.slice(0, 6).map((color, cIdx) => (
+                                  <div
+                                    key={color._id || cIdx}
+                                    style={{
+                                      width: '16px',
+                                      height: '16px',
+                                      borderRadius: '50%',
+                                      backgroundColor: color.hex || '#cbd5e1',
+                                      backgroundImage: color.imageUrl ? `url(${color.imageUrl})` : 'none',
+                                      backgroundSize: 'cover',
+                                      border: color.name === opt.featuredColor ? '2px solid #d97706' : '1px solid #cbd5e1',
+                                      boxShadow: color.name === opt.featuredColor ? '0 0 0 2px rgba(217, 119, 6, 0.25)' : '0 1px 2px rgba(0,0,0,0.1)'
+                                    }}
+                                    title={color.name}
+                                  />
+                                ))}
+                                {opt.colors.length > 6 && (
+                                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>
+                                    +{opt.colors.length - 6}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+
+                            {serviceName === 'Kameez Shalwar' && opt.name !== 'Provide my own fabric' && (
+                              <div style={{ fontSize: '0.725rem', color: '#D97706', fontWeight: 700, marginTop: '0.4rem', background: '#FEF3C7', padding: '0.2rem 0.4rem', borderRadius: '4px', display: 'inline-block' }}>
+                                🔥 Includes Rs. 1,099 Stitching Offer
+                              </div>
+                            )}
+                          </div>
+
+                          {selectedFabric.name === opt.name && selectedFabric.name !== 'Provide my own fabric' && (
+                            <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 5px rgba(0,0,0,0.2)', zIndex: 3 }}>✓</div>
+                          )}
+                        </div>
+                      );
+                    })}
                 </div>
 
                 {viewingFabric && (
