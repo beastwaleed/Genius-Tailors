@@ -89,7 +89,7 @@ const initWhatsApp = async (forceClean = false) => {
     }
 
     try {
-        addWALog('Starting initWhatsApp with single-file auth...');
+        addWALog('Starting initWhatsApp...');
         const authFilePath = path.join(__dirname, '../../auth_single.json');
         const authFolder = path.join(__dirname, '../../auth_info_baileys');
         
@@ -127,16 +127,16 @@ const initWhatsApp = async (forceClean = false) => {
             addWALog(`Using default WhatsApp Web version: ${waVersion.join('.')}`);
         }
 
-        addWALog('Creating WASocket instance with macOS Desktop signature...');
+        addWALog('Creating WASocket instance with Ubuntu Chrome signature...');
         const sock = makeWASocket({
             version: waVersion,
             auth: state,
             printQRInTerminal: false,
             logger: pino({ level: 'silent' }),
-            browser: Browsers.macOS('Desktop'),
+            browser: Browsers.ubuntu('Chrome'),
             syncFullHistory: false,
             generateHighQualityLinkPreview: false,
-            markOnlineOnConnect: false,
+            markOnlineOnConnect: true,
             connectTimeoutMs: 60000,
             defaultQueryTimeoutMs: 60000,
             keepAliveIntervalMs: 25000
@@ -146,7 +146,7 @@ const initWhatsApp = async (forceClean = false) => {
             const { connection, lastDisconnect, qr } = update;
             
             if (qr) {
-                addWALog('✅ SUCCESS: QR Code emitted from Baileys!');
+                addWALog('✅ Live QR Code emitted/refreshed from Baileys!');
                 currentQR = qr;
                 isInitializing = false;
             }

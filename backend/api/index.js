@@ -251,8 +251,7 @@ app.get('/whatsapp/qr', (req, res) => {
       </div>
 
       <script>
-        let isQRDisplayed = ${qr ? 'true' : 'false'};
-        let pollTimer = null;
+        let currentDisplayedQR = '${qr || ''}';
 
         async function checkStatus() {
           try {
@@ -275,25 +274,21 @@ app.get('/whatsapp/qr', (req, res) => {
             if (data.isConnected) {
               qrBox.innerHTML = '<div style="padding: 2rem;"><h3 style="color: #16a34a; margin: 0;">✅ WhatsApp Connected!</h3><p style="color: #475569; margin-top: 0.5rem;">Your WhatsApp bot is active and ready to send notifications.</p></div>';
               instruction.innerHTML = 'Connected to WhatsApp successfully!';
-              if (pollTimer) clearInterval(pollTimer);
               return;
             }
 
-            if (data.qr && !isQRDisplayed) {
-              isQRDisplayed = true;
+            if (data.qr && data.qr !== currentDisplayedQR) {
+              currentDisplayedQR = data.qr;
               const qrImgUrl = \`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=\${encodeURIComponent(data.qr)}\`;
               qrBox.innerHTML = \`<img src="\${qrImgUrl}" alt="WhatsApp QR Code" />\`;
-              instruction.innerHTML = '<strong>Scan this QR code:</strong> Open WhatsApp on phone → Settings / Menu → <strong>Linked Devices</strong> → Tap <strong>Link a Device</strong>.';
-              if (pollTimer) clearInterval(pollTimer);
+              instruction.innerHTML = '🟢 <strong style="color: #16a34a;">Live Active QR Code:</strong> Open WhatsApp on phone → Settings / Menu → <strong>Linked Devices</strong> → Tap <strong>Link a Device</strong>.';
             }
           } catch (err) {
             console.error('Status check error:', err);
           }
         }
 
-        if (!isQRDisplayed && !${isConnected ? 'true' : 'false'}) {
-          pollTimer = setInterval(checkStatus, 2000);
-        }
+        setInterval(checkStatus, 2000);
       </script>
     </body>
     </html>
