@@ -2780,21 +2780,39 @@ app.post('/api/admin/crm/users/:id/retarget', protect, admin, async (req, res) =
       return res.status(404).json({ message: 'Customer not found' });
     }
 
-    const { promoCode = 'VIP10', discountText = '10% OFF Special VIP Offer', customMessage } = req.body;
+    const { promoCode = 'VIP10', discountText = '10% OFF Special VIP Offer', customMessage = '' } = req.body;
+
+    const formattedMsg = customMessage ? customMessage
+      .replace(/\{name\}/gi, user.name || 'Valued Customer')
+      .replace(/\{code\}/gi, promoCode)
+      .replace(/\{discount\}/gi, discountText)
+      .replace(/\{link\}/gi, 'https://geniustailors.com/services') : '';
+
+    let waSent = false;
+    let emSent = false;
 
     if (user.phone) {
-      if (customMessage) {
-        await sendPromoWhatsapp(user.phone, user.name, promoCode, discountText);
-      } else {
-        await sendPromoWhatsapp(user.phone, user.name, promoCode, discountText);
+      try {
+        await sendPromoWhatsapp(user.phone, user.name, promoCode, discountText, 0, null, formattedMsg);
+        waSent = true;
+      } catch (e) {
+        console.error('WhatsApp single retarget error:', e);
       }
     }
 
     if (user.email) {
-      await sendPromoEmail(user.email, user.name, promoCode, discountText);
+      try {
+        await sendPromoEmail(user.email, user.name, promoCode, discountText);
+        emSent = true;
+      } catch (e) {
+        console.error('Email single retarget error:', e);
+      }
     }
 
-    res.json({ success: true, message: `Retargeting campaign sent to ${user.name}!` });
+    res.json({
+      success: true,
+      message: `Retargeting dispatched to ${user.name}! (WhatsApp: ${waSent ? '✅ Sent' : '⚠️ Offline/No Phone'}, Email: ${emSent ? '✅ Sent' : '⚠️ No Email'})`
+    });
   } catch (error) {
     console.error('CRM single retarget error:', error);
     res.status(500).json({ message: error.message || 'Failed to send retargeting campaign' });
@@ -2804,17 +2822,23 @@ app.post('/api/admin/crm/users/:id/retarget', protect, admin, async (req, res) =
 // Segment retargeting
 app.post('/api/admin/crm/retarget-segment', protect, admin, async (req, res) => {
   try {
-    const { promoCode = 'VIP10', discountText = '10% OFF Special Offer', segment = 'all', customMessage } = req.body;
+    const { promoCode = 'VIP10', discountText = '10% OFF Special Offer', segment = 'all', customMessage = '' } = req.body;
 
-    let query = { role: 'customer' };
+    let query = { role: { $ne: 'admin' } };
     if (segment === 'vip') query.isVip = true;
 
     const users = await User.find(query);
     let count = 0;
 
     for (const user of users) {
+      const formattedMsg = customMessage ? customMessage
+        .replace(/\{name\}/gi, user.name || 'Valued Customer')
+        .replace(/\{code\}/gi, promoCode)
+        .replace(/\{discount\}/gi, discountText)
+        .replace(/\{link\}/gi, 'https://geniustailors.com/services') : '';
+
       if (user.phone) {
-        await sendPromoWhatsapp(user.phone, user.name, promoCode, discountText);
+        await sendPromoWhatsapp(user.phone, user.name, promoCode, discountText, 0, null, formattedMsg);
         count++;
       }
       if (user.email) {
@@ -2822,7 +2846,7 @@ app.post('/api/admin/crm/retarget-segment', protect, admin, async (req, res) => 
       }
     }
 
-    res.json({ success: true, message: `Retargeting campaign sent to ${count} customer(s)!` });
+    res.json({ success: true, message: `Retargeting campaign dispatched to ${count} customer(s)!` });
   } catch (error) {
     console.error('CRM retarget segment error:', error);
     res.status(500).json({ message: error.message || 'Failed to send segment retargeting campaign' });
@@ -2880,7 +2904,7 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
       expiryDays = 7,
       ctaLink,
       customMessage = '',
-      channels = ['whatsapp']
+      channels = ['whatsapp', 'email']
     } = req.body;
 
     if (!name) {
@@ -2888,9 +2912,14 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
     }
 
     let targetUsers = [];
-    if (audienceType === 'specific' && userId) {
-      const u = await User.findById(userId);
-      if (u) targetUsers = [u];
+    if (audienceType === 'specific') {
+      if (userId) {
+        const u = await User.findById(userId);
+        if (u) targetUsers = [u];
+      }
+      if (targetUsers.length === 0) {
+        targetUsers = await User.find({ role: { $ne: 'admin' } });
+      }
     } else {
       let query = { role: { $ne: 'admin' } };
       if (audienceType === 'vip') query.isVip = true;
@@ -2906,6 +2935,10 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
       targetUsers = await User.find(query);
     }
 
+    if (targetUsers.length === 0) {
+      return res.status(400).json({ message: 'No target customers found matching your selected audience criteria.' });
+    }
+
     let whatsappSent = 0;
     let emailsSent = 0;
     let popupCreated = false;
@@ -2918,7 +2951,13 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
       for (const u of targetUsers) {
         if (u.phone) {
           try {
-            await sendPromoWhatsapp(u.phone, u.name, promoCode, discountText, 0, expDate, customMessage);
+            const formattedMsg = customMessage ? customMessage
+              .replace(/\{name\}/gi, u.name || 'Valued Customer')
+              .replace(/\{code\}/gi, promoCode)
+              .replace(/\{discount\}/gi, discountText)
+              .replace(/\{link\}/gi, 'https://geniustailors.com/services') : '';
+
+            await sendPromoWhatsapp(u.phone, u.name, promoCode, discountText, 0, expDate, formattedMsg);
             whatsappSent++;
           } catch (e) {
             console.error(`Failed to send WhatsApp to ${u.phone}:`, e);
@@ -2932,7 +2971,7 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
       for (const u of targetUsers) {
         if (u.email) {
           try {
-            await sendPromoEmail(u.email, u.name, promoCode, discountText);
+            await sendPromoEmail(u.email, u.name, promoCode, discountText, 0, expDate);
             emailsSent++;
           } catch (e) {
             console.error(`Failed to send email to ${u.email}:`, e);
@@ -2976,7 +3015,7 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
 
     res.json({
       success: true,
-      message: `Campaign "${name}" launched successfully! Target: ${targetUsers.length}, Sent: ${whatsappSent} WhatsApp, ${emailsSent} Emails.`,
+      message: `🎉 Campaign "${name}" dispatched successfully to ${targetUsers.length} customer(s)! (${whatsappSent} WhatsApp sent, ${emailsSent} Email sent)`,
       campaign: campaignRecord
     });
   } catch (error) {

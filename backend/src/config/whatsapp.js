@@ -192,25 +192,31 @@ const initWhatsApp = async (forceClean = false) => {
 };
 
 const sendWhatsappMessage = async (toPhone, message) => {
-    let cleanPhone = toPhone.replace(/[\+\s\-]/g, '');
+    if (!toPhone) return false;
+    let cleanPhone = String(toPhone).replace(/[\+\s\-\(\)]/g, '');
     
     if (cleanPhone.startsWith('0')) {
         cleanPhone = '92' + cleanPhone.substring(1);
+    } else if (cleanPhone.length === 10 && (cleanPhone.startsWith('3') || cleanPhone.startsWith('4'))) {
+        cleanPhone = '92' + cleanPhone;
     }
 
     const jid = `${cleanPhone}@s.whatsapp.net`;
 
     if (!waSocket || !isConnected) {
-        addWALog(`WhatsApp offline. Queuing message for ${cleanPhone}...`);
+        addWALog(`WhatsApp offline. Waking up WhatsApp socket for ${cleanPhone}...`);
+        getWhatsAppQR();
         messageQueue.push({ jid, message, cleanPhone });
-        return;
+        return false;
     }
 
     try {
         await waSocket.sendMessage(jid, { text: message });
-        addWALog(`WhatsApp message sent instantly to ${cleanPhone}`);
+        addWALog(`✅ WhatsApp message sent instantly to ${cleanPhone}`);
+        return true;
     } catch (error) {
-        addWALog(`Failed to send WhatsApp message via Baileys: ${error.message}`);
+        addWALog(`❌ Failed to send WhatsApp message via Baileys to ${cleanPhone}: ${error.message}`);
+        return false;
     }
 };
 
