@@ -7,39 +7,61 @@ let currentQR = null;
 let isConnected = false;
 let messageQueue = [];
 let waInitError = null;
-let isInitializing = false;
 
-const initWhatsApp = async () => {
-    if (isInitializing || isConnected) return;
-    isInitializing = true;
+const initWhatsApp = async (forceClean = false) => {
     try {
         const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
+        
+        // If forceClean requested OR if we're not connected and have no QR, start 100% fresh so Baileys MUST emit QR
+        if (forceClean || (!isConnected && !currentQR)) {
+            if (waSocket) {
+                try { waSocket.end(new Error('Clean restart')); } catch(e){}
+                waSocket = null;
+            }
+            if (fs.existsSync(authFolder)) {
+                try { fs.rmSync(authFolder, { recursive: true, force: true }); } catch(e){}
+            }
+            currentQR = null;
+            isConnected = false;
+        }
+
+        if (waSocket && (isConnected || currentQR)) {
+            return;
+        }
+
         const { state, saveCreds } = await useMultiFileAuthState(authFolder);
 
         const sock = makeWASocket({
             auth: state,
             printQRInTerminal: false,
             logger: pino({ level: 'silent' }),
-            defaultQueryTimeoutMs: 30000
+            defaultQueryTimeoutMs: 30000,
+            connectTimeoutMs: 30000,
+            keepAliveIntervalMs: 15000
         });
 
         sock.ev.on('connection.update', (update) => {
             const { connection, lastDisconnect, qr } = update;
             
             if (qr) {
+                console.log('✅ New WhatsApp QR Code generated!');
                 currentQR = qr;
             }
 
             if (connection === 'close') {
                 isConnected = false;
-                isInitializing = false;
                 const statusCode = (lastDisconnect?.error)?.output?.statusCode;
                 console.log(`WhatsApp connection closed (Status: ${statusCode}).`);
+                if (statusCode === DisconnectReason.loggedOut || statusCode === 401 || statusCode === 405) {
+                    currentQR = null;
+                    if (fs.existsSync(authFolder)) {
+                        try { fs.rmSync(authFolder, { recursive: true, force: true }); } catch(e){}
+                    }
+                }
             } else if (connection === 'open') {
                 console.log('WhatsApp connection opened successfully!');
                 currentQR = null;
                 isConnected = true;
-                isInitializing = false;
                 
                 // Process any queued messages
                 while (messageQueue.length > 0) {
@@ -52,12 +74,10 @@ const initWhatsApp = async () => {
         });
 
         sock.ev.on('creds.update', saveCreds);
-        
         waSocket = sock;
         waInitError = null;
     } catch (error) {
         waInitError = error.message || String(error);
-        isInitializing = false;
         console.error('Failed to initialize WhatsApp:', error);
     }
 };
@@ -86,30 +106,12 @@ const sendWhatsappMessage = async (toPhone, message) => {
 };
 
 const resetWhatsApp = async () => {
-    try {
-        if (waSocket) {
-            try { waSocket.end(new Error('Reset requested')); } catch(e){}
-            waSocket = null;
-        }
-        currentQR = null;
-        isConnected = false;
-        isInitializing = false;
-        waInitError = null;
-
-        const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
-        if (fs.existsSync(authFolder)) {
-            fs.rmSync(authFolder, { recursive: true, force: true });
-        }
-        await initWhatsApp();
-        return { success: true, message: 'WhatsApp session reset. Generating new QR...' };
-    } catch (error) {
-        console.error('Failed to reset WhatsApp session:', error);
-        return { success: false, error: error.message };
-    }
+    await initWhatsApp(true);
+    return { success: true, message: 'WhatsApp session reset. Generating new QR...' };
 };
 
 const getWhatsAppQR = () => {
-    if (!waSocket && !waInitError && !isInitializing) {
+    if (!waSocket && !isConnected) {
         initWhatsApp().catch(err => console.error('Init WA error:', err));
     }
     return { qr: currentQR, socketInitialized: !!waSocket, isConnected, error: waInitError };
