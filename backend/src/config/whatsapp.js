@@ -8,14 +8,28 @@ let isConnected = false;
 let messageQueue = [];
 let waInitError = null;
 let isInitializing = false;
+let waLogs = [];
+
+function addWALog(msg) {
+    const timestamp = new Date().toLocaleTimeString();
+    const entry = `[${timestamp}] ${msg}`;
+    console.log(entry);
+    waLogs.push(entry);
+    if (waLogs.length > 35) waLogs.shift();
+}
 
 const initWhatsApp = async (forceClean = false) => {
-    if (isInitializing && !forceClean) return;
+    if (isInitializing && !forceClean) {
+        addWALog('initWhatsApp skipped: initialization already in progress');
+        return;
+    }
 
     try {
+        addWALog('Starting initWhatsApp...');
         const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
         
         if (forceClean) {
+            addWALog('Force clean requested: clearing socket and auth folder');
             if (waSocket) {
                 try { waSocket.end(new Error('Clean restart')); } catch(e){}
                 waSocket = null;
@@ -28,26 +42,32 @@ const initWhatsApp = async (forceClean = false) => {
         }
 
         if (waSocket && (isConnected || currentQR)) {
+            addWALog(`Socket active. isConnected=${isConnected}, hasQR=${!!currentQR}`);
             return;
         }
 
         isInitializing = true;
+        addWALog('Reading multi-file auth state...');
         const { state, saveCreds } = await useMultiFileAuthState(authFolder);
 
+        addWALog('Creating WASocket instance with Chrome browser identification...');
         const sock = makeWASocket({
             auth: state,
             printQRInTerminal: false,
             logger: pino({ level: 'silent' }),
-            defaultQueryTimeoutMs: 30000,
-            connectTimeoutMs: 30000,
-            keepAliveIntervalMs: 15000
+            browser: ['Genius Tailors', 'Chrome', '1.0.0'],
+            syncFullHistory: false,
+            generateHighQualityLinkPreview: false,
+            connectTimeoutMs: 60000,
+            defaultQueryTimeoutMs: 60000,
+            keepAliveIntervalMs: 25000
         });
 
         sock.ev.on('connection.update', (update) => {
             const { connection, lastDisconnect, qr } = update;
             
             if (qr) {
-                console.log('✅ New WhatsApp QR Code generated!');
+                addWALog('✅ SUCCESS: QR Code emitted from Baileys!');
                 currentQR = qr;
                 isInitializing = false;
             }
@@ -56,7 +76,9 @@ const initWhatsApp = async (forceClean = false) => {
                 isConnected = false;
                 isInitializing = false;
                 const statusCode = (lastDisconnect?.error)?.output?.statusCode;
-                console.log(`WhatsApp connection closed (Status: ${statusCode}).`);
+                const errReason = lastDisconnect?.error?.message || 'Unknown';
+                addWALog(`❌ Connection closed. Status code: ${statusCode}, Reason: ${errReason}`);
+                
                 if (statusCode === DisconnectReason.loggedOut || statusCode === 401 || statusCode === 405) {
                     currentQR = null;
                     if (fs.existsSync(authFolder)) {
@@ -64,17 +86,16 @@ const initWhatsApp = async (forceClean = false) => {
                     }
                 }
             } else if (connection === 'open') {
-                console.log('WhatsApp connection opened successfully!');
+                addWALog('🎉 WhatsApp connection opened successfully!');
                 currentQR = null;
                 isConnected = true;
                 isInitializing = false;
                 
-                // Process any queued messages
                 while (messageQueue.length > 0) {
                     const item = messageQueue.shift();
                     waSocket.sendMessage(item.jid, { text: item.message })
-                        .then(() => console.log(`Queued WhatsApp message sent to ${item.cleanPhone}`))
-                        .catch(err => console.error(`Failed to send queued message to ${item.cleanPhone}:`, err));
+                        .then(() => addWALog(`Queued WhatsApp message sent to ${item.cleanPhone}`))
+                        .catch(err => addWALog(`Failed to send queued message to ${item.cleanPhone}: ${err.message}`));
                 }
             }
         });
@@ -82,9 +103,11 @@ const initWhatsApp = async (forceClean = false) => {
         sock.ev.on('creds.update', saveCreds);
         waSocket = sock;
         waInitError = null;
+        addWALog('WASocket created successfully. Waiting for QR/connection event...');
     } catch (error) {
         waInitError = error.message || String(error);
         isInitializing = false;
+        addWALog(`💥 initWhatsApp FATAL ERROR: ${waInitError}`);
         console.error('Failed to initialize WhatsApp:', error);
     }
 };
@@ -99,16 +122,16 @@ const sendWhatsappMessage = async (toPhone, message) => {
     const jid = `${cleanPhone}@s.whatsapp.net`;
 
     if (!waSocket || !isConnected) {
-        console.log(`WhatsApp is booting up or reconnecting. Queuing message for ${cleanPhone}...`);
+        addWALog(`WhatsApp offline. Queuing message for ${cleanPhone}...`);
         messageQueue.push({ jid, message, cleanPhone });
         return;
     }
 
     try {
         await waSocket.sendMessage(jid, { text: message });
-        console.log(`WhatsApp message sent instantly to ${cleanPhone}`);
+        addWALog(`WhatsApp message sent instantly to ${cleanPhone}`);
     } catch (error) {
-        console.error('Failed to send WhatsApp message via Baileys:', error);
+        addWALog(`Failed to send WhatsApp message via Baileys: ${error.message}`);
     }
 };
 
@@ -120,9 +143,9 @@ const resetWhatsApp = async () => {
 
 const getWhatsAppQR = () => {
     if (!waSocket && !isConnected && !isInitializing) {
-        initWhatsApp().catch(err => console.error('Init WA error:', err));
+        initWhatsApp().catch(err => addWALog(`Init WA error: ${err.message}`));
     }
-    return { qr: currentQR, socketInitialized: !!waSocket, isConnected, error: waInitError };
+    return { qr: currentQR, socketInitialized: !!waSocket, isConnected, isInitializing, error: waInitError, logs: waLogs };
 };
 
 const sendWhatsappOrderConfirmation = async (customerPhone, customerName, serviceName, totalPrice, orderId) => {

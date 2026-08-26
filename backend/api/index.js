@@ -187,9 +187,9 @@ app.get('/api/whatsapp/status', (req, res) => {
   res.json(getWhatsAppQR());
 });
 
-// View & Manage WhatsApp QR Code route (Paused & Static QR Display)
+// View & Manage WhatsApp QR Code route (Paused & Static QR Display + Diagnostic Logs)
 app.get('/whatsapp/qr', (req, res) => {
-  const { qr, isConnected } = getWhatsAppQR();
+  const { qr, isConnected, logs } = getWhatsAppQR();
 
   res.send(`
     <!DOCTYPE html>
@@ -198,16 +198,17 @@ app.get('/whatsapp/qr', (req, res) => {
       <title>Scan WhatsApp QR Code</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <style>
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; text-align: center; padding: 40px 15px; background: #f8fafc; color: #0f172a; }
-        .card { background: white; max-width: 480px; margin: auto; padding: 2.5rem 2rem; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
-        .qr-box { background: #f1f5f9; min-height: 280px; display: flex; align-items: center; justify-content: center; border-radius: 12px; margin: 20px 0; border: 2px dashed #cbd5e1; position: relative; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; text-align: center; padding: 30px 15px; background: #f8fafc; color: #0f172a; }
+        .card { background: white; max-width: 520px; margin: auto; padding: 2rem 1.5rem; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+        .qr-box { background: #f1f5f9; min-height: 260px; display: flex; align-items: center; justify-content: center; border-radius: 12px; margin: 15px 0; border: 2px dashed #cbd5e1; position: relative; }
         img { border-radius: 8px; background: white; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .btn { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: inline-block; cursor: pointer; transition: background 0.2s; }
+        .btn { background: #2563eb; color: white; border: none; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-block; cursor: pointer; transition: background 0.2s; }
         .btn:hover { background: #1d4ed8; }
         .btn-danger { background: #ef4444; }
         .btn-danger:hover { background: #dc2626; }
-        .spinner { border: 4px solid #cbd5e1; border-top: 4px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 0.9s linear infinite; margin: 0 auto 10px auto; }
+        .spinner { border: 4px solid #cbd5e1; border-top: 4px solid #2563eb; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.9s linear infinite; margin: 0 auto 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .log-box { margin-top: 1.5rem; text-align: left; background: #0f172a; color: #38bdf8; padding: 0.85rem; border-radius: 8px; font-family: monospace; font-size: 0.725rem; max-height: 160px; overflow-y: auto; }
       </style>
     </head>
     <body>
@@ -222,15 +223,15 @@ app.get('/whatsapp/qr', (req, res) => {
                 <p style="color: #475569; margin-top: 0.5rem;">Your WhatsApp bot is active and ready to send notifications.</p>
               </div>
             ` : qr ? `
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(qr)}" alt="WhatsApp QR Code" />
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qr)}" alt="WhatsApp QR Code" />
             ` : `
               <div>
                 <div class="spinner"></div>
-                <p style="color: #475569; font-weight: 600;">Generating QR Code...</p>
+                <p style="color: #475569; font-weight: 600;">Connecting & Generating QR...</p>
               </div>
             `}
           </div>
-          <p id="instruction" style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">
+          <p id="instruction" style="color: #64748b; font-size: 0.875rem; margin-bottom: 1rem; line-height: 1.5;">
             ${isConnected ? 'Connected to WhatsApp successfully!' : qr ? '<strong>Scan this QR code:</strong> Open WhatsApp on phone → Settings / Menu → <strong>Linked Devices</strong> → Tap <strong>Link a Device</strong>.' : 'Please wait a moment while WhatsApp initializes...'}
           </p>
         </div>
@@ -238,6 +239,14 @@ app.get('/whatsapp/qr', (req, res) => {
         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
           <button class="btn" onclick="checkStatus()">🔄 Refresh Status</button>
           <a href="/whatsapp/reset" class="btn btn-danger" onclick="return confirm('Reset WhatsApp session and generate a new QR?')">🔴 Reset & New QR</a>
+        </div>
+
+        <!-- Live Diagnostics Log Box -->
+        <div class="log-box">
+          <div style="color: #94a3b8; font-weight: bold; margin-bottom: 0.4rem; border-bottom: 1px solid #334155; padding-bottom: 0.2rem;">📋 Live Diagnostic Logs:</div>
+          <div id="log-lines">
+            ${(logs || []).map(l => `<div>${l}</div>`).join('') || '<div>Waiting for initialization logs...</div>'}
+          </div>
         </div>
       </div>
 
@@ -252,6 +261,11 @@ app.get('/whatsapp/qr', (req, res) => {
 
             const qrBox = document.getElementById('qr-box');
             const instruction = document.getElementById('instruction');
+            const logLines = document.getElementById('log-lines');
+
+            if (logLines && data.logs && Array.isArray(data.logs)) {
+              logLines.innerHTML = data.logs.map(l => `<div>\${l}</div>`).join('');
+            }
 
             if (data.isConnected) {
               qrBox.innerHTML = '<div style="padding: 2rem;"><h3 style="color: #16a34a; margin: 0;">✅ WhatsApp Connected!</h3><p style="color: #475569; margin-top: 0.5rem;">Your WhatsApp bot is active and ready to send notifications.</p></div>';
@@ -262,10 +276,9 @@ app.get('/whatsapp/qr', (req, res) => {
 
             if (data.qr && !isQRDisplayed) {
               isQRDisplayed = true;
-              const qrImgUrl = \`https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=\${encodeURIComponent(data.qr)}\`;
+              const qrImgUrl = \`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=\${encodeURIComponent(data.qr)}\`;
               qrBox.innerHTML = \`<img src="\${qrImgUrl}" alt="WhatsApp QR Code" />\`;
               instruction.innerHTML = '<strong>Scan this QR code:</strong> Open WhatsApp on phone → Settings / Menu → <strong>Linked Devices</strong> → Tap <strong>Link a Device</strong>.';
-              // PAUSE AUTO-POLLING SO THE QR CODE DOES NOT REFRESH OR MOVE
               if (pollTimer) clearInterval(pollTimer);
             }
           } catch (err) {
@@ -274,7 +287,7 @@ app.get('/whatsapp/qr', (req, res) => {
         }
 
         if (!isQRDisplayed && !${isConnected ? 'true' : 'false'}) {
-          pollTimer = setInterval(checkStatus, 2500);
+          pollTimer = setInterval(checkStatus, 1500);
         }
       </script>
     </body>
