@@ -1,4 +1,4 @@
-const { default: makeWASocket, initAuthCreds, BufferJSON, proto, DisconnectReason } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, fetchLatestBaileysVersion, Browsers, initAuthCreds, BufferJSON, proto, DisconnectReason } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const fs = require('fs');
 const path = require('path');
@@ -118,18 +118,28 @@ const initWhatsApp = async (forceClean = false) => {
         addWALog('Loading single-file auth state...');
         const { state, saveCreds } = useSingleAuthState(authFilePath);
 
-        addWALog('Creating WASocket instance...');
+        let waVersion = [2, 3000, 1015901307];
+        try {
+            const fetchedVer = await fetchLatestBaileysVersion();
+            waVersion = fetchedVer.version;
+            addWALog(`Fetched latest WhatsApp Web version: ${waVersion.join('.')}`);
+        } catch (verErr) {
+            addWALog(`Using default WhatsApp Web version: ${waVersion.join('.')}`);
+        }
+
+        addWALog('Creating WASocket instance with macOS Desktop signature...');
         const sock = makeWASocket({
+            version: waVersion,
             auth: state,
             printQRInTerminal: false,
             logger: pino({ level: 'silent' }),
-            browser: ['Genius Tailors', 'Chrome', '1.0.0'],
+            browser: Browsers.macOS('Desktop'),
             syncFullHistory: false,
             generateHighQualityLinkPreview: false,
             markOnlineOnConnect: false,
-            connectTimeoutMs: 30000,
-            defaultQueryTimeoutMs: 30000,
-            keepAliveIntervalMs: 20000
+            connectTimeoutMs: 60000,
+            defaultQueryTimeoutMs: 60000,
+            keepAliveIntervalMs: 25000
         });
 
         sock.ev.on('connection.update', (update) => {
