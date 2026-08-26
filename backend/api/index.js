@@ -269,7 +269,7 @@ app.get('/whatsapp/qr', (req, res) => {
             const logLines = document.getElementById('log-lines');
 
             if (logLines && data.logs && Array.isArray(data.logs)) {
-              logLines.innerHTML = data.logs.map(l => `<div>\${l}</div>`).join('');
+              logLines.innerHTML = data.logs.map(l => '<div>' + l + '</div>').join('');
             }
 
             if (data.isConnected) {

@@ -1,6 +1,7 @@
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, initAuthCreds, BufferJSON, proto, DisconnectReason } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const fs = require('fs');
+const path = require('path');
 
 let waSocket = null;
 let currentQR = null;
@@ -18,6 +19,69 @@ function addWALog(msg) {
     if (waLogs.length > 35) waLogs.shift();
 }
 
+// Single-file auth state to prevent CloudLinux multi-file I/O locks & 503 crashes
+const useSingleAuthState = (filePath) => {
+    let creds;
+    let keys = {};
+    if (fs.existsSync(filePath)) {
+        try {
+            const raw = fs.readFileSync(filePath, 'utf-8');
+            const parsed = JSON.parse(raw, BufferJSON.reviver);
+            creds = parsed.creds || initAuthCreds();
+            keys = parsed.keys || {};
+        } catch (e) {
+            creds = initAuthCreds();
+        }
+    } else {
+        creds = initAuthCreds();
+    }
+
+    const save = () => {
+        try {
+            const content = JSON.stringify({ creds, keys }, BufferJSON.replacer, 2);
+            fs.writeFileSync(filePath, content);
+        } catch (err) {
+            console.error('Failed to save auth state:', err);
+        }
+    };
+
+    return {
+        state: {
+            creds,
+            keys: {
+                get: (type, ids) => {
+                    const data = {};
+                    for (const id of ids) {
+                        let value = keys[`${type}-${id}`];
+                        if (value) {
+                            if (type === 'app-state-sync-key' && value) {
+                                value = proto.Message.AppStateSyncKeyData.fromObject(value);
+                            }
+                            data[id] = value;
+                        }
+                    }
+                    return data;
+                },
+                set: (data) => {
+                    for (const category in data) {
+                        for (const id in data[category]) {
+                            const value = data[category][id];
+                            const key = `${category}-${id}`;
+                            if (value) {
+                                keys[key] = value;
+                            } else {
+                                delete keys[key];
+                            }
+                        }
+                    }
+                    save();
+                }
+            }
+        },
+        saveCreds: save
+    };
+};
+
 const initWhatsApp = async (forceClean = false) => {
     if (isInitializing && !forceClean) {
         addWALog('initWhatsApp skipped: initialization already in progress');
@@ -25,14 +89,18 @@ const initWhatsApp = async (forceClean = false) => {
     }
 
     try {
-        addWALog('Starting initWhatsApp...');
-        const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
+        addWALog('Starting initWhatsApp with single-file auth...');
+        const authFilePath = path.join(__dirname, '../../auth_single.json');
+        const authFolder = path.join(__dirname, '../../auth_info_baileys');
         
         if (forceClean) {
-            addWALog('Force clean requested: clearing socket and auth folder');
+            addWALog('Force clean requested: resetting session...');
             if (waSocket) {
                 try { waSocket.end(new Error('Clean restart')); } catch(e){}
                 waSocket = null;
+            }
+            if (fs.existsSync(authFilePath)) {
+                try { fs.unlinkSync(authFilePath); } catch(e){}
             }
             if (fs.existsSync(authFolder)) {
                 try { fs.rmSync(authFolder, { recursive: true, force: true }); } catch(e){}
@@ -47,10 +115,10 @@ const initWhatsApp = async (forceClean = false) => {
         }
 
         isInitializing = true;
-        addWALog('Reading multi-file auth state...');
-        const { state, saveCreds } = await useMultiFileAuthState(authFolder);
+        addWALog('Loading single-file auth state...');
+        const { state, saveCreds } = useSingleAuthState(authFilePath);
 
-        addWALog('Creating WASocket instance with Chrome browser identification...');
+        addWALog('Creating WASocket instance...');
         const sock = makeWASocket({
             auth: state,
             printQRInTerminal: false,
@@ -58,9 +126,10 @@ const initWhatsApp = async (forceClean = false) => {
             browser: ['Genius Tailors', 'Chrome', '1.0.0'],
             syncFullHistory: false,
             generateHighQualityLinkPreview: false,
-            connectTimeoutMs: 60000,
-            defaultQueryTimeoutMs: 60000,
-            keepAliveIntervalMs: 25000
+            markOnlineOnConnect: false,
+            connectTimeoutMs: 30000,
+            defaultQueryTimeoutMs: 30000,
+            keepAliveIntervalMs: 20000
         });
 
         sock.ev.on('connection.update', (update) => {
@@ -81,8 +150,8 @@ const initWhatsApp = async (forceClean = false) => {
                 
                 if (statusCode === DisconnectReason.loggedOut || statusCode === 401 || statusCode === 405) {
                     currentQR = null;
-                    if (fs.existsSync(authFolder)) {
-                        try { fs.rmSync(authFolder, { recursive: true, force: true }); } catch(e){}
+                    if (fs.existsSync(authFilePath)) {
+                        try { fs.unlinkSync(authFilePath); } catch(e){}
                     }
                 }
             } else if (connection === 'open') {
@@ -103,7 +172,7 @@ const initWhatsApp = async (forceClean = false) => {
         sock.ev.on('creds.update', saveCreds);
         waSocket = sock;
         waInitError = null;
-        addWALog('WASocket created successfully. Waiting for QR/connection event...');
+        addWALog('WASocket instance created. Waiting for connection.update event...');
     } catch (error) {
         waInitError = error.message || String(error);
         isInitializing = false;
