@@ -965,13 +965,6 @@ export default function Booking() {
                             background: '#ffffff'
                           }}
                         >
-                          {/* Featured Color Highlight Badge */}
-                          {opt.featuredColor && opt.name !== 'Provide my own fabric' && (
-                            <div style={{ position: 'absolute', top: '8px', left: '8px', zIndex: 2, background: 'linear-gradient(135deg, #d97706, #b45309)', color: 'white', padding: '0.15rem 0.5rem', borderRadius: '12px', fontSize: '0.675rem', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
-                              ⭐ {opt.featuredColor}
-                            </div>
-                          )}
-
                           <div className="fabric-img-wrapper" style={{ height: '200px', overflow: 'hidden', background: '#f1f5f9', position: 'relative' }}>
                             <img src={thumbnailImg} alt={opt.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           </div>
