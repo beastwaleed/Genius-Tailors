@@ -2541,6 +2541,20 @@ app.get('/api/popups', async (req, res) => {
   }
 });
 
+// Get Active Popup for Website Display
+app.get('/api/popups/active', async (req, res) => {
+  try {
+    const activePopup = await Popup.findOne({ isActive: true }).sort({ createdAt: -1 });
+    if (!activePopup) {
+      const latestPopup = await Popup.findOne().sort({ createdAt: -1 });
+      return res.json(latestPopup || null);
+    }
+    res.json(activePopup);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch active popup', error: error.message });
+  }
+});
+
 app.post('/api/popups', protect, admin, upload.any(), async (req, res) => {
   try {
     const popupData = { ...req.body };
@@ -2583,16 +2597,16 @@ app.delete('/api/popups/:id', protect, admin, async (req, res) => {
   }
 });
 
-app.post('/api/popups/:id/impression', async (req, res) => {
+app.post(['/api/popups/:id/impression', '/api/popups/:id/track-view'], async (req, res) => {
   try {
-    const popup = await Popup.findByIdAndUpdate(req.params.id, { $inc: { impressionsCount: 1 } }, { new: true });
+    const popup = await Popup.findByIdAndUpdate(req.params.id, { $inc: { impressionsCount: 1, viewsCount: 1 } }, { new: true });
     res.json(popup);
   } catch (error) {
     res.status(500).json({ message: 'Failed to record impression', error: error.message });
   }
 });
 
-app.post('/api/popups/:id/click', async (req, res) => {
+app.post(['/api/popups/:id/click', '/api/popups/:id/track-click'], async (req, res) => {
   try {
     const popup = await Popup.findByIdAndUpdate(req.params.id, { $inc: { clicksCount: 1 } }, { new: true });
     res.json(popup);
