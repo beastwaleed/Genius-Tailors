@@ -2064,12 +2064,7 @@ module.exports = async (req, res) => {
 // 2. Production Server Startup
 const PORT = process.env.PORT || 5000;
 
-// Initialize WhatsApp immediately on startup
-try {
-  initWhatsApp();
-} catch (err) {
-  console.error('Failed to initialize WhatsApp bot:', err);
-}
+// WhatsApp is initialized lazily on-demand via /whatsapp/qr to prevent startup crashes
 
 connectDB().then(() => {
   if (process.env.NODE_ENV !== 'test') {

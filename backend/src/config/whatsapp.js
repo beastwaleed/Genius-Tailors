@@ -1,45 +1,45 @@
 const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const fs = require('fs');
-const qrcode = require('qrcode-terminal');
 
 let waSocket = null;
 let currentQR = null;
 let isConnected = false;
 let messageQueue = [];
 let waInitError = null;
+let isInitializing = false;
 
 const initWhatsApp = async () => {
+    if (isInitializing || isConnected) return;
+    isInitializing = true;
     try {
         const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
         const { state, saveCreds } = await useMultiFileAuthState(authFolder);
 
         const sock = makeWASocket({
             auth: state,
-            printQRInTerminal: true,
-            logger: pino({ level: 'silent' }), // Suppress excessive logs
-            defaultQueryTimeoutMs: undefined
+            printQRInTerminal: false,
+            logger: pino({ level: 'silent' }),
+            defaultQueryTimeoutMs: 30000
         });
 
         sock.ev.on('connection.update', (update) => {
             const { connection, lastDisconnect, qr } = update;
             
             if (qr) {
-                console.log('\n\n======================================================');
-                console.log('📱 SCAN THIS QR CODE IN WHATSAPP TO LINK YOUR BOT 📱');
-                console.log('======================================================\n\n');
-                qrcode.generate(qr, { small: true });
                 currentQR = qr;
             }
 
             if (connection === 'close') {
                 isConnected = false;
-                const statusCode = (lastDisconnect.error)?.output?.statusCode;
+                isInitializing = false;
+                const statusCode = (lastDisconnect?.error)?.output?.statusCode;
                 console.log(`WhatsApp connection closed (Status: ${statusCode}).`);
             } else if (connection === 'open') {
                 console.log('WhatsApp connection opened successfully!');
                 currentQR = null;
                 isConnected = true;
+                isInitializing = false;
                 
                 // Process any queued messages
                 while (messageQueue.length > 0) {
@@ -57,15 +57,14 @@ const initWhatsApp = async () => {
         waInitError = null;
     } catch (error) {
         waInitError = error.message || String(error);
+        isInitializing = false;
         console.error('Failed to initialize WhatsApp:', error);
     }
 };
 
 const sendWhatsappMessage = async (toPhone, message) => {
-    // Format phone number: remove '+' and spaces
     let cleanPhone = toPhone.replace(/[\+\s\-]/g, '');
     
-    // Pakistani numbers must include country code (e.g., 923332662110). If local format (0333...), convert it:
     if (cleanPhone.startsWith('0')) {
         cleanPhone = '92' + cleanPhone.substring(1);
     }
@@ -79,7 +78,6 @@ const sendWhatsappMessage = async (toPhone, message) => {
     }
 
     try {
-        // Send message directly
         await waSocket.sendMessage(jid, { text: message });
         console.log(`WhatsApp message sent instantly to ${cleanPhone}`);
     } catch (error) {
@@ -87,7 +85,33 @@ const sendWhatsappMessage = async (toPhone, message) => {
     }
 };
 
+const resetWhatsApp = async () => {
+    try {
+        if (waSocket) {
+            try { waSocket.end(new Error('Reset requested')); } catch(e){}
+            waSocket = null;
+        }
+        currentQR = null;
+        isConnected = false;
+        isInitializing = false;
+        waInitError = null;
+
+        const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
+        if (fs.existsSync(authFolder)) {
+            fs.rmSync(authFolder, { recursive: true, force: true });
+        }
+        await initWhatsApp();
+        return { success: true, message: 'WhatsApp session reset. Generating new QR...' };
+    } catch (error) {
+        console.error('Failed to reset WhatsApp session:', error);
+        return { success: false, error: error.message };
+    }
+};
+
 const getWhatsAppQR = () => {
+    if (!waSocket && !waInitError && !isInitializing) {
+        initWhatsApp().catch(err => console.error('Init WA error:', err));
+    }
     return { qr: currentQR, socketInitialized: !!waSocket, isConnected, error: waInitError };
 };
 
@@ -190,35 +214,6 @@ const sendAdminNewOrderWhatsapp = async (customerName, serviceName, totalPrice, 
 const sendWhatsappPasswordReset = async (customerPhone, customerName, resetUrl) => {
   const message = `*Genius Tailors Security* 🔐\n\nHi ${customerName},\n\nWe received a request to reset your password. Please click the secure link below to create a new password:\n\n${resetUrl}\n\nIf you did not request this, please ignore this message.`;
   await sendWhatsappMessage(customerPhone, message);
-};
-
-const resetWhatsApp = async () => {
-    try {
-        if (waSocket) {
-            try { waSocket.end(new Error('Reset requested')); } catch(e){}
-            waSocket = null;
-        }
-        currentQR = null;
-        isConnected = false;
-        waInitError = null;
-
-        const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
-        if (fs.existsSync(authFolder)) {
-            fs.rmSync(authFolder, { recursive: true, force: true });
-        }
-        await initWhatsApp();
-        return { success: true, message: 'WhatsApp session reset. Generating new QR...' };
-    } catch (error) {
-        console.error('Failed to reset WhatsApp session:', error);
-        return { success: false, error: error.message };
-    }
-};
-
-const getWhatsAppQR = () => {
-    if (!waSocket && !waInitError) {
-        initWhatsApp().catch(err => console.error('Init WA error:', err));
-    }
-    return { qr: currentQR, socketInitialized: !!waSocket, isConnected, error: waInitError };
 };
 
 module.exports = { initWhatsApp, resetWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR };
