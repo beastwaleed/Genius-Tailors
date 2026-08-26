@@ -257,6 +257,11 @@ app.get('/whatsapp/qr', (req, res) => {
         async function checkStatus() {
           try {
             const res = await fetch('/api/whatsapp/status');
+            if (!res.ok) {
+              const statusText = document.getElementById('instruction');
+              if (statusText) statusText.innerHTML = '<span style="color: #d97706; font-weight: bold;">⏳ Server initializing... Retrying status check...</span>';
+              return;
+            }
             const data = await res.json();
 
             const qrBox = document.getElementById('qr-box');
@@ -287,7 +292,7 @@ app.get('/whatsapp/qr', (req, res) => {
         }
 
         if (!isQRDisplayed && !${isConnected ? 'true' : 'false'}) {
-          pollTimer = setInterval(checkStatus, 1500);
+          pollTimer = setInterval(checkStatus, 2000);
         }
       </script>
     </body>
