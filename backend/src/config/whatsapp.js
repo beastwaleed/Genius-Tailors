@@ -192,4 +192,33 @@ const sendWhatsappPasswordReset = async (customerPhone, customerName, resetUrl) 
   await sendWhatsappMessage(customerPhone, message);
 };
 
-module.exports = { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR };
+const resetWhatsApp = async () => {
+    try {
+        if (waSocket) {
+            try { waSocket.end(new Error('Reset requested')); } catch(e){}
+            waSocket = null;
+        }
+        currentQR = null;
+        isConnected = false;
+        waInitError = null;
+
+        const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
+        if (fs.existsSync(authFolder)) {
+            fs.rmSync(authFolder, { recursive: true, force: true });
+        }
+        await initWhatsApp();
+        return { success: true, message: 'WhatsApp session reset. Generating new QR...' };
+    } catch (error) {
+        console.error('Failed to reset WhatsApp session:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+const getWhatsAppQR = () => {
+    if (!waSocket && !waInitError) {
+        initWhatsApp().catch(err => console.error('Init WA error:', err));
+    }
+    return { qr: currentQR, socketInitialized: !!waSocket, isConnected, error: waInitError };
+};
+
+module.exports = { initWhatsApp, resetWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR };

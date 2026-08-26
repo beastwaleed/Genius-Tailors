@@ -29,7 +29,7 @@ const RetargetingCampaign = require('../src/models/RetargetingCampaign');
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/upload');
 const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendWelcomeEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
-const { initWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR } = require('../src/config/whatsapp');
+const { initWhatsApp, resetWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -182,33 +182,115 @@ app.get('/', (req, res) => {
   res.send('Genius Tailors API is successfully running on Vercel!');
 });
 
-// View WhatsApp QR Code route
+// API Status Endpoint
+app.get('/api/whatsapp/status', (req, res) => {
+  res.json(getWhatsAppQR());
+});
+
+// View & Manage WhatsApp QR Code route
 app.get('/whatsapp/qr', (req, res) => {
   const { qr, socketInitialized, isConnected, error } = getWhatsAppQR();
   
+  const refreshMeta = (!isConnected && !qr) ? '<meta http-equiv="refresh" content="3">' : '';
+
+  if (isConnected) {
+    return res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>WhatsApp Bot Connected</title>
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 50px; background: #f8fafc; }
+          .card { background: white; max-width: 500px; margin: auto; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+          .btn { background: #dc2626; color: white; border: none; padding: 0.75rem 1.5rem; font-weight: bold; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 1.5rem; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h2 style="color: #16a34a;">✅ WhatsApp Connected!</h2>
+          <p style="color: #475569; font-size: 1.1rem;">Your WhatsApp bot is linked and active. Notifications will be sent automatically.</p>
+          <a href="/whatsapp/reset" class="btn" onclick="return confirm('Disconnect & generate a new QR code?')">🔴 Reset Session / Re-link Device</a>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+
   if (!qr) {
     return res.send(`
-      <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
-        <h2>WhatsApp Bot Status</h2>
-        <p style="color: ${socketInitialized ? (isConnected ? 'green' : 'orange') : 'red'}; font-weight: bold;">
-          ${socketInitialized 
-            ? (isConnected ? '✅ WhatsApp Bot is connected successfully!' : '⏳ WhatsApp Bot is booting up/connecting...') 
-            : '❌ WhatsApp Bot FAILED TO INITIALIZE!'}
-        </p>
-        ${error ? `<p style="color: red; background: #ffeeee; padding: 10px; border-radius: 5px;"><strong>Error:</strong> ${error}</p>` : ''}
-        <p>No QR code to scan.</p>
-        <p style="font-size: 12px; color: #aaa; margin-top: 20px;">Socket Status: Initialized: ${socketInitialized}, Connected: ${isConnected}</p>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>WhatsApp Bot Booting...</title>
+        ${refreshMeta}
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 50px; background: #f8fafc; }
+          .card { background: white; max-width: 500px; margin: auto; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+          .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #2563eb; border-radius: 50%; width: 36px; height: 36px; animation: spin 1s linear infinite; margin: 15px auto; }
+          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h2>📱 WhatsApp Connection</h2>
+          <div class="spinner"></div>
+          <p style="color: #d97706; font-weight: bold;">⏳ Generating QR code... (Auto-refreshing)</p>
+          ${error ? `<p style="color: red; background: #fee2e2; padding: 10px; border-radius: 6px;"><strong>Error:</strong> ${error}</p>` : ''}
+          <p style="font-size: 0.85rem; color: #64748b;">If it takes more than 10 seconds, click Reset below to clear old session data and force a new QR code.</p>
+          <a href="/whatsapp/reset" style="background: #dc2626; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9rem; display: inline-block; margin-top: 10px;">🔴 Reset & Generate Fresh QR Code</a>
+        </div>
+      </body>
+      </html>
     `);
   }
   
   res.send(`
-    <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
-      <h2>WhatsApp Bot Login</h2>
-      <p>Scan this QR code from your WhatsApp Linked Devices screen.</p>
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}" alt="QR Code" />
-      <p style="margin-top: 20px; font-size: 14px; color: #666;">Refresh this page if the QR code expires.</p>
-    </div>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Scan WhatsApp QR Code</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 40px; background: #f8fafc; }
+        .card { background: white; max-width: 480px; margin: auto; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        img { border: 4px solid #e2e8f0; border-radius: 10px; padding: 8px; background: white; margin: 15px 0; }
+        .btn { background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.85rem; display: inline-block; margin-top: 15px; }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <h2 style="margin-top: 0; color: #0f172a;">📱 Link WhatsApp Device</h2>
+        <p style="color: #475569; font-size: 0.95rem;">Open WhatsApp on your phone → Settings / Menu → <strong>Linked Devices</strong> → Tap <strong>Link a Device</strong> and scan below:</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(qr)}" alt="WhatsApp QR Code" />
+        <br />
+        <a href="/whatsapp/reset" class="btn">🔄 Re-generate New QR Code</a>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
+// Force Reset WhatsApp Auth Session Route
+app.get('/whatsapp/reset', async (req, res) => {
+  const result = await resetWhatsApp();
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta http-equiv="refresh" content="2;url=/whatsapp/qr">
+      <title>Resetting WhatsApp...</title>
+      <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f8fafc; }
+        .card { background: white; max-width: 450px; margin: auto; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <h2 style="color: #2563eb;">🔄 Resetting Session...</h2>
+        <p>Cleared old authentication data. Redirecting to QR code in 2 seconds...</p>
+        <p><a href="/whatsapp/qr" style="color: #2563eb; font-weight: bold;">Click here if not redirected</a></p>
+      </div>
+    </body>
+    </html>
   `);
 });
 
