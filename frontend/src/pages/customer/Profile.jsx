@@ -62,51 +62,61 @@ export default function Profile() {
         <meta name="description" content="Manage your custom tailoring profile, save your measurements, and track your orders with Genius Tailors in Pakistan." />
       </Helmet>
       <CustomerLayout title="My Profile">
-      <div className="luxury-workspace-inner" style={{ maxWidth: '800px', margin: '0' }}>
+      <div className="premium-dashboard" style={{ maxWidth: '800px' }}>
         
-        <div className="luxury-section">
-          <h2 className="luxury-section-title">Personal Information</h2>
-          <div className="luxury-card profile-card-inner">
+        <div>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.2rem 0' }}>Personal Information</h1>
+          <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0 0 1.25rem 0' }}>Manage your account contact details and primary shipping address.</p>
+          
+          <div className="premium-glass-card" style={{ padding: '1.5rem' }}>
             {loading ? (
-              <p style={{ textAlign: 'center', padding: '2rem 0', color: 'var(--stone)' }}>Loading profile data...</p>
+              <p style={{ textAlign: 'center', padding: '2rem 0', color: '#64748b', margin: 0 }}>Loading profile data...</p>
             ) : (
-            <form onSubmit={handleProfileUpdate} className="luxury-form">
+            <form onSubmit={handleProfileUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               
-              <div className="form-row">
-                <div className="luxury-form-group">
-                  <label>Full Name</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Full Name</label>
                   <input 
                     type="text" 
+                    className="premium-input"
+                    style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
                 </div>
                 
-                <div className="luxury-form-group">
-                  <label>Email Address</label>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Email Address</label>
                   <input 
                     type="email" 
+                    className="premium-input"
+                    style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                   />
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="luxury-form-group">
-                  <label>Phone Number</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Phone Number</label>
                   <input 
                     type="text" 
+                    className="premium-input"
+                    style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
                     placeholder="+92 300 1234567"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
                   />
                 </div>
 
-                <div className="luxury-form-group">
-                  <label>Shipping Address</label>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Shipping Address</label>
                   <input 
                     type="text" 
+                    className="premium-input"
+                    style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
                     placeholder="Your primary delivery address"
                     value={formData.address}
                     onChange={(e) => setFormData({...formData, address: e.target.value})}
@@ -114,21 +124,23 @@ export default function Profile() {
                 </div>
               </div>
 
-              <hr style={{ border: 'none', borderTop: '1px solid var(--ivory-border)', margin: '1rem 0' }} />
+              <hr style={{ border: 'none', borderTop: '1px solid #E2E8F0', margin: '0.5rem 0' }} />
 
-              <div className="luxury-form-group" style={{ maxWidth: '50%' }}>
-                <label>Change Password (Optional)</label>
+              <div style={{ maxWidth: '360px' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.35rem' }}>Change Password (Optional)</label>
                 <input 
                   type="password" 
+                  className="premium-input"
+                  style={{ width: '100%', padding: '0.5rem 0.75rem', fontSize: '0.875rem' }}
                   placeholder="Leave blank to keep current"
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
                 />
-                <span className="subtext" style={{ marginTop: '0.25rem', display: 'block' }}>Only fill this out if you wish to change your password.</span>
+                <span style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem', display: 'block' }}>Only fill this out if you wish to change your password.</span>
               </div>
 
-              <div style={{ marginTop: '2rem' }}>
-                <button type="submit" className="luxury-btn-primary" disabled={saving}>
+              <div style={{ marginTop: '0.5rem' }}>
+                <button type="submit" className="btn btn-primary btn-sm" style={{ padding: '0.55rem 1.5rem', fontSize: '0.85rem', borderRadius: '6px' }} disabled={saving}>
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>

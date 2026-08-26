@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import logo from '../assets/logo.png';
+import logo from '../assets/LogoPNG.png';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -50,23 +50,12 @@ export default function Navbar() {
               <Link to="/blogs" className={`nav-link ${isActive('/blogs') ? 'nav-link-active' : ''}`}>Journal</Link>
               <Link to="/contact" className={`nav-link ${isActive('/contact') ? 'nav-link-active' : ''}`}>Contact</Link>
               <Link to="/track" className={`nav-link ${isActive('/track') ? 'nav-link-active' : ''}`} style={{ color: 'var(--gold)', fontWeight: 600 }}>Track Order</Link>
-
-
-
-              {isAdmin && (
-                <>
-                  <Link to="/admin" className={`nav-link ${isActive('/admin') ? 'nav-link-active' : ''}`}>Dashboard</Link>
-                  <Link to="/admin/orders" className={`nav-link ${isActive('/admin/orders') ? 'nav-link-active' : ''}`}>Orders</Link>
-                  <Link to="/admin/queue" className={`nav-link ${isActive('/admin/queue') ? 'nav-link-active' : ''}`}>Queue</Link>
-                  <Link to="/admin/customers" className={`nav-link ${isActive('/admin/customers') ? 'nav-link-active' : ''}`}>Customers</Link>
-                </>
-              )}
             </div>
 
             {/* Right Actions */}
             <div className="navbar-actions">
               {isLoggedIn ? (
-                <div className="nav-user" style={{ position: 'relative' }}>
+                <div className="nav-user">
                   <button 
                     onClick={() => setDropdownOpen(!dropdownOpen)} 
                     className="nav-user-info"
@@ -80,7 +69,7 @@ export default function Navbar() {
                       </span>
                     )}
                     {isAdmin && <span className="badge badge-admin">Admin</span>}
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginLeft: '0.5rem' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginLeft: '0.4rem' }}>
                       <path d="M6 9l6 6 6-6" />
                     </svg>
                   </button>
@@ -88,23 +77,29 @@ export default function Navbar() {
                   {/* Dropdown Menu */}
                   {dropdownOpen && (
                     <div className="user-dropdown">
-                      {!isAdmin && (
+                      {!isAdmin ? (
                         <>
-                          <Link to="/dashboard" className="dropdown-item">Dashboard</Link>
-                          <Link to="/my-orders" className="dropdown-item">My Orders</Link>
-                          <Link to="/measurements" className="dropdown-item">Measurements</Link>
-                          <Link to="/loyalty" className="dropdown-item">Loyalty Points</Link>
+                          <Link to="/dashboard" className="dropdown-item">📊 My Dashboard</Link>
+                          <Link to="/my-orders" className="dropdown-item">📦 My Orders</Link>
+                          <Link to="/measurements" className="dropdown-item">📏 Measurements</Link>
+                          <Link to="/loyalty" className="dropdown-item">🎁 Loyalty Points</Link>
+                          <Link to="/profile" className="dropdown-item">👤 Profile</Link>
+                        </>
+                      ) : (
+                        <>
+                          <Link to="/admin" className="dropdown-item">⚡ Admin Dashboard</Link>
+                          <Link to="/admin/orders" className="dropdown-item">📦 All Orders</Link>
+                          <Link to="/admin/queue" className="dropdown-item">⚡ Priority Queue</Link>
+                          <Link to="/admin/customers" className="dropdown-item">👥 Customers</Link>
+                          <Link to="/admin/popups" className="dropdown-item">🎁 Popups & Offers</Link>
                         </>
                       )}
-                      {isAdmin && (
-                        <Link to="/admin" className="dropdown-item">Admin Dashboard</Link>
-                      )}
+                      <div className="dropdown-divider" />
+                      <button onClick={handleLogout} className="dropdown-item danger">
+                        🚪 Sign Out
+                      </button>
                     </div>
                   )}
-
-                  <button onClick={handleLogout} className="btn btn-ghost btn-sm">
-                    Sign Out
-                  </button>
                 </div>
               ) : (
                 <div className="nav-auth">

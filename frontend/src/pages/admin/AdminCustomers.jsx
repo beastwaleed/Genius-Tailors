@@ -239,9 +239,49 @@ export default function AdminCustomers() {
     link.setAttribute('download', `Customers_Export_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
     toast.success('Customers exported successfully');
-    toast.success('Customers exported successfully');
+  };
+
+  const handleQuickWhatsAppRetarget = (customer) => {
+    if (!customer.phone) {
+      toast.error('Customer has no phone number on file');
+      return;
+    }
+    const cleanPhone = customer.phone.replace(/[^0-9]/g, '');
+    const msg = `Salam ${customer.name}! We miss your custom style at Genius Tailors. Use promo code VIP10 for 10% OFF + Free Delivery on your next bespoke order: https://geniustailors.com/book`;
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
+
+  const handleQuickAutoRetarget = async (customer) => {
+    try {
+      const { data } = await api.post(`/api/admin/crm/users/${customer._id}/retarget`, {
+        promoCode: 'VIP10',
+        discountText: '10% OFF Special VIP Return Offer'
+      });
+      toast.success(data.message || `Retargeting campaign sent to ${customer.name}`);
+    } catch (error) {
+      toast.error('Failed to send retargeting campaign');
+    }
+  };
+
+  const handleBroadcastRetarget = async () => {
+    if (filteredCustomersList.length === 0) {
+      toast.error('No customers match your filter');
+      return;
+    }
+    if (!window.confirm(`Broadcast retargeting promo VIP10 (10% OFF) to all ${filteredCustomersList.length} filtered customers via WhatsApp & Email?`)) return;
+
+    try {
+      const { data } = await api.post('/api/admin/crm/retarget-segment', {
+        targetTags: filterTag ? [filterTag] : [],
+        membershipLevel: filterMembership || '',
+        promoCode: 'VIP10',
+        discountText: '10% OFF Special VIP Return Offer'
+      });
+      toast.success(data.message || 'Segment retargeting broadcast initiated!');
+    } catch (error) {
+      toast.error('Failed to broadcast segment retargeting');
+    }
   };
 
   const totalPoints = customers.reduce((acc, c) => acc + (c.loyaltyPoints || 0), 0);
@@ -250,27 +290,18 @@ export default function AdminCustomers() {
   return (
     <AdminLayout title="Customer Base">
       <div className="premium-dashboard">
-        <div className="admin-stats-grid" style={{ marginBottom: '2rem' }}>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)' }}>👥</div>
-            <div className="stat-info">
-              <h4>Total Customers</h4>
-              <p className="stat-value">{customers.length}</p>
-            </div>
+        <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '1.25rem' }}>
+          <div className="admin-stat-card">
+            <span className="stat-label">Total Customers</span>
+            <span className="stat-val">{customers.length}</span>
           </div>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)' }}>⭐</div>
-            <div className="stat-info">
-              <h4>Loyalty Members</h4>
-              <p className="stat-value">{activeMembers}</p>
-            </div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Loyalty Members</span>
+            <span className="stat-val">{activeMembers}</span>
           </div>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}>🏆</div>
-            <div className="stat-info">
-              <h4>Total Points Issued</h4>
-              <p className="stat-value">{totalPoints}</p>
-            </div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Total Points Issued</span>
+            <span className="stat-val">{totalPoints}</span>
           </div>
         </div>
 
@@ -317,34 +348,38 @@ export default function AdminCustomers() {
           </div>
         )}
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
-          <h2 className="premium-title" style={{ marginBottom: 0, fontSize: '1.5rem' }}>Customer Directory</h2>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="premium-glass-card" style={{ padding: '1rem', marginBottom: '1.25rem' }}>
+          <div className="filter-controls">
             <input 
               type="text" 
               placeholder="Search by name, email..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="premium-input"
-              style={{ width: '220px' }}
+              className="premium-input search-input"
+              style={{ padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
             />
-            <select className="premium-input" value={filterMembership} onChange={(e) => setFilterMembership(e.target.value)} style={{ width: '150px' }}>
-              <option value="">All Tiers</option>
-              <option value="Bronze">Bronze</option>
-              <option value="Silver">Silver</option>
-              <option value="Gold">Gold</option>
-            </select>
-            <input 
-              type="text" 
-              placeholder="Filter by Tag (e.g. VIP)" 
-              value={filterTag}
-              onChange={(e) => setFilterTag(e.target.value)}
-              className="premium-input"
-              style={{ width: '180px' }}
-            />
-            <button className="premium-btn" onClick={() => setShowModal(true)} style={{ background: '#1e293b', color: 'white', border: 'none', padding: '0.75rem 1.25rem', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>+ Add Customer</button>
-            <button className="premium-btn" onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#C9A96E', color: 'white', border: 'none', padding: '0.75rem 1.25rem', borderRadius: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <div className="select-group">
+              <select className="premium-input" value={filterMembership} onChange={(e) => setFilterMembership(e.target.value)} style={{ padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}>
+                <option value="">All Tiers</option>
+                <option value="Bronze">Bronze</option>
+                <option value="Silver">Silver</option>
+                <option value="Gold">Gold</option>
+              </select>
+              <input 
+                type="text" 
+                placeholder="Filter by Tag (e.g. VIP)" 
+                value={filterTag}
+                onChange={(e) => setFilterTag(e.target.value)}
+                className="premium-input"
+                style={{ padding: '0.45rem 0.75rem', fontSize: '0.85rem', width: '160px' }}
+              />
+            </div>
+            <button className="premium-btn" onClick={handleBroadcastRetarget} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.45rem 0.85rem', fontSize: '0.825rem', borderRadius: '6px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              🎯 Retarget Segment
+            </button>
+            <button className="premium-btn" onClick={() => setShowModal(true)} style={{ background: '#1e293b', color: 'white', border: 'none', padding: '0.45rem 0.85rem', fontSize: '0.825rem', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}>+ Add Customer</button>
+            <button className="premium-btn" onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#C9A96E', color: 'white', border: 'none', padding: '0.45rem 0.85rem', fontSize: '0.825rem', borderRadius: '6px', fontWeight: 600, cursor: 'pointer' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
               Export CSV
             </button>
           </div>
@@ -386,11 +421,17 @@ export default function AdminCustomers() {
                     <td>{customer.email}</td>
                     <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
                     <td style={{ fontWeight: 600, color: '#f59e0b' }}>{customer.loyaltyPoints || 0}</td>
-                    <td style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                      <button className="premium-btn-sm" onClick={() => handleViewProfile(customer)}>View Measurements</button>
+                    <td style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <button className="premium-btn-sm" onClick={() => handleViewProfile(customer)}>Measurements</button>
                       <Link to={`/admin/customers/${customer._id}`} className="premium-btn-sm" style={{ background: '#0284c7', color: 'white', textDecoration: 'none' }}>
                         360° CRM
                       </Link>
+                      <button className="premium-btn-sm" onClick={() => handleQuickWhatsAppRetarget(customer)} style={{ background: '#25D366', color: 'white', border: 'none', cursor: 'pointer' }} title="Send WhatsApp Offer">
+                        💬 WhatsApp
+                      </button>
+                      <button className="premium-btn-sm" onClick={() => handleQuickAutoRetarget(customer)} style={{ background: '#10b981', color: 'white', border: 'none', cursor: 'pointer' }} title="Auto Email + WhatsApp Retarget">
+                        🚀 Retarget
+                      </button>
                       <button 
                         onClick={() => handleDeleteCustomer(customer._id)}
                         style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.2rem', fontSize: '1.2rem' }}

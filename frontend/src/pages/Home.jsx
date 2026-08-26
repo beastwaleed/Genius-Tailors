@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import api from '../api';
@@ -110,12 +110,31 @@ export default function Home() {
     return !sessionStorage.getItem('gt_banner_dismissed');
   });
   const [servicesData, setServicesData] = useState(SERVICES_PREVIEW);
+  const [portfolioItems, setPortfolioItems] = useState(PORTFOLIO_IMAGES);
   const [selected, setSelected] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
 
+  useEffect(() => {
+    api.get('/api/portfolio')
+      .then(res => {
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          const liveFeatured = res.data.filter(p => p.featuredOnHome !== false).map(p => ({
+            id: p._id,
+            src: p.imageUrl,
+            title: p.title
+          }));
+          if (liveFeatured.length > 0) {
+            setPortfolioItems([...liveFeatured, ...PORTFOLIO_IMAGES]);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const navigate = useNavigate();
+
   const handleOpenModal = (svc) => {
-    setSelected(svc);
-    setActiveImage(svc.img);
+    navigate(`/services/${svc.id}`);
   };
 
   const scrollGrid = (direction, id) => {
@@ -225,7 +244,7 @@ export default function Home() {
             <div className="container">
               <div className="hero-inner">
                 <div className="hero-content animate-fade-in-up">
-                  <p className="text-label" style={{ marginBottom: '1.25rem' }}>
+                  <p className="text-label hero-label" style={{ marginBottom: '1.25rem' }}>
                     Est. 1992 · Hyderabad, Pakistan
                   </p>
                   <h1 className="text-display hero-heading">
@@ -306,29 +325,17 @@ export default function Home() {
               </div>
               <div className="process-grid animate-children">
                 {PROCESS_STEPS.map(step => (
-                  <div key={step.num} className="process-step animate-fade-in" style={{ position: 'relative', overflow: 'hidden' }}>
-                    <div className="process-step-bg" style={{ 
-                      backgroundImage: `url(${step.bgImg})`,
-                      position: 'absolute',
-                      inset: 0,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      opacity: 0.45,
-                      zIndex: 0
-                    }} />
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.4) 100%)',
-                      zIndex: 0
-                    }} />
-                    
-                    <div style={{ position: 'relative', zIndex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-                        <div className="process-num text-label" style={{ marginBottom: 0 }}>{step.num}</div>
+                  <div key={step.num} className="process-step animate-fade-in">
+                    <div className="process-circle-wrapper">
+                      <div className="process-circle">
+                        <img src={step.bgImg} alt={step.title} className="process-circle-img" />
+                        <div className="process-circle-overlay" />
                       </div>
+                      <div className="process-num-badge">{step.num}</div>
+                    </div>
+                    <div className="process-info">
                       <h3 className="process-title">{step.title}</h3>
-                      <p className="text-small process-desc" style={{ position: 'relative', zIndex: 1 }}>{step.desc}</p>
+                      <p className="process-desc">{step.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -355,7 +362,7 @@ export default function Home() {
                     <div 
                       key={svc.name} 
                       className="svc-card animate-fade-in"
-                      onClick={() => handleOpenModal(svc)}
+                      onClick={() => navigate(`/services/${svc.id}`)}
                       style={{ cursor: 'pointer' }}
                     >
 
@@ -376,8 +383,8 @@ export default function Home() {
 
                     {/* Body */}
                     <div className="svc-card-body">
-                      {/* Name + Urdu */}
-                      <div className="svc-card-title-row">
+                      {/* Name + Urdu on Separate Lines */}
+                      <div className="svc-card-title-block">
                         <h3 className="svc-card-name">{svc.name}</h3>
                         <span className="svc-card-urdu">{svc.urdu}</span>
                       </div>
@@ -393,9 +400,12 @@ export default function Home() {
                       {/* Description */}
                       <p className="svc-card-desc">{svc.desc}</p>
 
-                      {/* Footer */}
+                      {/* Footer: Price on Line 1, Order Button on Line 2 */}
                       <div className="svc-card-footer">
-                        <span className="svc-card-price">{svc.price}</span>
+                        <div className="svc-price-block">
+                          <span className="svc-price-label">Starting Price</span>
+                          <span className="svc-card-price">{svc.price}</span>
+                        </div>
                         <Link 
                           to={`/book?service=${encodeURIComponent(svc.name)}`}
                           className="svc-order-btn"
@@ -428,15 +438,15 @@ export default function Home() {
 
             <div className="portfolio-marquee">
               <div className="portfolio-track">
-                {PORTFOLIO_IMAGES.map((item) => (
-                  <div key={item.id} className="portfolio-slide">
+                {portfolioItems.map((item, idx) => (
+                  <div key={item.id || idx} className="portfolio-slide">
                     <img src={item.src} alt={item.title} />
                   </div>
                 ))}
               </div>
               <div className="portfolio-track" aria-hidden="true">
-                {PORTFOLIO_IMAGES.map((item) => (
-                  <div key={item.id + '-copy'} className="portfolio-slide">
+                {portfolioItems.map((item, idx) => (
+                  <div key={(item.id || idx) + '-copy'} className="portfolio-slide">
                     <img src={item.src} alt={item.title} />
                   </div>
                 ))}
@@ -506,37 +516,98 @@ export default function Home() {
           </section>
 
 
-          {/* ── Loyalty CTA ─────────────────────────────────── */}
+          {/* ── Loyalty CTA Section ─────────────────────────── */}
           <section className="section loyalty-cta-section">
             <div className="container">
-              <div className="loyalty-cta">
-                <div className="loyalty-cta-content">
-                  <span className="text-label" style={{ color: 'var(--onyx)' }}>Loyalty Programme</span>
-                  <h2 className="text-heading-2" style={{ color: 'var(--onyx)', marginTop: '0.75rem' }}>
-                    Earn Points on Every Order
+              <div className="loyalty-card-wrapper">
+                <div className="loyalty-cta-header">
+                  <span className="loyalty-badge">✦ EXCLUSIVE CLUB & REWARDS</span>
+                  <h2 className="text-heading-2 loyalty-title">
+                    Unlock VIP Privileges & Instant Savings
                   </h2>
-                  <p className="text-subtitle" style={{ color: 'rgba(39, 39, 39, 0.7)', marginTop: '0.75rem' }}>
-                    Bronze → Silver → Gold membership. Redeem points for discounts. The more you order, the more you save.
+                  <p className="loyalty-subtitle">
+                    Get <strong>50 Welcome Points</strong> immediately when you join. Earn 1 Point for every Rs. 100 spent and unlock lifetime tier discounts plus peak-season priority tailoring.
                   </p>
-                  <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexWrap: 'wrap' }}>
-                    <Link to="/register" className="btn btn-gold btn-lg">Join Now — It's Free</Link>
-                    <Link to="/login" className="btn" style={{ background: 'transparent', color: 'var(--onyx)', border: '1.5px solid rgba(26, 26, 26, 0.3)', padding: '1rem 2.5rem' }}>
-                      Sign In
-                    </Link>
-                  </div>
                 </div>
-                <div className="loyalty-tiers">
+
+                <div className="loyalty-tiers-grid">
                   {[
-                    { tier: 'Bronze', pts: '0 – 499 pts', perks: 'Standard delivery, order history' },
-                    { tier: 'Silver', pts: '500 – 1499 pts', perks: '5% discount, priority support' },
-                    { tier: 'Gold', pts: '1500+ pts', perks: 'Peak season priority, 10% discount' },
+                    {
+                      tier: 'Bronze',
+                      badge: 'Starter',
+                      pts: '0 – 499 pts',
+                      perks: ['50 Bonus Signup Points', 'Saved Measurement Profiles', 'Order Status Notifications'],
+                      accent: '#CD7F32'
+                    },
+                    {
+                      tier: 'Silver',
+                      badge: 'Popular',
+                      pts: '500 – 1,499 pts',
+                      perks: ['5% Off Every Order', 'Priority Stitching Queue', 'Free Home Fabric Pickup'],
+                      accent: '#C0C0C0'
+                    },
+                    {
+                      tier: 'Gold VIP',
+                      badge: 'Best Value',
+                      pts: '1,500+ pts',
+                      perks: ['10% Off Lifetime Discount', 'Peak-Season Eid Priority', 'Free Express Delivery'],
+                      accent: '#FFD700'
+                    },
                   ].map(t => (
-                    <div key={t.tier} className={`tier-card tier-${t.tier.toLowerCase()}`}>
-                      <div className="tier-name">{t.tier}</div>
-                      <div className="tier-pts">{t.pts}</div>
-                      <div className="tier-perks">{t.perks}</div>
+                    <div key={t.tier} className={`tier-card tier-card-${t.tier.toLowerCase().replace(' ', '')}`}>
+                      <div className="tier-card-header">
+                        <span className="tier-pill" style={{ borderColor: t.accent, color: t.accent }}>{t.badge}</span>
+                        <h3 className="tier-name" style={{ color: t.accent }}>{t.tier}</h3>
+                        <div className="tier-pts">{t.pts}</div>
+                      </div>
+                      <ul className="tier-perks-list">
+                        {t.perks.map((p, idx) => (
+                          <li key={idx} className="tier-perk-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={t.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span>{p}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
+                </div>
+
+                <div className="loyalty-cta-actions">
+                  {isLoggedIn ? (
+                    <>
+                      <Link to="/loyalty" className="btn btn-gold btn-lg">
+                        View My Rewards & Points
+                      </Link>
+                      <Link to="/services" className="btn btn-outline-light btn-lg">
+                        Place Order to Earn Points
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/register" className="btn btn-gold btn-lg">
+                        Become a VIP
+                      </Link>
+                      <Link to="/login" className="btn btn-outline-light btn-lg">
+                        Sign In to Account
+                      </Link>
+                    </>
+                  )}
+                </div>
+
+                {/* Micro Perks Badges */}
+                <div className="loyalty-micro-perks">
+                  <div className="micro-perk">
+                    <span className="micro-icon">🎁</span>
+                    <span><strong>50 Bonus Pts</strong> on signup</span>
+                  </div>
+                  <div className="micro-perk">
+                    <span className="micro-icon">💸</span>
+                    <span><strong>Rs. 1 Off</strong> per 10 Pts redeemed</span>
+                  </div>
+                  <div className="micro-perk">
+                    <span className="micro-icon">⚡</span>
+                    <span><strong>No Waiting</strong> during peak Eid season</span>
+                  </div>
                 </div>
               </div>
             </div>

@@ -32,78 +32,65 @@ export default function MyOrders() {
 
   return (
     <CustomerLayout title="My Orders">
-      <div className="orders-page-container">
-        <div className="orders-header">
+      <div className="premium-dashboard">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h2 className="orders-title">Order History</h2>
-            <p className="orders-subtitle">Track your bespoke creations in real-time.</p>
+            <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>Order History</h1>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0.2rem 0 0 0' }}>Track your bespoke creations in real-time.</p>
           </div>
           {orders.length > 0 && (
-            <Link to="/services" className="btn btn-gold new-order-btn">
-              <span className="plus-icon">+</span> Place New Order
+            <Link to="/services" className="btn btn-primary btn-sm" style={{ padding: '0.45rem 0.85rem', fontSize: '0.825rem', textDecoration: 'none', borderRadius: '6px' }}>
+              + Place New Order
             </Link>
           )}
         </div>
 
         {loading ? (
-          <div className="loading-container">
-            <div className="spinner"></div>
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
             <p>Fetching your tailoring history...</p>
           </div>
         ) : orders.length === 0 ? (
-          <div className="empty-orders-state">
-            <div className="empty-icon-wrapper">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="empty-icon">
-                <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                <line x1="12" y1="22.08" x2="12" y2="12"></line>
-              </svg>
-            </div>
-            <h3>Your wardrobe awaits</h3>
-            <p>You haven't placed any custom orders yet. Start building your perfect fit today.</p>
-            <Link to="/services" className="btn btn-gold start-order-btn">Start an Online Order</Link>
+          <div className="admin-table-container" style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#0f172a', marginBottom: '0.5rem' }}>Your wardrobe awaits</h3>
+            <p style={{ color: '#64748b', marginBottom: '1.25rem', fontSize: '0.875rem' }}>You haven't placed any custom orders yet. Start building your perfect fit today.</p>
+            <Link to="/services" className="btn btn-primary btn-sm" style={{ textDecoration: 'none', padding: '0.5rem 1.25rem', borderRadius: '6px' }}>Start an Online Order</Link>
           </div>
         ) : (
-          <div className="orders-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
             {orders.map((order) => (
-              <div key={order._id} className="order-card-premium">
-                <div className="order-card-header">
-                  <div className="order-brand-label">Genius Tailors</div>
-                  <div className={`status-badge-premium ${order.status.toLowerCase()}`}>
-                    {order.status}
+              <div key={order._id} className="premium-glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '0.725rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {order.orderNumber || `...${order._id.slice(-6)}`}
+                    </span>
+                    <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                      {order.status}
+                    </span>
                   </div>
-                </div>
 
-                <div className="order-card-body">
-                  <h3 className="order-service-name">{order.serviceName}</h3>
-                  <div className="order-meta">
-                    <span className="order-date">Ordered: {new Date(order.createdAt).toLocaleDateString()}</span>
-                    <span className="order-price">Rs. {order.totalPrice.toLocaleString()}</span>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', margin: '0 0 0.4rem 0' }}>{order.serviceName}</h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+                    <span style={{ color: '#64748b' }}>{new Date(order.createdAt).toLocaleDateString()}</span>
+                    <span style={{ fontWeight: 700, color: '#0f172a' }}>Rs. {order.totalPrice.toLocaleString()}</span>
                   </div>
                   
-                  {order.isRush && <div className="rush-tag">⚡ Rush Delivery</div>}
-                  {order.isPriority && <div className="priority-tag">⭐ Priority Gold</div>}
+                  {order.isRush && <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#dc2626', background: '#fee2e2', padding: '0.2rem 0.5rem', borderRadius: '4px', display: 'inline-block', marginBottom: '0.5rem' }}>⚡ Rush Delivery</div>}
 
                   {order.trackingNumber && (
-                    <div style={{ marginTop: '0.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ fontSize: '0.85rem', color: '#64748b' }}>PostEx:</span>
-                      <span style={{ fontSize: '0.85rem', color: '#C9A96E', fontWeight: 600 }}>
-                        {order.trackingNumber}
-                      </span>
-                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '0.25rem' }}>(Click View Details for live tracking)</span>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '0.75rem' }}>
+                      PostEx Tracking: <strong style={{ color: '#2563eb' }}>{order.trackingNumber}</strong>
                     </div>
                   )}
 
                   {order.status !== 'Cancelled' && (
-                    <div className="status-progress-wrapper">
-                      <div className="progress-bar-bg">
+                    <div style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
+                      <div style={{ height: '6px', background: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
                         <div 
-                          className="progress-bar-fill" 
-                          style={{ width: `${getStatusProgress(order.status)}%` }}
+                          style={{ height: '100%', background: '#3B82F6', borderRadius: '9999px', width: `${getStatusProgress(order.status)}%`, transition: 'width 500ms ease' }}
                         ></div>
                       </div>
-                      <div className="progress-labels">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#64748b', marginTop: '0.35rem', fontWeight: 600 }}>
                         <span>Pending</span>
                         <span>Stitching</span>
                         <span>Delivered</span>
@@ -112,14 +99,9 @@ export default function MyOrders() {
                   )}
                 </div>
 
-                <div className="order-card-footer">
-                  <span className="order-id-label">{order.orderNumber || order._id}</span>
-                  <Link to={`/my-orders/${order._id}`} className="view-details-link">
-                    View Details
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                      <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
+                <div style={{ borderTop: '1px solid #F1F5F9', paddingTop: '0.75rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                  <Link to={`/my-orders/${order._id}`} className="premium-link" style={{ fontSize: '0.825rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                    View Order Details &rarr;
                   </Link>
                 </div>
               </div>

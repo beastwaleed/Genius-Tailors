@@ -71,48 +71,33 @@ export default function AdminPromos() {
       <div className="premium-dashboard">
         
         {/* Top Header & Stats */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h2 className="premium-title" style={{ margin: 0, fontSize: '1.8rem', color: '#1e293b' }}>Promo Code Engine</h2>
-            <p style={{ color: '#64748b', margin: '0.2rem 0 0 0' }}>Generate targeted discount codes and track campaign performance.</p>
+            <h2 className="premium-title" style={{ margin: 0, fontSize: '1.4rem', color: '#1e293b' }}>Promo Code Engine</h2>
+            <p style={{ color: '#64748b', margin: '0.2rem 0 0 0', fontSize: '0.85rem' }}>Generate targeted discount codes and track campaign performance.</p>
           </div>
           <button 
             className="premium-btn" 
             onClick={() => setShowModal(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', color: 'white', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontWeight: 600, border: 'none', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#1e293b', color: 'white', padding: '0.45rem 0.85rem', fontSize: '0.825rem', borderRadius: '6px', fontWeight: 600, border: 'none', cursor: 'pointer' }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Generate Promo Code
           </button>
         </div>
 
-        <div className="admin-stats-grid" style={{ marginBottom: '2rem' }}>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)' }}>
-              🎟️
-            </div>
-            <div className="stat-info">
-              <h4>Total Campaigns</h4>
-              <p className="stat-value">{promos.length}</p>
-            </div>
+        <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '1.25rem' }}>
+          <div className="admin-stat-card">
+            <span className="stat-label">Total Campaigns</span>
+            <span className="stat-val">{promos.length}</span>
           </div>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #34d399 0%, #059669 100%)' }}>
-              ✅
-            </div>
-            <div className="stat-info">
-              <h4>Active Promos</h4>
-              <p className="stat-value">{activePromos}</p>
-            </div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Active Promos</span>
+            <span className="stat-val" style={{ color: '#059669' }}>{activePromos}</span>
           </div>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)' }}>
-              🔥
-            </div>
-            <div className="stat-info">
-              <h4>Total Uses</h4>
-              <p className="stat-value">{totalUses}</p>
-            </div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Total Uses</span>
+            <span className="stat-val" style={{ color: '#2563eb' }}>{totalUses}</span>
           </div>
         </div>
 

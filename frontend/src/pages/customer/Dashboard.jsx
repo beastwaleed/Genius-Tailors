@@ -38,76 +38,78 @@ export default function Dashboard() {
 
   return (
     <CustomerLayout title="Dashboard Overview">
-      <div className="luxury-workspace-inner">
-        <div className="luxury-welcome">
-          <h1>Welcome back, {user?.name?.split(' ')[0]}</h1>
+      <div className="premium-dashboard">
+        <div style={{ marginBottom: '1.25rem' }}>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>Welcome back, {user?.name?.split(' ')[0]}</h1>
+          <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0.2rem 0 0 0' }}>Here is a summary of your recent orders and tailoring rewards.</p>
         </div>
 
         {/* Metric Cards */}
-        <div className="luxury-metrics-grid">
-          <div className="luxury-metric-card">
-            <div className="luxury-metric-header">
-              <h3>Total Orders</h3>
-              <span className="metric-icon">🛍️</span>
-            </div>
-            <div className="luxury-metric-value">{orders.length}</div>
+        <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '1.5rem' }}>
+          <div className="admin-stat-card">
+            <span className="stat-label">Total Orders</span>
+            <span className="stat-val">{orders.length}</span>
           </div>
 
-          <div className="luxury-metric-card">
-            <div className="luxury-metric-header">
-              <h3>Active Orders</h3>
-              <span className="metric-icon">⏳</span>
-            </div>
-            <div className="luxury-metric-value">{activeOrdersCount}</div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Active Orders</span>
+            <span className="stat-val" style={{ color: '#2563eb' }}>{activeOrdersCount}</span>
           </div>
 
-          <div className="luxury-metric-card">
-            <div className="luxury-metric-header">
-              <h3>Loyalty Points</h3>
-              <span className="metric-icon">✧</span>
-            </div>
-            <div className="luxury-metric-value">{user?.loyaltyPoints || 0}</div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Loyalty Points</span>
+            <span className="stat-val" style={{ color: '#d97706' }}>{user?.loyaltyPoints || 0} pts</span>
           </div>
         </div>
 
         {/* Recent Orders List */}
-        <div className="luxury-section">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem' }}>
-            <h2 className="luxury-section-title" style={{ marginBottom: 0 }}>Recent Orders</h2>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+            <h2 className="premium-title" style={{ margin: 0, fontSize: '1rem' }}>Recent Orders</h2>
             {orders.length > 0 && (
-              <Link to="/my-orders" style={{ color: 'var(--stone)', textDecoration: 'none', fontSize: '0.9rem' }}>
-                View All →
+              <Link to="/my-orders" className="premium-link">
+                View All Orders →
               </Link>
             )}
           </div>
 
-          <div className="luxury-card">
+          <div className="admin-table-container">
             {loading ? (
-              <p style={{ padding: '3rem', color: 'var(--stone)', textAlign: 'center' }}>Loading orders...</p>
+              <p style={{ padding: '2rem', color: '#64748b', textAlign: 'center', margin: 0 }}>Loading orders...</p>
             ) : orders.length === 0 ? (
-              <div style={{ padding: '4rem 2rem', textAlign: 'center' }}>
-                <p style={{ color: 'var(--stone)', marginBottom: '1.5rem' }}>You haven't placed any orders yet.</p>
-                <Link to="/services" className="luxury-btn-primary">Start a Online Order</Link>
+              <div style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
+                <p style={{ color: '#64748b', marginBottom: '1rem', fontSize: '0.9rem' }}>You haven't placed any orders yet.</p>
+                <Link to="/services" className="btn btn-primary btn-sm" style={{ textDecoration: 'none', padding: '0.5rem 1.25rem', borderRadius: '6px' }}>Start an Online Order</Link>
               </div>
             ) : (
-              <div className="luxury-table">
-                {orders.slice(0, 5).map(order => (
-                  <div key={order._id} className="luxury-table-row">
-                    <div className="luxury-table-cell main-cell">
-                      <h4>{order.serviceName}</h4>
-                      <span className="subtext">{new Date(order.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    <div className="luxury-table-cell">
-                      <span className="price">Rs. {order.totalPrice.toLocaleString()}</span>
-                    </div>
-                    <div className="luxury-table-cell align-right">
-                      <span className={`luxury-badge badge-${order.status.toLowerCase()}`}>
-                        {order.status}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <table className="premium-table">
+                <thead>
+                  <tr>
+                    <th>Service Garment</th>
+                    <th>Date</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.slice(0, 5).map(order => (
+                    <tr key={order._id}>
+                      <td style={{ fontWeight: 600, color: '#1e293b' }}>{order.serviceName}</td>
+                      <td style={{ color: '#64748b', fontSize: '0.85rem' }}>{new Date(order.createdAt).toLocaleDateString()}</td>
+                      <td style={{ fontWeight: 700, color: '#0f172a' }}>Rs. {order.totalPrice.toLocaleString()}</td>
+                      <td>
+                        <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td>
+                        <Link to={`/my-orders/${order._id}`} className="premium-link" style={{ fontSize: '0.825rem' }}>Details &rarr;</Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         </div>

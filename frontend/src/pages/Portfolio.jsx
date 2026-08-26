@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Helmet } from 'react-helmet-async';
+import api from '../api';
 
 import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
 import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
@@ -27,7 +28,7 @@ import urbanCore02 from '../assets/UrbanCore02.jpeg'
 import royalSlateClassicMain from '../assets/RoyalSlateClassicMain.jpeg'
 import royalSlateClassic01 from '../assets/RoyalSlateClassic01.jpeg'
 
-const PORTFOLIO_IMAGES = [
+const DEFAULT_PORTFOLIO_IMAGES = [
   { id: 1, src: ShalwarKameezFeaturedImage, title: 'Classic Kameez Shalwar' },
   { id: 2, src: angularEdgeMain, title: 'Angular Edge Design' },
   { id: 3, src: urbanCoreMain, title: 'Urban Core Zardari Suit' },
@@ -50,6 +51,31 @@ const PORTFOLIO_IMAGES = [
 ];
 
 export default function Portfolio() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    api.get('/api/portfolio')
+      .then(res => {
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          const formatted = res.data.map(p => ({
+            id: p._id,
+            src: p.imageUrl,
+            title: p.title,
+            category: p.category
+          }));
+          setItems([...formatted, ...DEFAULT_PORTFOLIO_IMAGES]);
+        } else {
+          setItems(DEFAULT_PORTFOLIO_IMAGES);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to load portfolio API:', err);
+        setItems(DEFAULT_PORTFOLIO_IMAGES);
+      });
+  }, []);
+
+  const displayItems = items.length > 0 ? items : DEFAULT_PORTFOLIO_IMAGES;
+
   return (
     <>
       <Helmet>
@@ -70,8 +96,8 @@ export default function Portfolio() {
           </div>
 
           <div className="portfolio-page-grid">
-            {PORTFOLIO_IMAGES.map((item, idx) => (
-              <div key={idx} className="portfolio-item">
+            {displayItems.map((item, idx) => (
+              <div key={item.id || idx} className="portfolio-item">
                 <img src={item.src} alt={item.title} />
                 <div className="portfolio-item-overlay">
                   <span>{item.title}</span>

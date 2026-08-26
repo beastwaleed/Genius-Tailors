@@ -102,60 +102,45 @@ export default function AdminDashboard() {
       ) : (
         <>
           <div className="premium-dashboard">
-            <div className="admin-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div className="premium-stat-card">
-                <div className="stat-icon" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}>💰</div>
-                <div className="stat-info">
-                  <h4>Gross Revenue</h4>
-                  <p className="stat-value">Rs. {stats.revenue?.toLocaleString()}</p>
-                </div>
+            <div className="admin-stats-grid">
+              <div className="admin-stat-card">
+                <span className="stat-label">Gross Revenue</span>
+                <span className="stat-val">Rs. {stats.revenue?.toLocaleString()}</span>
               </div>
-              <div className="premium-stat-card">
-                <div className="stat-icon" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)' }}>📈</div>
-                <div className="stat-info">
-                  <h4>Avg Order Value</h4>
-                  <p className="stat-value">Rs. {Math.round(stats.aov || 0).toLocaleString()}</p>
-                </div>
+              <div className="admin-stat-card">
+                <span className="stat-label">Avg Order Value</span>
+                <span className="stat-val">Rs. {Math.round(stats.aov || 0).toLocaleString()}</span>
               </div>
-              <div className="premium-stat-card">
-                <div className="stat-icon" style={{ color: '#3b82f6', background: 'rgba(59, 130, 246, 0.1)' }}>📦</div>
-                <div className="stat-info">
-                  <h4>Total Orders</h4>
-                  <p className="stat-value">{stats.totalOrders}</p>
-                </div>
+              <div className="admin-stat-card">
+                <span className="stat-label">Total Orders</span>
+                <span className="stat-val">{stats.totalOrders}</span>
               </div>
-              <div className="premium-stat-card">
-                <div className="stat-icon" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)' }}>⏳</div>
-                <div className="stat-info">
-                  <h4>Active Pipeline</h4>
-                  <p className="stat-value">{stats.pendingOrders}</p>
-                </div>
+              <div className="admin-stat-card">
+                <span className="stat-label">Active Pipeline</span>
+                <span className="stat-val">{stats.pendingOrders}</span>
               </div>
-              <div className="premium-stat-card">
-                <div className="stat-icon" style={{ color: '#64748b', background: 'rgba(100, 116, 139, 0.1)' }}>👥</div>
-                <div className="stat-info">
-                  <h4>Registered Users</h4>
-                  <p className="stat-value">{stats.totalCustomers}</p>
-                </div>
+              <div className="admin-stat-card">
+                <span className="stat-label">Registered Users</span>
+                <span className="stat-val">{stats.totalCustomers}</span>
               </div>
             </div>
 
             {/* ── Revenue & Growth Chart Row ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div className="premium-glass-card" style={{ padding: '1.5rem', gridColumn: 'span 2' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <h3 className="premium-title" style={{ margin: 0 }}>Revenue Growth (LTV & MRR)</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+              <div className="premium-glass-card" style={{ padding: '1rem', gridColumn: 'span 2' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <h3 className="premium-title" style={{ margin: 0, fontSize: '0.9rem' }}>Revenue Growth (LTV & MRR)</h3>
                   <span style={{ 
                     background: stats.momGrowth >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
                     color: stats.momGrowth >= 0 ? '#10b981' : '#ef4444', 
-                    padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 700 
+                    padding: '0.15rem 0.6rem', borderRadius: '1rem', fontSize: '0.75rem', fontWeight: 700 
                   }}>
                     {stats.momGrowth >= 0 ? '+' : ''}{stats.momGrowth}% this month
                   </span>
                 </div>
-                <div style={{ width: '100%', height: 300 }}>
+                <div style={{ width: '100%', height: 180 }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={stats.chartData || []} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <AreaChart data={stats.chartData || []} margin={{ top: 5, right: 15, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
@@ -163,22 +148,22 @@ export default function AdminDashboard() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dy={10} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dx={-10} tickFormatter={(value) => `Rs.${value/1000}k`} domain={[0, dataMax => Math.max(dataMax * 1.1, 1000)]} />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dy={5} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dx={-5} tickFormatter={(value) => `Rs.${value/1000}k`} domain={[0, dataMax => Math.max(dataMax * 1.1, 1000)]} />
                       <RechartsTooltip 
-                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                        contentStyle={{ borderRadius: '6px', border: 'none', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', fontSize: '0.8rem' }}
                         formatter={(value) => [`Rs. ${value.toLocaleString()}`, 'Revenue']}
                       />
-                      <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+                      <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </div>
 
               {/* Order Status Donut Chart */}
-              <div className="premium-glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-                <h3 className="premium-title" style={{ margin: 0, marginBottom: '1rem' }}>Order Distribution</h3>
-                <div style={{ flex: 1, width: '100%', minHeight: '300px' }}>
+              <div className="premium-glass-card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column' }}>
+                <h3 className="premium-title" style={{ margin: 0, marginBottom: '0.75rem', fontSize: '0.9rem' }}>Order Distribution</h3>
+                <div style={{ flex: 1, width: '100%', minHeight: '180px' }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -187,9 +172,9 @@ export default function AdminDashboard() {
                         nameKey="_id"
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
-                        outerRadius={90}
-                        paddingAngle={5}
+                        innerRadius={45}
+                        outerRadius={65}
+                        paddingAngle={4}
                       >
                         {stats.orderStatuses?.map((entry, index) => {
                           const COLORS = {
@@ -204,10 +189,10 @@ export default function AdminDashboard() {
                         })}
                       </Pie>
                       <RechartsTooltip 
-                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                        contentStyle={{ borderRadius: '6px', border: 'none', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', fontSize: '0.8rem' }}
                         formatter={(value) => [`${value} Orders`, 'Count']}
                       />
-                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                      <Legend verticalAlign="bottom" height={28} iconType="circle" wrapperStyle={{ fontSize: '0.75rem' }} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
@@ -215,23 +200,23 @@ export default function AdminDashboard() {
             </div>
 
             {/* ── Order Volume & Services Row ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
               
               {/* Monthly Orders Bar Chart */}
-              <div className="premium-glass-card" style={{ padding: '1.5rem' }}>
-                <h3 className="premium-title" style={{ margin: 0, marginBottom: '1.5rem' }}>Monthly Order Volume</h3>
-                <div style={{ width: '100%', height: 280 }}>
+              <div className="premium-glass-card" style={{ padding: '1rem' }}>
+                <h3 className="premium-title" style={{ margin: 0, marginBottom: '0.75rem', fontSize: '0.9rem' }}>Monthly Order Volume</h3>
+                <div style={{ width: '100%', height: 180 }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={stats.chartData || []} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <BarChart data={stats.chartData || []} margin={{ top: 5, right: 15, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dy={10} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dx={-10} allowDecimals={false} domain={[0, dataMax => Math.max(dataMax, 5)]} />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dy={5} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dx={-5} allowDecimals={false} domain={[0, dataMax => Math.max(dataMax, 5)]} />
                       <RechartsTooltip 
                         cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
-                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                        contentStyle={{ borderRadius: '6px', border: 'none', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', fontSize: '0.8rem' }}
                         formatter={(value) => [`${value} Orders`, 'Volume']}
                       />
-                      <Bar dataKey="orders" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={30} />
+                      <Bar dataKey="orders" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

@@ -79,81 +79,93 @@ export default function Loyalty() {
 
   return (
     <CustomerLayout title="Loyalty & Rewards">
-      <div className="luxury-workspace-inner" style={{ maxWidth: '800px' }}>
+      <div className="premium-dashboard">
         
-        <div className="luxury-card loyalty-hero">
-          <div className="loyalty-hero-content">
-            <h2 className="tier-title">{currentTier} Tier</h2>
-            <div className="points-display">
-              <span className="points-value">{points}</span>
-              <span className="points-label">Total Points</span>
+        {/* Tier Card */}
+        <div style={{ background: '#0F172A', color: '#FFFFFF', borderRadius: '16px', padding: '1.75rem 2rem', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#C9A96E', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                {currentTier} Member Tier
+              </span>
+              <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Genius VIP Club</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '1.5rem' }}>
+              <span style={{ fontSize: '3rem', fontWeight: 800, fontFamily: 'var(--font-serif)', lineHeight: 1, color: '#FFFFFF' }}>{points}</span>
+              <span style={{ fontSize: '0.8rem', color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total Points</span>
             </div>
             
-            <div className="progress-container">
-              <div className="progress-header">
+            <div style={{ maxWidth: '420px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.775rem', color: '#CBD5E1', marginBottom: '0.4rem' }}>
                 <span>{pointsNeeded > 0 ? `${pointsNeeded} points to ${nextTier}` : 'Max Tier Reached!'}</span>
-                <span>{Math.min(100, Math.round(progress))}%</span>
+                <span style={{ fontWeight: 700 }}>{Math.min(100, Math.round(progress))}%</span>
               </div>
-              <div className="progress-bar-bg">
-                <div className="progress-bar-fill" style={{ width: `${Math.min(100, progress)}%` }}></div>
+              <div style={{ height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '9999px', overflow: 'hidden' }}>
+                <div style={{ height: '100%', background: 'linear-gradient(90deg, #C9A96E 0%, #E8D5A3 100%)', borderRadius: '9999px', width: `${Math.min(100, progress)}%`, transition: 'width 500ms ease' }}></div>
               </div>
-            </div>
-          </div>
-          <div className="loyalty-hero-bg">
-            <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-          </div>
-        </div>
-
-        <div className="luxury-section" style={{ marginTop: '3rem' }}>
-          <h2 className="luxury-section-title">Your Benefits</h2>
-          <div className="benefits-grid">
-            <div className="luxury-card benefit-card">
-              <div className="benefit-icon">🚚</div>
-              <h4>Free Shipping</h4>
-              <p>Enjoy complimentary shipping on all orders over Rs. 10,000.</p>
-            </div>
-            <div className="luxury-card benefit-card">
-              <div className="benefit-icon">✂️</div>
-              <h4>Priority Tailoring</h4>
-              <p>Your orders skip the queue and go straight to our master tailors.</p>
-            </div>
-            <div className="luxury-card benefit-card">
-              <div className="benefit-icon">🎁</div>
-              <h4>Birthday Gift</h4>
-              <p>Receive an exclusive accessory tailored for you on your birthday.</p>
             </div>
           </div>
         </div>
 
-        <div className="luxury-section" style={{ marginTop: '4rem' }}>
-          <h2 className="luxury-section-title">Earn More Points</h2>
-          <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>Follow us on social media and share a screenshot to earn 5 points instantly upon admin approval!</p>
+        {/* Benefits Section */}
+        <div style={{ marginTop: '1.5rem' }}>
+          <h2 className="premium-title" style={{ margin: '0 0 1rem 0', fontSize: '1.1rem' }}>Your Tier Benefits</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+            <div className="premium-glass-card" style={{ padding: '1.25rem' }}>
+              <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🚚</div>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.25rem 0' }}>Free Shipping</h4>
+              <p style={{ fontSize: '0.825rem', color: '#64748B', margin: 0, lineHeight: 1.5 }}>Enjoy complimentary delivery on all bespoke orders over Rs. 10,000.</p>
+            </div>
+            <div className="premium-glass-card" style={{ padding: '1.25rem' }}>
+              <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>✂️</div>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.25rem 0' }}>Priority Tailoring</h4>
+              <p style={{ fontSize: '0.825rem', color: '#64748B', margin: 0, lineHeight: 1.5 }}>Your orders skip standard queue lines and go straight to our master tailors.</p>
+            </div>
+            <div className="premium-glass-card" style={{ padding: '1.25rem' }}>
+              <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🎁</div>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.25rem 0' }}>VIP Gifts</h4>
+              <p style={{ fontSize: '0.825rem', color: '#64748B', margin: 0, lineHeight: 1.5 }}>Receive custom accessories and seasonal tailoring perks on your birthday.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Earn More Points */}
+        <div style={{ marginTop: '1.5rem' }}>
+          <h2 className="premium-title" style={{ margin: '0 0 0.25rem 0', fontSize: '1.1rem' }}>Earn More Points</h2>
+          <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '0 0 1rem 0' }}>Follow us on social media and upload a screenshot to claim +5 points instantly upon approval.</p>
           
-          <div className="benefits-grid">
-            <div className="luxury-card benefit-card social-card">
-              <i className="fa-brands fa-instagram social-icon" style={{ color: '#E1306C' }}></i>
-              <h4>Instagram</h4>
-              <p>Follow @geniustailors</p>
-              <a href="https://instagram.com/geniustailors" target="_blank" rel="noreferrer" className="luxury-btn-outline btn-sm" style={{ marginBottom: '1rem', display: 'inline-block' }}>Visit Profile</a>
-              
-              <label className="luxury-btn-primary btn-sm" style={{ cursor: 'pointer', display: 'block' }}>
-                {uploading && platform === 'Instagram' ? 'Uploading...' : 'Upload Screenshot'}
-                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleUploadScreenshot(e, 'Instagram')} disabled={uploading} />
-              </label>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+            <div className="premium-glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.25rem 0' }}>Instagram (+5 Points)</h4>
+                <p style={{ fontSize: '0.825rem', color: '#64748B', margin: '0 0 1rem 0' }}>Follow @geniustailors on Instagram and upload proof.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <a href="https://instagram.com/geniustailors" target="_blank" rel="noreferrer" className="premium-link" style={{ padding: '0.45rem 0.75rem', border: '1px solid #E2E8F0', borderRadius: '6px', fontSize: '0.8rem', textDecoration: 'none' }}>
+                  Visit Profile ↗
+                </a>
+                <label className="btn btn-primary btn-sm" style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', cursor: 'pointer', borderRadius: '6px' }}>
+                  {uploading && platform === 'Instagram' ? 'Uploading...' : 'Upload Screenshot'}
+                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleUploadScreenshot(e, 'Instagram')} disabled={uploading} />
+                </label>
+              </div>
             </div>
 
-            <div className="luxury-card benefit-card social-card">
-              <i className="fa-brands fa-tiktok social-icon" style={{ color: '#000000' }}></i>
-              <h4>TikTok</h4>
-              <p>Follow @geniustailors</p>
-              <a href="https://www.tiktok.com/@geniustailors" target="_blank" rel="noreferrer" className="luxury-btn-outline btn-sm" style={{ marginBottom: '1rem', display: 'inline-block' }}>Visit Profile</a>
-              
-              <label className="luxury-btn-primary btn-sm" style={{ cursor: 'pointer', display: 'block' }}>
-                {uploading && platform === 'TikTok' ? 'Uploading...' : 'Upload Screenshot'}
-                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleUploadScreenshot(e, 'TikTok')} disabled={uploading} />
-              </label>
+            <div className="premium-glass-card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.25rem 0' }}>TikTok (+5 Points)</h4>
+                <p style={{ fontSize: '0.825rem', color: '#64748B', margin: '0 0 1rem 0' }}>Follow @geniustailors on TikTok and upload proof.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <a href="https://www.tiktok.com/@geniustailors" target="_blank" rel="noreferrer" className="premium-link" style={{ padding: '0.45rem 0.75rem', border: '1px solid #E2E8F0', borderRadius: '6px', fontSize: '0.8rem', textDecoration: 'none' }}>
+                  Visit Profile ↗
+                </a>
+                <label className="btn btn-primary btn-sm" style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', cursor: 'pointer', borderRadius: '6px' }}>
+                  {uploading && platform === 'TikTok' ? 'Uploading...' : 'Upload Screenshot'}
+                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleUploadScreenshot(e, 'TikTok')} disabled={uploading} />
+                </label>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -67,7 +67,7 @@ export const ALL_SERVICES = [
     urdu: 'قمیض شلوار',
     tagline: 'The Timeless Pakistani Classic',
     desc: 'Our most-ordered garment. A perfectly fitted Kameez Shalwar is the foundation of every Pakistani wardrobe — comfortable for daily wear, sharp enough for formal events.',
-    price: 'From Rs. 1,800',
+    price: 'From Rs. 1,099',
     deliveryDays: '5–7 working days',
     img: ShalwarKameezFeaturedImage,
     badge: 'Most Popular',
@@ -249,9 +249,10 @@ export default function Services() {
     ? servicesData
     : servicesData.filter(s => s.category === filter);
 
+  const navigate = useNavigate();
+
   const handleOpenModal = (svc) => {
-    setSelected(svc);
-    setActiveImage(svc.img);
+    navigate(`/services/${svc.id}`);
   };
 
   return (
@@ -288,10 +289,10 @@ export default function Services() {
                 <div
                 key={svc.id}
                 className="sp-card"
-                onClick={() => handleOpenModal(svc)}
+                onClick={() => navigate(`/services/${svc.id}`)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={e => e.key === 'Enter' && handleOpenModal(svc)}
+                onKeyDown={e => e.key === 'Enter' && navigate(`/services/${svc.id}`)}
               >
                 {/* Image */}
                 <div className="sp-card-img-wrap">
@@ -306,7 +307,7 @@ export default function Services() {
 
                 {/* Body */}
                 <div className="sp-card-body">
-                  <div className="svc-card-title-row">
+                  <div className="svc-card-title-block">
                     <h3 className="svc-card-name">{svc.name}</h3>
                     <span className="svc-card-urdu">{svc.urdu}</span>
                   </div>
@@ -316,7 +317,10 @@ export default function Services() {
                     <span className="svc-reviews">({svc.reviews} reviews)</span>
                   </div>
                   <div className="svc-card-footer">
-                    <span className="svc-card-price">{svc.price}</span>
+                    <div className="svc-price-block">
+                      <span className="svc-price-label">Starting Price</span>
+                      <span className="svc-card-price">{svc.price}</span>
+                    </div>
                     <Link
                       to={`/book?service=${encodeURIComponent(svc.name)}`}
                       className="svc-order-btn"

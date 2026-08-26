@@ -368,6 +368,15 @@ export default function Booking() {
     }
   }
 
+  // 1099 Stitching offer ONLY for Kameez Shalwar when selecting from our given fabric options vs 1800 when providing own fabric
+  if (serviceName === 'Kameez Shalwar') {
+    if (selectedFabric && selectedFabric.name !== 'Provide my own fabric') {
+      basePrice = 1099;
+    } else {
+      basePrice = 1800;
+    }
+  }
+
   // Calculate Extra Styling Charges
   let styleExtras = 0;
   if (config.designs && config.designs.length > 0) {
@@ -892,7 +901,31 @@ export default function Booking() {
           {step === 3 && (
             <div className="wizard-step luxury-card">
               <h2 className="step-title">Fabric Selection</h2>
-              <p style={{ color: 'var(--stone)', marginBottom: '2rem' }}>Choose your preferred fabric or provide your own.</p>
+              <p style={{ color: 'var(--stone)', marginBottom: '1rem' }}>Choose your preferred fabric or provide your own.</p>
+
+              {serviceName === 'Kameez Shalwar' && (
+                <div style={{
+                  background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+                  border: '1px solid #F59E0B',
+                  borderRadius: '10px',
+                  padding: '1rem 1.25rem',
+                  marginBottom: '1.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  boxShadow: '0 2px 10px rgba(245, 158, 11, 0.15)'
+                }}>
+                  <span style={{ fontSize: '1.6rem' }}>🎁</span>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#92400E', fontWeight: 700 }}>
+                      SPECIAL STITCHING OFFER: Get Stitching for ONLY Rs. 1,099!
+                    </h4>
+                    <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.825rem', color: '#B45309', lineHeight: 1.4 }}>
+                      Select any of our premium fabrics below to unlock discounted stitching for <strong>Rs. 1,099</strong> (Save Rs. 701 vs Rs. 1,800 stitching when providing your own fabric)!
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="style-section" style={{ marginBottom: '2rem' }}>
                 <div className="fabric-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -926,6 +959,11 @@ export default function Booking() {
                         <span style={{ fontWeight: '600', fontSize: '0.9rem', color: opt.price === 0 ? 'var(--stone)' : 'var(--primary)' }}>
                           {opt.price === 0 ? 'Free' : `+Rs. ${opt.price}`}
                         </span>
+                        {serviceName === 'Kameez Shalwar' && opt.name !== 'Provide my own fabric' && (
+                          <div style={{ fontSize: '0.725rem', color: '#D97706', fontWeight: 700, marginTop: '0.35rem', background: '#FEF3C7', padding: '0.2rem 0.4rem', borderRadius: '4px', display: 'inline-block' }}>
+                            🔥 Includes Rs. 1,099 Stitching Offer
+                          </div>
+                        )}
                       </div>
                       {selectedFabric.name === opt.name && selectedFabric.name !== 'Provide my own fabric' && (
                         <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--onyx)', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>✓</div>

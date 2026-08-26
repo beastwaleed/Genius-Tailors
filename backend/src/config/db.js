@@ -13,8 +13,10 @@ const connectDB = async () => {
   try {
     console.log('Creating new MongoDB connection...');
     
-    // Connect to MongoDB using the connection string in your .env file
-    const db = await mongoose.connect(process.env.MONGO_URI);
+    const mongoURI = process.env.MONGO_URI || 'mongodb+srv://waleedDB:Waleed%4086@cluster0.vyqf3uv.mongodb.net/geniustailors?appName=Cluster0';
+    
+    // Connect to MongoDB using the connection string
+    const db = await mongoose.connect(mongoURI);
     
     // Check if the connection state is 'connected' (a readyState of 1 means connected)
     isConnected = db.connections[0].readyState === 1;

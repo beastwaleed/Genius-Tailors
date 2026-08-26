@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logo from '../assets/LogoPNG.png';
 
 export default function Footer() {
   return (
@@ -14,6 +14,7 @@ export default function Footer() {
                 src={logo}
                 alt="Genius Tailors"
                 className="footer-logo-img"
+                style={{ height: '70px', width: 'auto', objectFit: 'contain' }}
               />
             </Link>
             <p className="footer-tagline">

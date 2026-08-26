@@ -95,42 +95,33 @@ export default function AdminAbandonedCarts() {
   return (
     <AdminLayout title="Abandoned Carts">
       <div className="premium-dashboard">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h2 className="premium-title" style={{ margin: 0, fontSize: '1.8rem', color: '#1e293b' }}>Cart Recovery Engine</h2>
-            <p style={{ color: '#64748b', margin: '0.2rem 0 0 0' }}>Track incomplete checkouts and recapture lost sales.</p>
+            <h2 className="premium-title" style={{ margin: 0, fontSize: '1.4rem', color: '#1e293b' }}>Cart Recovery Engine</h2>
+            <p style={{ color: '#64748b', margin: '0.2rem 0 0 0', fontSize: '0.85rem' }}>Track incomplete checkouts and recapture lost sales.</p>
           </div>
           {selectedCarts.length > 0 && (
             <button 
               onClick={handleBulkDelete}
-              style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              style={{ background: '#ef4444', color: 'white', border: 'none', padding: '0.45rem 0.85rem', fontSize: '0.825rem', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
             >
               🗑️ Delete Selected ({selectedCarts.length})
             </button>
           )}
         </div>
 
-        <div className="admin-stats-grid" style={{ marginBottom: '2rem' }}>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)' }}>🛒</div>
-            <div className="stat-info">
-              <h4>Pending Carts</h4>
-              <p className="stat-value">{pendingCount}</p>
-            </div>
+        <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '1.25rem' }}>
+          <div className="admin-stat-card">
+            <span className="stat-label">Pending Carts</span>
+            <span className="stat-val">{pendingCount}</span>
           </div>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #34d399 0%, #059669 100%)' }}>✅</div>
-            <div className="stat-info">
-              <h4>Successfully Recovered</h4>
-              <p className="stat-value">{recoveredCount}</p>
-            </div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Successfully Recovered</span>
+            <span className="stat-val" style={{ color: '#059669' }}>{recoveredCount}</span>
           </div>
-          <div className="premium-stat-card">
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)' }}>💸</div>
-            <div className="stat-info">
-              <h4>Potential Revenue</h4>
-              <p className="stat-value">Rs. {lostRevenue.toLocaleString()}</p>
-            </div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Potential Revenue</span>
+            <span className="stat-val" style={{ color: '#dc2626' }}>Rs. {lostRevenue.toLocaleString()}</span>
           </div>
         </div>
 

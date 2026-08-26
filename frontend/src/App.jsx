@@ -20,6 +20,7 @@ import TrackOrder from './pages/TrackOrder';
 import TermsConditions from './pages/TermsConditions';
 import Blogs from './pages/Blogs';
 import BlogDetail from './pages/BlogDetail';
+import ServiceDetail from './pages/ServiceDetail';
 import NotFound from './pages/NotFound';
 
 // Customer pages
@@ -44,8 +45,12 @@ import AdminCustomers from './pages/admin/AdminCustomers';
 import AdminCustomerDetails from './pages/admin/AdminCustomerDetails';
 import AdminFabrics from './pages/admin/AdminFabrics';
 import AdminPromos from './pages/admin/AdminPromos';
+import AdminRetargeting from './pages/admin/AdminRetargeting';
+import AdminPopups from './pages/admin/AdminPopups';
+import AdminPortfolio from './pages/admin/AdminPortfolio';
 import AdminAbandonedCarts from './pages/admin/AdminAbandonedCarts';
 import AdminBlogs from './pages/admin/AdminBlogs';
+import PromotionalPopup from './components/PromotionalPopup';
 
 export default function App() {
   const { isLoggedIn, isAdmin } = useAuth();
@@ -57,6 +62,7 @@ export default function App() {
       {/* ── Public Routes ─────────────────────────── */}
       <Route path="/" element={<Home />} />
       <Route path="/services" element={<Services />} />
+      <Route path="/services/:id" element={<ServiceDetail />} />
       <Route path="/portfolio" element={<Portfolio />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
@@ -92,12 +98,16 @@ export default function App() {
       <Route path="/admin/customers/:id" element={<ProtectedRoute role="Admin"><AdminCustomerDetails /></ProtectedRoute>} />
       <Route path="/admin/fabrics" element={<ProtectedRoute role="Admin"><AdminFabrics /></ProtectedRoute>} />
       <Route path="/admin/marketing" element={<ProtectedRoute role="Admin"><AdminPromos /></ProtectedRoute>} />
+      <Route path="/admin/retargeting" element={<ProtectedRoute role="Admin"><AdminRetargeting /></ProtectedRoute>} />
+      <Route path="/admin/popups" element={<ProtectedRoute role="Admin"><AdminPopups /></ProtectedRoute>} />
+      <Route path="/admin/portfolio" element={<ProtectedRoute role="Admin"><AdminPortfolio /></ProtectedRoute>} />
       <Route path="/admin/abandoned-carts" element={<ProtectedRoute role="Admin"><AdminAbandonedCarts /></ProtectedRoute>} />
       <Route path="/admin/blogs" element={<ProtectedRoute role="Admin"><AdminBlogs /></ProtectedRoute>} />
 
       {/* ── Catch All ─────────────────────────────── */}
       <Route path="*" element={<NotFound />} />
       </Routes>
+      <PromotionalPopup />
       <Chatbot />
       <SocialProofPopup />
       <a 

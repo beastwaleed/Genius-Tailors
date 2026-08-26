@@ -44,6 +44,8 @@ export default function AdminLayout({ children, title }) {
     Customers: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>,
     Fabrics: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>,
     Marketing: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>,
+    Popups: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>,
+    Portfolio: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>,
     Carts: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>,
     Blogs: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>,
     Logout: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -89,9 +91,12 @@ export default function AdminLayout({ children, title }) {
           <SidebarLink to="/admin/seasons" icon={Icons.Seasons} label="Season Config" />
           <SidebarLink to="/admin/customers" icon={Icons.Customers} label="Customers" />
           <SidebarLink to="/admin/fabrics" icon={Icons.Fabrics} label="Fabrics" />
-          <SidebarLink to="/admin/marketing" icon={Icons.Marketing} label="Marketing" />
+          <SidebarLink to="/admin/marketing" icon={Icons.Marketing} label="Marketing Promos" />
+          <SidebarLink to="/admin/retargeting" icon={Icons.Queue} label="Customer Retargeting" />
+          <SidebarLink to="/admin/popups" icon={Icons.Popups} label="Popups & Discounts" />
+          <SidebarLink to="/admin/portfolio" icon={Icons.Portfolio} label="Portfolio Showcase" />
           <SidebarLink to="/admin/abandoned-carts" icon={Icons.Carts} label="Abandoned Carts" />
-          <SidebarLink to="/admin/blogs" icon={Icons.Blogs} label="SEO & Blog" />
+          <SidebarLink to="/admin/blogs" icon={Icons.Blogs} label="SEO & Blog Analytics" />
           
           <div style={{ flex: 1 }} />
           <div style={{ marginBottom: '4rem' }}>

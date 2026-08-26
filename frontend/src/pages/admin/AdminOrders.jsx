@@ -158,44 +158,36 @@ export default function AdminOrders() {
   return (
     <AdminLayout title="Manage Orders">
       {/* ── KPI Row ── */}
-      <div className="premium-dashboard" style={{ marginBottom: '2rem' }}>
-        <div className="admin-stats-grid">
-          <div className="premium-stat-card">
-             <div className="stat-icon" style={{ color: '#3b82f6', background: 'rgba(59, 130, 246, 0.1)' }}>📑</div>
-             <div className="stat-info">
-               <h4>Total Orders</h4>
-               <p className="stat-value">{orders.length}</p>
-             </div>
+      <div className="premium-dashboard" style={{ marginBottom: '1.25rem' }}>
+        <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+          <div className="admin-stat-card">
+            <span className="stat-label">Total Orders</span>
+            <span className="stat-val">{orders.length}</span>
           </div>
-          <div className="premium-stat-card">
-             <div className="stat-icon" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}>🔄</div>
-             <div className="stat-info">
-               <h4>Active Processing</h4>
-               <p className="stat-value">{activeCount}</p>
-             </div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Active Processing</span>
+            <span className="stat-val">{activeCount}</span>
           </div>
-          <div className="premium-stat-card">
-             <div className="stat-icon" style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)' }}>🔥</div>
-             <div className="stat-info">
-               <h4>Urgent (Expedited)</h4>
-               <p className="stat-value">{expeditedCount}</p>
-             </div>
+          <div className="admin-stat-card">
+            <span className="stat-label">Urgent (Expedited)</span>
+            <span className="stat-val">{expeditedCount}</span>
           </div>
         </div>
       </div>
 
       {/* ── Controls Row ── */}
-      <div className="premium-glass-card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+      <div className="premium-glass-card" style={{ padding: '1rem', marginBottom: '1.25rem' }}>
         <div className="filter-controls">
           <input 
             type="text" 
-            placeholder="Search by ID, Customer Name, or Service..." 
+            placeholder="Search ID, Customer, Service..." 
             className="premium-input search-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
           />
           <div className="select-group">
-            <select className="premium-input" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <select className="premium-input" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}>
               <option value="All">All Statuses</option>
               <option value="Pending">Pending</option>
               <option value="Cutting">Cutting</option>
@@ -204,24 +196,24 @@ export default function AdminOrders() {
               <option value="Delivered">Delivered</option>
               <option value="Cancelled">Cancelled</option>
             </select>
-            <select className="premium-input" value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)}>
+            <select className="premium-input" value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)} style={{ padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}>
               <option value="All">All Priorities</option>
               <option value="Standard">Standard</option>
               <option value="Expedited">Expedited (Rush)</option>
             </select>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', background: '#f8fafc', padding: '0.2rem 0.5rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '0.8rem', color: '#64748b' }}>From:</span>
-              <input type="date" className="premium-input" style={{ padding: '0.4rem', border: 'none', background: 'transparent' }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-              <span style={{ fontSize: '0.8rem', color: '#64748b' }}>To:</span>
-              <input type="date" className="premium-input" style={{ padding: '0.4rem', border: 'none', background: 'transparent' }} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', background: '#f8fafc', padding: '0.2rem 0.5rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>From:</span>
+              <input type="date" className="premium-input" style={{ padding: '0.2rem', border: 'none', background: 'transparent', fontSize: '0.8rem' }} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>To:</span>
+              <input type="date" className="premium-input" style={{ padding: '0.2rem', border: 'none', background: 'transparent', fontSize: '0.8rem' }} value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </div>
           </div>
           <button 
             className="premium-btn" 
             onClick={handleExportCSV}
-            style={{ padding: '0.6rem 1.25rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#C9A96E', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+            style={{ padding: '0.45rem 0.85rem', fontSize: '0.825rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#C9A96E', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             Export CSV {selectedOrders.length > 0 ? `(${selectedOrders.length})` : '(All)'}
           </button>
           
@@ -230,13 +222,13 @@ export default function AdminOrders() {
             onClick={handleDownloadLabels}
             disabled={selectedOrders.length === 0}
             style={{ 
-              padding: '0.6rem 1.25rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.5rem', 
+              padding: '0.45rem 0.85rem', fontSize: '0.825rem', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '0.4rem', 
               background: selectedOrders.length > 0 ? '#1e293b' : '#cbd5e1', 
-              color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', 
+              color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', 
               cursor: selectedOrders.length > 0 ? 'pointer' : 'not-allowed' 
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
             Print Labels {selectedOrders.length > 0 && `(${selectedOrders.length})`}
           </button>
         </div>

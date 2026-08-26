@@ -17,6 +17,36 @@ export default function AdminCustomerDetails() {
   const [adminNotes, setAdminNotes] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
 
+  // Retargeting State
+  const [retargeting, setRetargeting] = useState(false);
+  const [promoCode, setPromoCode] = useState('VIP10');
+  const [discountText, setDiscountText] = useState('10% OFF Special VIP Discount');
+
+  const handleRetargetCustomer = async () => {
+    setRetargeting(true);
+    try {
+      const { data } = await api.post(`/api/admin/crm/users/${id}/retarget`, {
+        promoCode,
+        discountText
+      });
+      toast.success(data.message || 'Retargeting campaign sent!');
+    } catch (error) {
+      toast.error('Failed to send retargeting campaign');
+    } finally {
+      setRetargeting(false);
+    }
+  };
+
+  const handleOpenWhatsAppRetarget = () => {
+    if (!profile || !profile.phone) {
+      toast.error('Customer has no phone number on file');
+      return;
+    }
+    const cleanPhone = profile.phone.replace(/[^0-9]/g, '');
+    const message = `Salam ${profile.name}! We miss your custom style at Genius Tailors. Use promo code ${promoCode} for ${discountText} on your next order: https://geniustailors.com/book`;
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
   useEffect(() => {
     fetchCRMProfile();
   }, [id]);
@@ -200,6 +230,54 @@ export default function AdminCustomerDetails() {
           {/* Right Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             
+            {/* Retargeting Engine */}
+            <div className="premium-glass-card" style={{ background: '#f0fdf4', borderColor: '#bbf7d0' }}>
+              <h3 style={{ fontSize: '1.1rem', color: '#166534', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                🎯 Customer Retargeting Engine
+              </h3>
+              <p style={{ fontSize: '0.8rem', color: '#15803d', marginBottom: '1rem' }}>
+                Re-engage this customer with automated WhatsApp & Email promo discount offers.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#166534', marginBottom: '0.25rem' }}>Promo Code</label>
+                  <input 
+                    type="text" 
+                    value={promoCode} 
+                    onChange={e => setPromoCode(e.target.value.toUpperCase())}
+                    style={{ width: '100%', padding: '0.45rem 0.75rem', border: '1px solid #86efac', borderRadius: '6px', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#166534', marginBottom: '0.25rem' }}>Discount Offer Text</label>
+                  <input 
+                    type="text" 
+                    value={discountText} 
+                    onChange={e => setDiscountText(e.target.value)}
+                    style={{ width: '100%', padding: '0.45rem 0.75rem', border: '1px solid #86efac', borderRadius: '6px', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <button 
+                  onClick={handleRetargetCustomer} 
+                  disabled={retargeting}
+                  style={{ width: '100%', padding: '0.65rem', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                >
+                  {retargeting ? 'Sending...' : '🚀 Send Auto Retargeting (WhatsApp + Email)'}
+                </button>
+
+                <button 
+                  onClick={handleOpenWhatsAppRetarget}
+                  style={{ width: '100%', padding: '0.65rem', background: '#25D366', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                >
+                  💬 Open Direct WhatsApp Chat
+                </button>
+              </div>
+            </div>
+
             {/* Admin Private Notes */}
             <div className="premium-glass-card" style={{ background: '#fffbeb', borderColor: '#fde68a' }}>
               <h3 style={{ fontSize: '1.1rem', color: '#b45309', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

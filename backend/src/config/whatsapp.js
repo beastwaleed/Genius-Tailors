@@ -34,16 +34,8 @@ const initWhatsApp = async () => {
 
             if (connection === 'close') {
                 isConnected = false;
-                const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-                console.log('WhatsApp connection closed. Reconnecting:', shouldReconnect);
-                if (shouldReconnect) {
-                    initWhatsApp();
-                } else {
-                    console.log('You logged out of WhatsApp. You must scan the QR code again.');
-                    const authFolder = require('path').join(__dirname, '../../auth_info_baileys');
-                    fs.rmSync(authFolder, { recursive: true, force: true });
-                    initWhatsApp();
-                }
+                const statusCode = (lastDisconnect.error)?.output?.statusCode;
+                console.log(`WhatsApp connection closed (Status: ${statusCode}).`);
             } else if (connection === 'open') {
                 console.log('WhatsApp connection opened successfully!');
                 currentQR = null;

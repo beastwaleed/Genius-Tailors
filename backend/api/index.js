@@ -21,6 +21,9 @@ const Promo = require('../src/models/Promo');
 const AbandonedCart = require('../src/models/AbandonedCart');
 const Blog = require('../src/models/Blog');
 const RewardRequest = require('../src/models/RewardRequest');
+const Popup = require('../src/models/Popup');
+const Portfolio = require('../src/models/Portfolio');
+const RetargetingCampaign = require('../src/models/RetargetingCampaign');
 
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
@@ -2500,5 +2503,162 @@ app.delete('/api/blogs/:id', protect, admin, async (req, res) => {
     res.status(500).json({ message: 'Failed to delete blog', error: error.message });
   }
 });
+
+// ==========================================
+// POPUPS & PROMOTIONS ENDPOINTS
+// ==========================================
+app.get('/api/popups', async (req, res) => {
+  try {
+    const popups = await Popup.find().sort({ createdAt: -1 });
+    res.json(popups);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch popups', error: error.message });
+  }
+});
+
+app.post('/api/popups', protect, admin, upload.single('image'), async (req, res) => {
+  try {
+    const popupData = { ...req.body };
+    if (req.file) {
+      popupData.imageUrl = req.file.path || req.file.secure_url || req.file.url;
+    }
+    const popup = new Popup(popupData);
+    await popup.save();
+    res.status(201).json(popup);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create popup', error: error.message });
+  }
+});
+
+app.put('/api/popups/:id', protect, admin, upload.single('image'), async (req, res) => {
+  try {
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.imageUrl = req.file.path || req.file.secure_url || req.file.url;
+    }
+    const popup = await Popup.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
+    if (!popup) return res.status(404).json({ message: 'Popup not found' });
+    res.json(popup);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update popup', error: error.message });
+  }
+});
+
+app.delete('/api/popups/:id', protect, admin, async (req, res) => {
+  try {
+    const popup = await Popup.findByIdAndDelete(req.params.id);
+    if (!popup) return res.status(404).json({ message: 'Popup not found' });
+    res.json({ message: 'Popup deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete popup', error: error.message });
+  }
+});
+
+app.post('/api/popups/:id/impression', async (req, res) => {
+  try {
+    const popup = await Popup.findByIdAndUpdate(req.params.id, { $inc: { impressionsCount: 1 } }, { new: true });
+    res.json(popup);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to record impression', error: error.message });
+  }
+});
+
+app.post('/api/popups/:id/click', async (req, res) => {
+  try {
+    const popup = await Popup.findByIdAndUpdate(req.params.id, { $inc: { clicksCount: 1 } }, { new: true });
+    res.json(popup);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to record click', error: error.message });
+  }
+});
+
+// ==========================================
+// PORTFOLIO ENDPOINTS
+// ==========================================
+app.get('/api/portfolio', async (req, res) => {
+  try {
+    const items = await Portfolio.find().sort({ createdAt: -1 });
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch portfolio', error: error.message });
+  }
+});
+
+app.post('/api/portfolio', protect, admin, upload.single('image'), async (req, res) => {
+  try {
+    const data = { ...req.body };
+    if (req.file) {
+      data.imageUrl = req.file.path || req.file.secure_url || req.file.url;
+    }
+    const item = new Portfolio(data);
+    await item.save();
+    res.status(201).json(item);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create portfolio item', error: error.message });
+  }
+});
+
+app.put('/api/portfolio/:id', protect, admin, upload.single('image'), async (req, res) => {
+  try {
+    const data = { ...req.body };
+    if (req.file) {
+      data.imageUrl = req.file.path || req.file.secure_url || req.file.url;
+    }
+    const item = await Portfolio.findByIdAndUpdate(req.params.id, data, { new: true, runValidators: true });
+    if (!item) return res.status(404).json({ message: 'Portfolio item not found' });
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update portfolio item', error: error.message });
+  }
+});
+
+app.delete('/api/portfolio/:id', protect, admin, async (req, res) => {
+  try {
+    const item = await Portfolio.findByIdAndDelete(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Portfolio item not found' });
+    res.json({ message: 'Portfolio item deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete portfolio item', error: error.message });
+  }
+});
+
+// ==========================================
+// RETARGETING CAMPAIGNS ENDPOINTS
+// ==========================================
+app.get('/api/retargeting', protect, admin, async (req, res) => {
+  try {
+    const campaigns = await RetargetingCampaign.find().sort({ createdAt: -1 });
+    res.json(campaigns);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch campaigns', error: error.message });
+  }
+});
+
+app.post('/api/retargeting', protect, admin, async (req, res) => {
+  try {
+    const campaign = new RetargetingCampaign(req.body);
+    await campaign.save();
+    res.status(201).json(campaign);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create campaign', error: error.message });
+  }
+});
+
+app.delete('/api/retargeting/:id', protect, admin, async (req, res) => {
+  try {
+    const campaign = await RetargetingCampaign.findByIdAndDelete(req.params.id);
+    if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
+    res.json({ message: 'Campaign deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete campaign', error: error.message });
+  }
+});
+
+connectDB().catch(err => console.error('MongoDB initial connection error:', err.message));
+
+if (require.main === module) {
+  const serverPort = process.env.PORT || 5000;
+  app.listen(serverPort, () => console.log(`Server running on port ${serverPort}`));
+}
 
 module.exports = app;
