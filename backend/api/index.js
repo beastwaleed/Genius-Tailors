@@ -2833,7 +2833,7 @@ app.post('/api/admin/crm/retarget-segment', protect, admin, async (req, res) => 
 app.get('/api/admin/crm/retargeting/audience', protect, admin, async (req, res) => {
   try {
     const { audienceType = 'all', tier, tag } = req.query;
-    let query = { role: 'customer' };
+    let query = { role: { $ne: 'admin' } };
 
     if (audienceType === 'vip') query.isVip = true;
     else if (audienceType === 'tier' && tier) query.loyaltyTier = tier;
@@ -2892,7 +2892,7 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
       const u = await User.findById(userId);
       if (u) targetUsers = [u];
     } else {
-      let query = { role: 'customer' };
+      let query = { role: { $ne: 'admin' } };
       if (audienceType === 'vip') query.isVip = true;
       else if (audienceType === 'tier' && tier) query.loyaltyTier = tier;
       else if (audienceType === 'tag' && tag) query.tags = tag;
@@ -2918,7 +2918,7 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
       for (const u of targetUsers) {
         if (u.phone) {
           try {
-            await sendPromoWhatsapp(u.phone, u.name, promoCode, discountText, 0, expDate);
+            await sendPromoWhatsapp(u.phone, u.name, promoCode, discountText, 0, expDate, customMessage);
             whatsappSent++;
           } catch (e) {
             console.error(`Failed to send WhatsApp to ${u.phone}:`, e);

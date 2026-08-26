@@ -284,11 +284,16 @@ const sendWelcomeWhatsapp = async (customerPhone, customerName) => {
   await sendWhatsappMessage(customerPhone, message);
 };
 
-const sendPromoWhatsapp = async (customerPhone, customerName, promoCode, discountText, minSpend, expiryDate) => {
-  let message = `*Exclusive Offer from Genius Tailors!* ✂️🎉\n\nHi ${customerName},\n\nWe have a special discount just for you! Use the promo code *${promoCode}* to get *${discountText}* on your next order.\n\n`;
+const sendPromoWhatsapp = async (customerPhone, customerName, promoCode, discountText, minSpend = 0, expiryDate = null, customMsgText = '') => {
+  let message = `*Genius Tailors Special Offer* ✂️🎉\n\nHi ${customerName},\n\n`;
+  if (customMsgText) {
+    message += `${customMsgText}\n\n*Promo Code:* ${promoCode} (${discountText})\n`;
+  } else {
+    message += `We have a special discount just for you! Use promo code *${promoCode}* to get *${discountText}* on your next tailored order.\n\n`;
+  }
   if (minSpend > 0) message += `*Minimum Spend:* Rs. ${minSpend}\n`;
   if (expiryDate) message += `*Valid Until:* ${new Date(expiryDate).toLocaleDateString('en-PK', { weekday: 'short', month: 'short', day: 'numeric' })}\n\n`;
-  message += `Book your tailored fit today!`;
+  message += `Book your tailored fit today: ${process.env.FRONTEND_URL || 'https://geniustailors.com'}/services`;
   
   await sendWhatsappMessage(customerPhone, message);
 };
