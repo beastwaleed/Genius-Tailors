@@ -2769,34 +2769,261 @@ app.delete('/api/portfolio/:id', protect, admin, async (req, res) => {
 });
 
 // ==========================================
-// RETARGETING CAMPAIGNS ENDPOINTS
+// CRM & RETARGETING CAMPAIGNS ENDPOINTS
 // ==========================================
-app.get('/api/retargeting', protect, admin, async (req, res) => {
+
+// Single customer retargeting
+app.post('/api/admin/crm/users/:id/retarget', protect, admin, async (req, res) => {
   try {
-    const campaigns = await RetargetingCampaign.find().sort({ createdAt: -1 });
-    res.json(campaigns);
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    const { promoCode = 'VIP10', discountText = '10% OFF Special VIP Offer', customMessage } = req.body;
+
+    if (user.phone) {
+      if (customMessage) {
+        await sendPromoWhatsapp(user.phone, user.name, promoCode, discountText);
+      } else {
+        await sendPromoWhatsapp(user.phone, user.name, promoCode, discountText);
+      }
+    }
+
+    if (user.email) {
+      await sendPromoEmail(user.email, user.name, promoCode, discountText);
+    }
+
+    res.json({ success: true, message: `Retargeting campaign sent to ${user.name}!` });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch campaigns', error: error.message });
+    console.error('CRM single retarget error:', error);
+    res.status(500).json({ message: error.message || 'Failed to send retargeting campaign' });
   }
 });
 
-app.post('/api/retargeting', protect, admin, async (req, res) => {
+// Segment retargeting
+app.post('/api/admin/crm/retarget-segment', protect, admin, async (req, res) => {
   try {
-    const campaign = new RetargetingCampaign(req.body);
-    await campaign.save();
-    res.status(201).json(campaign);
+    const { promoCode = 'VIP10', discountText = '10% OFF Special Offer', segment = 'all', customMessage } = req.body;
+
+    let query = { role: 'customer' };
+    if (segment === 'vip') query.isVip = true;
+
+    const users = await User.find(query);
+    let count = 0;
+
+    for (const user of users) {
+      if (user.phone) {
+        await sendPromoWhatsapp(user.phone, user.name, promoCode, discountText);
+        count++;
+      }
+      if (user.email) {
+        await sendPromoEmail(user.email, user.name, promoCode, discountText);
+      }
+    }
+
+    res.json({ success: true, message: `Retargeting campaign sent to ${count} customer(s)!` });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to create campaign', error: error.message });
+    console.error('CRM retarget segment error:', error);
+    res.status(500).json({ message: error.message || 'Failed to send segment retargeting campaign' });
   }
 });
 
-app.delete('/api/retargeting/:id', protect, admin, async (req, res) => {
+// Retargeting Audience lookup
+app.get('/api/admin/crm/retargeting/audience', protect, admin, async (req, res) => {
   try {
-    const campaign = await RetargetingCampaign.findByIdAndDelete(req.params.id);
-    if (!campaign) return res.status(404).json({ message: 'Campaign not found' });
-    res.json({ message: 'Campaign deleted successfully' });
+    const { audienceType = 'all', tier, tag } = req.query;
+    let query = { role: 'customer' };
+
+    if (audienceType === 'vip') query.isVip = true;
+    else if (audienceType === 'tier' && tier) query.loyaltyTier = tier;
+    else if (audienceType === 'tag' && tag) query.tags = tag;
+    else if (audienceType === 'inactive_30') {
+      const d30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+      query.updatedAt = { $lte: d30 };
+    } else if (audienceType === 'inactive_60') {
+      const d60 = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000);
+      query.updatedAt = { $lte: d60 };
+    }
+
+    const users = await User.find(query).select('-password').sort({ createdAt: -1 });
+    res.json({ total: users.length, users });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to delete campaign', error: error.message });
+    console.error('Fetch CRM audience error:', error);
+    res.status(500).json({ message: 'Failed to fetch audience' });
+  }
+});
+
+// Retargeting History lookup
+app.get('/api/admin/crm/retargeting/history', protect, admin, async (req, res) => {
+  try {
+    const history = await RetargetingCampaign.find().sort({ createdAt: -1 });
+    res.json(history);
+  } catch (error) {
+    console.error('Fetch retargeting history error:', error);
+    res.status(500).json({ message: 'Failed to fetch campaign history' });
+  }
+});
+
+// Retargeting Campaign Launch
+app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) => {
+  try {
+    const {
+      name,
+      audienceType = 'all',
+      tier,
+      tag,
+      userId,
+      promoCode = 'VIP10',
+      discountType = 'Percentage',
+      discountValue = 10,
+      expiryDays = 7,
+      ctaLink,
+      customMessage = '',
+      channels = ['whatsapp']
+    } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: 'Campaign name is required' });
+    }
+
+    let targetUsers = [];
+    if (audienceType === 'specific' && userId) {
+      const u = await User.findById(userId);
+      if (u) targetUsers = [u];
+    } else {
+      let query = { role: 'customer' };
+      if (audienceType === 'vip') query.isVip = true;
+      else if (audienceType === 'tier' && tier) query.loyaltyTier = tier;
+      else if (audienceType === 'tag' && tag) query.tags = tag;
+      else if (audienceType === 'inactive_30') {
+        const d30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        query.updatedAt = { $lte: d30 };
+      } else if (audienceType === 'inactive_60') {
+        const d60 = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000);
+        query.updatedAt = { $lte: d60 };
+      }
+      targetUsers = await User.find(query);
+    }
+
+    let whatsappSent = 0;
+    let emailsSent = 0;
+    let popupCreated = false;
+
+    const discountText = discountType === 'Percentage' ? `${discountValue}% OFF` : `Rs. ${discountValue} OFF`;
+    const expDate = expiryDays ? new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000) : null;
+
+    // Send WhatsApp messages
+    if (channels.includes('whatsapp')) {
+      for (const u of targetUsers) {
+        if (u.phone) {
+          try {
+            await sendPromoWhatsapp(u.phone, u.name, promoCode, discountText, 0, expDate);
+            whatsappSent++;
+          } catch (e) {
+            console.error(`Failed to send WhatsApp to ${u.phone}:`, e);
+          }
+        }
+      }
+    }
+
+    // Send Emails
+    if (channels.includes('email')) {
+      for (const u of targetUsers) {
+        if (u.email) {
+          try {
+            await sendPromoEmail(u.email, u.name, promoCode, discountText);
+            emailsSent++;
+          } catch (e) {
+            console.error(`Failed to send email to ${u.email}:`, e);
+          }
+        }
+      }
+    }
+
+    // Create Popup if requested
+    if (channels.includes('popup')) {
+      try {
+        await Popup.create({
+          title: name,
+          subtitle: `${discountText} Special Offer! Use code ${promoCode}`,
+          discountText: discountText,
+          promoCode: promoCode,
+          buttonText: 'Claim Offer',
+          buttonLink: ctaLink || '/services',
+          isActive: true
+        });
+        popupCreated = true;
+      } catch (e) {
+        console.error('Failed to create campaign popup:', e);
+      }
+    }
+
+    const campaignRecord = await RetargetingCampaign.create({
+      name,
+      targetAudience: audienceType,
+      promoCode,
+      discountType,
+      discountValue,
+      channels,
+      customMessage,
+      totalTargeted: targetUsers.length,
+      whatsappSent,
+      emailsSent,
+      popupCreated,
+      status: 'Completed'
+    });
+
+    res.json({
+      success: true,
+      message: `Campaign "${name}" launched successfully! Target: ${targetUsers.length}, Sent: ${whatsappSent} WhatsApp, ${emailsSent} Emails.`,
+      campaign: campaignRecord
+    });
+  } catch (error) {
+    console.error('Launch campaign error:', error);
+    res.status(500).json({ message: error.message || 'Failed to launch retargeting campaign' });
+  }
+});
+
+// Delete Retargeting History Log
+app.delete('/api/admin/crm/retargeting/history/:id', protect, admin, async (req, res) => {
+  try {
+    await RetargetingCampaign.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Retargeting log deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete retargeting history' });
+  }
+});
+
+// Customer Details for CRM
+app.get('/api/admin/crm/users/:id', protect, admin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    const orders = await Order.find({ user: user._id }).sort({ createdAt: -1 });
+    const measurements = await MeasurementProfile.find({ user: user._id });
+    res.json({ user, orders, measurements });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch user details' });
+  }
+});
+
+// Customer Tagging & Notes Updates
+app.put('/api/admin/crm/users/:id/tags', protect, admin, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, { tags: req.body.tags }, { new: true }).select('-password');
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update tags' });
+  }
+});
+
+app.put('/api/admin/crm/users/:id/notes', protect, admin, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, { adminNotes: req.body.adminNotes }, { new: true }).select('-password');
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update notes' });
   }
 });
 
