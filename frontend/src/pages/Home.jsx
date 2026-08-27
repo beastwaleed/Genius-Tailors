@@ -79,7 +79,7 @@ const TESTIMONIALS = [
 
 
 export default function Home() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isAdmin } = useAuth();
   const [activeSeason, setActiveSeason] = useState(null);
   const [activeCard, setActiveCard] = useState(0);
   const [showPromo, setShowPromo] = useState(false);
@@ -258,9 +258,15 @@ export default function Home() {
                     <Link to="/services" className="btn btn-primary btn-lg">
                       Place Online Order
                     </Link>
-                    <Link to="/register" className="btn btn-outline btn-lg">
-                      Create Account
-                    </Link>
+                    {isLoggedIn ? (
+                      <Link to={isAdmin ? "/admin" : "/dashboard"} className="btn btn-outline btn-lg">
+                        Visit Dashboard
+                      </Link>
+                    ) : (
+                      <Link to="/register" className="btn btn-outline btn-lg">
+                        Create Account
+                      </Link>
+                    )}
                   </div>
                 </div>
 
