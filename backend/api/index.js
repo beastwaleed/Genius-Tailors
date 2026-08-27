@@ -2621,6 +2621,129 @@ app.get('/api/blogs/:slug', async (req, res) => {
   }
 });
 
+// Record blog view (Public)
+app.post('/api/blogs/:slug/view', async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ slug: req.params.slug });
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog post not found' });
+    }
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    
+    // Update daily views
+    const dayEntryIndex = blog.dailyViews.findIndex(d => d.date === todayStr);
+    if (dayEntryIndex > -1) {
+      blog.dailyViews[dayEntryIndex].count += 1;
+    } else {
+      blog.dailyViews.push({ date: todayStr, count: 1 });
+    }
+
+    // Auto-calculate reading time (~200 words/min)
+    const wordCount = (blog.content || '').split(/\s+/).filter(Boolean).length;
+    blog.readTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
+    blog.viewsCount += 1;
+
+    await blog.save();
+    res.json({ viewsCount: blog.viewsCount, readTimeMinutes: blog.readTimeMinutes });
+  } catch (error) {
+    console.error('Blog view tracking error:', error);
+    res.status(500).json({ message: 'Failed to record view' });
+  }
+});
+
+// Like a blog post (Public)
+app.post('/api/blogs/:id/like', async (req, res) => {
+  try {
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { likesCount: 1 } },
+      { new: true }
+    );
+    if (!blog) return res.status(404).json({ message: 'Blog post not found' });
+    res.json({ likesCount: blog.likesCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to like blog post' });
+  }
+});
+
+// Share a blog post (Public)
+app.post('/api/blogs/:id/share', async (req, res) => {
+  try {
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { sharesCount: 1 } },
+      { new: true }
+    );
+    if (!blog) return res.status(404).json({ message: 'Blog post not found' });
+    res.json({ sharesCount: blog.sharesCount });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to record share' });
+  }
+});
+
+// Get Blog Analytics (Admin)
+app.get('/api/admin/blogs/analytics', protect, admin, async (req, res) => {
+  try {
+    const blogs = await Blog.find();
+
+    let totalViews = 0;
+    let totalLikes = 0;
+    let totalShares = 0;
+    let totalPublished = 0;
+    let totalDrafts = 0;
+
+    const dailyMap = {};
+
+    blogs.forEach(b => {
+      totalViews += (b.viewsCount || 0);
+      totalLikes += (b.likesCount || 0);
+      totalShares += (b.sharesCount || 0);
+      if (b.status === 'published') totalPublished++;
+      else totalDrafts++;
+
+      if (b.dailyViews && Array.isArray(b.dailyViews)) {
+        b.dailyViews.forEach(d => {
+          dailyMap[d.date] = (dailyMap[d.date] || 0) + (d.count || 0);
+        });
+      }
+    });
+
+    const topPosts = await Blog.find({ status: 'published' })
+      .sort({ viewsCount: -1 })
+      .limit(5)
+      .select('title slug viewsCount likesCount sharesCount readTimeMinutes createdAt');
+
+    // Generate last 14 days chart data
+    const dailyTrends = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      dailyTrends.push({
+        date: dateStr,
+        label,
+        views: dailyMap[dateStr] || 0
+      });
+    }
+
+    res.json({
+      totalPosts: blogs.length,
+      totalPublished,
+      totalDrafts,
+      totalViews,
+      totalLikes,
+      totalShares,
+      topPosts,
+      dailyTrends
+    });
+  } catch (error) {
+    console.error('Fetch blog analytics error:', error);
+    res.status(500).json({ message: 'Failed to fetch blog analytics' });
+  }
+});
+
 // Update a blog post (Admin)
 app.put('/api/blogs/:id', protect, admin, async (req, res) => {
   try {

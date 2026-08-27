@@ -38,7 +38,27 @@ const blogSchema = new mongoose.Schema({
     type: String,
     enum: ['draft', 'published'],
     default: 'draft'
-  }
+  },
+  viewsCount: {
+    type: Number,
+    default: 0
+  },
+  likesCount: {
+    type: Number,
+    default: 0
+  },
+  sharesCount: {
+    type: Number,
+    default: 0
+  },
+  readTimeMinutes: {
+    type: Number,
+    default: 2
+  },
+  dailyViews: [{
+    date: { type: String }, // Format: YYYY-MM-DD
+    count: { type: Number, default: 0 }
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Blog', blogSchema);

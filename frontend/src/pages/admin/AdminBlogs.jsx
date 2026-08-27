@@ -7,6 +7,8 @@ import AdminLayout from '../../components/AdminLayout';
 export default function AdminBlogs() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [analytics, setAnalytics] = useState(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingFeaturedImage, setUploadingFeaturedImage] = useState(false);
@@ -29,6 +31,7 @@ export default function AdminBlogs() {
 
   useEffect(() => {
     fetchBlogs();
+    fetchAnalytics();
   }, []);
 
   const fetchBlogs = async () => {
@@ -40,6 +43,18 @@ export default function AdminBlogs() {
       toast.error('Failed to load blogs');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAnalytics = async () => {
+    try {
+      setLoadingAnalytics(true);
+      const res = await api.get('/api/admin/blogs/analytics');
+      setAnalytics(res.data);
+    } catch (error) {
+      console.error('Failed to fetch blog analytics:', error);
+    } finally {
+      setLoadingAnalytics(false);
     }
   };
 
@@ -74,6 +89,7 @@ export default function AdminBlogs() {
       await api.delete(`/api/blogs/${id}`);
       toast.success('Blog deleted');
       fetchBlogs();
+      fetchAnalytics();
     } catch (error) {
       toast.error('Failed to delete blog');
     }
@@ -92,9 +108,10 @@ export default function AdminBlogs() {
         toast.success('Blog updated successfully');
       } else {
         await api.post('/api/blogs', payload);
-        toast.success('Blog created successfully');
+        toast.success('Blog created successfully & customers notified!');
       }
       fetchBlogs();
+      fetchAnalytics();
       resetForm();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to save blog');
@@ -151,16 +168,58 @@ export default function AdminBlogs() {
   };
 
   return (
-    <AdminLayout title="Blog & SEO Management">
+    <AdminLayout title="Blog Analytics & Management">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <h2 className="premium-title" style={{ marginBottom: 0 }}>SEO Articles</h2>
+          <div>
+            <h2 className="premium-title" style={{ marginBottom: '0.25rem' }}>Blog Analytics & SEO</h2>
+            <p style={{ color: 'var(--stone)', fontSize: '0.9rem', margin: 0 }}>Real-time reader engagement, view counts, likes, and social shares</p>
+          </div>
           <button 
             className="btn btn-primary"
             onClick={() => { resetForm(); setShowForm(!showForm); }}
           >
-            {showForm ? '← Back to List' : '+ Create New Post'}
+            {showForm ? '← Back to Overview' : '+ Create New Article'}
           </button>
         </div>
+
+        {/* Analytics Cards Header Grid */}
+        {!showForm && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
+            
+            <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>👁️ TOTAL VIEWS</span>
+              <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0.5rem 0 0 0', color: '#0f172a' }}>
+                {loadingAnalytics ? '...' : (analytics?.totalViews || 0).toLocaleString()}
+              </h3>
+              <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600 }}>Real-time reader visits</span>
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>❤️ TOTAL LIKES</span>
+              <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0.5rem 0 0 0', color: '#dc2626' }}>
+                {loadingAnalytics ? '...' : (analytics?.totalLikes || 0).toLocaleString()}
+              </h3>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Customer appreciations</span>
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>📤 SOCIAL SHARES</span>
+              <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0.5rem 0 0 0', color: '#2563eb' }}>
+                {loadingAnalytics ? '...' : (analytics?.totalShares || 0).toLocaleString()}
+              </h3>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>WhatsApp/Social shares</span>
+            </div>
+
+            <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>📰 PUBLISHED ARTICLES</span>
+              <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0.5rem 0 0 0', color: '#059669' }}>
+                {loadingAnalytics ? '...' : (analytics?.totalPublished || 0).toLocaleString()}
+              </h3>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{analytics?.totalDrafts || 0} Drafts pending</span>
+            </div>
+
+          </div>
+        )}
 
         {showForm ? (
           <form onSubmit={handleSubmit} className="luxury-card" style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '2rem' }}>
@@ -271,13 +330,14 @@ export default function AdminBlogs() {
                 </div>
                 <textarea 
                   className="form-input" 
-                  rows="4"
+                  rows="3"
                   value={formData.metaDescription} 
                   onChange={e => setFormData({...formData, metaDescription: e.target.value})} 
                 />
               </div>
 
-              <h4 style={{ margin: '2rem 0 1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Media</h4>
+              <h4 style={{ margin: '2rem 0 1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>Featured Media</h4>
+
               <div className="form-group">
                 <label className="form-label">Featured Image URL</label>
                 <input 
@@ -285,12 +345,12 @@ export default function AdminBlogs() {
                   className="form-input" 
                   value={formData.featuredImage} 
                   onChange={e => setFormData({...formData, featuredImage: e.target.value})} 
-                  placeholder="Paste URL or upload below"
+                  placeholder="https://..."
                 />
                 
                 <div style={{ marginTop: '0.5rem' }}>
-                  <label className="btn btn-outline" style={{ padding: '0.5rem', width: '100%', display: 'flex', justifyContent: 'center', cursor: 'pointer' }}>
-                    {uploadingFeaturedImage ? 'Uploading...' : 'Upload Featured Image'}
+                  <label className="btn btn-outline" style={{ display: 'inline-block', width: '100%', textAlign: 'center', cursor: 'pointer', fontSize: '0.85rem' }}>
+                    {uploadingFeaturedImage ? 'Uploading Image...' : '📁 Upload Local File'}
                     <input 
                       type="file" 
                       accept="image/*" 
@@ -329,50 +389,70 @@ export default function AdminBlogs() {
               </div>
 
               <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-                {formData._id ? 'Update Post' : 'Save Post'}
+                {formData._id ? 'Update Post' : 'Save & Publish Post'}
               </button>
             </div>
           </form>
         ) : (
           <div className="luxury-card">
             {loading ? (
-              <p>Loading blogs...</p>
+              <p>Loading blogs & analytics...</p>
             ) : blogs.length === 0 ? (
-              <p>No blog posts found. Create your first post to boost SEO!</p>
+              <p>No blog posts found. Create your first post to boost SEO and customer engagement!</p>
             ) : (
               <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid var(--ivory-border)' }}>
-                    <th style={{ padding: '1rem 0' }}>Title</th>
+                    <th style={{ padding: '1rem 0' }}>Article Title</th>
                     <th>Status</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th>Views 👁️</th>
+                    <th>Likes ❤️</th>
+                    <th>Shares 📤</th>
+                    <th>Read Time</th>
+                    <th>Published Date</th>
+                    <th style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {blogs.map(blog => (
                     <tr key={blog._id} style={{ borderBottom: '1px solid var(--ivory-border)' }}>
-                      <td style={{ padding: '1rem 0', fontWeight: 500 }}>{blog.title}</td>
+                      <td style={{ padding: '1rem 0', fontWeight: 600, color: 'var(--charcoal)', maxWidth: '280px' }}>
+                        <div>{blog.title}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 400 }}>/{blog.slug}</div>
+                      </td>
                       <td>
                         <span style={{ 
                           padding: '0.25rem 0.75rem', 
                           borderRadius: '99px', 
                           fontSize: '0.85rem',
+                          fontWeight: 600,
                           background: blog.status === 'published' ? '#dcfce7' : '#f1f5f9',
                           color: blog.status === 'published' ? '#166534' : '#475569'
                         }}>
                           {blog.status}
                         </span>
                       </td>
-                      <td style={{ color: 'var(--stone)' }}>
-                        {new Date(blog.createdAt).toLocaleDateString()}
+                      <td>
+                        <strong style={{ color: '#0f172a' }}>{(blog.viewsCount || 0).toLocaleString()}</strong>
                       </td>
                       <td>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <button onClick={() => handleEdit(blog)} className="btn btn-outline" style={{ padding: '0.25rem 0.75rem' }}>Edit</button>
-                          <button onClick={() => handleDelete(blog._id)} className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', color: 'red', borderColor: 'red' }}>Delete</button>
+                        <span style={{ color: '#dc2626', fontWeight: 600 }}>{(blog.likesCount || 0).toLocaleString()}</span>
+                      </td>
+                      <td>
+                        <span style={{ color: '#2563eb', fontWeight: 600 }}>{(blog.sharesCount || 0).toLocaleString()}</span>
+                      </td>
+                      <td style={{ color: '#475569', fontSize: '0.85rem' }}>
+                        📖 {blog.readTimeMinutes || 2} min
+                      </td>
+                      <td style={{ color: 'var(--stone)', fontSize: '0.85rem' }}>
+                        {new Date(blog.createdAt).toLocaleDateString()}
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'inline-flex', gap: '0.4rem' }}>
+                          <button onClick={() => handleEdit(blog)} className="btn btn-outline" style={{ padding: '0.25rem 0.6rem', fontSize: '0.85rem' }}>Edit</button>
+                          <button onClick={() => handleDelete(blog._id)} className="btn btn-outline" style={{ padding: '0.25rem 0.6rem', fontSize: '0.85rem', color: 'red', borderColor: 'red' }}>Delete</button>
                           {blog.status === 'published' && (
-                            <button onClick={() => navigate(`/blog/${blog.slug}`)} className="btn btn-outline" style={{ padding: '0.25rem 0.75rem' }}>View</button>
+                            <button onClick={() => navigate(`/blog/${blog.slug}`)} className="btn btn-outline" style={{ padding: '0.25rem 0.6rem', fontSize: '0.85rem' }}>View</button>
                           )}
                         </div>
                       </td>
