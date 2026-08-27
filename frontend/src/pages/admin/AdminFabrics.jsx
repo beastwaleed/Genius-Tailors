@@ -242,8 +242,8 @@ export default function AdminFabrics() {
                 <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 2, display: 'flex', alignItems: 'center', gap: '0.25rem', background: 'rgba(15,23,42,0.85)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold', backdropFilter: 'blur(4px)' }}>
                   <span>Order #{fabric.displayOrder || idx + 1}</span>
                   <div style={{ display: 'flex', gap: '2px', marginLeft: '4px' }}>
-                    <button type="button" onClick={() => handleMoveOrder(idx, 'up')} disabled={idx === 0} style={{ background: 'transparent', border: 'none', color: idx === 0 ? '#64748b' : '#38bdf8', cursor: idx === 0 ? 'default' : 'pointer', padding: 0, fontSize: '0.8rem' }}>⬆️</button>
-                    <button type="button" onClick={() => handleMoveOrder(idx, 'down')} disabled={idx === fabrics.length - 1} style={{ background: 'transparent', border: 'none', color: idx === fabrics.length - 1 ? '#64748b' : '#38bdf8', cursor: idx === fabrics.length - 1 ? 'default' : 'pointer', padding: 0, fontSize: '0.8rem' }}>⬇️</button>
+                    <button type="button" onClick={() => handleMoveOrder(idx, 'up')} disabled={idx === 0} style={{ background: 'transparent', border: 'none', color: idx === 0 ? '#64748b' : '#38bdf8', cursor: idx === 0 ? 'default' : 'pointer', padding: '0 2px', fontSize: '0.85rem' }}>▲</button>
+                    <button type="button" onClick={() => handleMoveOrder(idx, 'down')} disabled={idx === fabrics.length - 1} style={{ background: 'transparent', border: 'none', color: idx === fabrics.length - 1 ? '#64748b' : '#38bdf8', cursor: idx === fabrics.length - 1 ? 'default' : 'pointer', padding: '0 2px', fontSize: '0.85rem' }}>▼</button>
                   </div>
                 </div>
 

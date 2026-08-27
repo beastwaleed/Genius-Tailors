@@ -388,13 +388,13 @@ export default function AdminPopups() {
                         onClick={() => openEditModal(p)}
                         style={{ flex: 1, padding: '8px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, color: 'var(--onyx)' }}
                       >
-                        ✏️ Edit / Customize
+                        Edit / Customize
                       </button>
                       <button
                         onClick={() => handleDelete(p._id)}
                         style={{ padding: '8px 12px', background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, color: '#dc2626' }}
                       >
-                        🗑️ Delete
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -412,7 +412,7 @@ export default function AdminPopups() {
               <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', borderRadius: '16px 16px 0 0' }}>
                 <div>
                   <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--onyx)' }}>
-                    {editingPopup ? '✏️ Customize Popup & Rules' : '➕ Create New Promotional Popup'}
+                    {editingPopup ? 'Customize Popup & Rules' : 'Create New Promotional Popup'}
                   </h2>
                 </div>
 

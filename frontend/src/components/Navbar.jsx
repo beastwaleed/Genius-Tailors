@@ -79,24 +79,24 @@ export default function Navbar() {
                     <div className="user-dropdown">
                       {!isAdmin ? (
                         <>
-                          <Link to="/dashboard" className="dropdown-item">📊 My Dashboard</Link>
-                          <Link to="/my-orders" className="dropdown-item">📦 My Orders</Link>
-                          <Link to="/measurements" className="dropdown-item">📏 Measurements</Link>
-                          <Link to="/loyalty" className="dropdown-item">🎁 Loyalty Points</Link>
-                          <Link to="/profile" className="dropdown-item">👤 Profile</Link>
+                          <Link to="/dashboard" className="dropdown-item">My Dashboard</Link>
+                          <Link to="/my-orders" className="dropdown-item">My Orders</Link>
+                          <Link to="/measurements" className="dropdown-item">Measurements</Link>
+                          <Link to="/loyalty" className="dropdown-item">Loyalty Points</Link>
+                          <Link to="/profile" className="dropdown-item">Profile</Link>
                         </>
                       ) : (
                         <>
-                          <Link to="/admin" className="dropdown-item">⚡ Admin Dashboard</Link>
-                          <Link to="/admin/orders" className="dropdown-item">📦 All Orders</Link>
-                          <Link to="/admin/queue" className="dropdown-item">⚡ Priority Queue</Link>
-                          <Link to="/admin/customers" className="dropdown-item">👥 Customers</Link>
-                          <Link to="/admin/popups" className="dropdown-item">🎁 Popups & Offers</Link>
+                          <Link to="/admin" className="dropdown-item">Admin Dashboard</Link>
+                          <Link to="/admin/orders" className="dropdown-item">All Orders</Link>
+                          <Link to="/admin/queue" className="dropdown-item">Priority Queue</Link>
+                          <Link to="/admin/customers" className="dropdown-item">Customers</Link>
+                          <Link to="/admin/popups" className="dropdown-item">Popups & Offers</Link>
                         </>
                       )}
                       <div className="dropdown-divider" />
                       <button onClick={handleLogout} className="dropdown-item danger">
-                        🚪 Sign Out
+                        Sign Out
                       </button>
                     </div>
                   )}

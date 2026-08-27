@@ -75,7 +75,7 @@ export default function MyOrders() {
                     <span style={{ fontWeight: 700, color: '#0f172a' }}>Rs. {order.totalPrice.toLocaleString()}</span>
                   </div>
                   
-                  {order.isRush && <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#dc2626', background: '#fee2e2', padding: '0.2rem 0.5rem', borderRadius: '4px', display: 'inline-block', marginBottom: '0.5rem' }}>⚡ Rush Delivery</div>}
+                  {order.isRush && <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#dc2626', background: '#fee2e2', padding: '0.2rem 0.5rem', borderRadius: '4px', display: 'inline-block', marginBottom: '0.5rem' }}>Rush Delivery</div>}
 
                   {order.trackingNumber && (
                     <div style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '0.75rem' }}>

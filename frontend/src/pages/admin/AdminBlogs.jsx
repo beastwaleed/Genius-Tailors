@@ -187,7 +187,7 @@ export default function AdminBlogs() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
             
             <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
-              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>👁️ TOTAL VIEWS</span>
+              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>TOTAL VIEWS</span>
               <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0.5rem 0 0 0', color: '#0f172a' }}>
                 {loadingAnalytics ? '...' : (analytics?.totalViews || 0).toLocaleString()}
               </h3>
@@ -195,7 +195,7 @@ export default function AdminBlogs() {
             </div>
 
             <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
-              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>❤️ TOTAL LIKES</span>
+              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>TOTAL LIKES</span>
               <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0.5rem 0 0 0', color: '#dc2626' }}>
                 {loadingAnalytics ? '...' : (analytics?.totalLikes || 0).toLocaleString()}
               </h3>
@@ -203,15 +203,15 @@ export default function AdminBlogs() {
             </div>
 
             <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
-              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>📤 SOCIAL SHARES</span>
+              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>SOCIAL SHARES</span>
               <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0.5rem 0 0 0', color: '#2563eb' }}>
                 {loadingAnalytics ? '...' : (analytics?.totalShares || 0).toLocaleString()}
               </h3>
-              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>WhatsApp/Social shares</span>
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>WhatsApp & Social shares</span>
             </div>
 
             <div style={{ background: '#ffffff', padding: '1.25rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
-              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>📰 PUBLISHED ARTICLES</span>
+              <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>PUBLISHED ARTICLES</span>
               <h3 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0.5rem 0 0 0', color: '#059669' }}>
                 {loadingAnalytics ? '...' : (analytics?.totalPublished || 0).toLocaleString()}
               </h3>
@@ -405,9 +405,9 @@ export default function AdminBlogs() {
                   <tr style={{ borderBottom: '2px solid var(--ivory-border)' }}>
                     <th style={{ padding: '1rem 0' }}>Article Title</th>
                     <th>Status</th>
-                    <th>Views 👁️</th>
-                    <th>Likes ❤️</th>
-                    <th>Shares 📤</th>
+                    <th>Views</th>
+                    <th>Likes</th>
+                    <th>Shares</th>
                     <th>Read Time</th>
                     <th>Published Date</th>
                     <th style={{ textAlign: 'right' }}>Actions</th>

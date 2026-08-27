@@ -152,9 +152,9 @@ export default function BlogDetail() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', color: 'var(--stone)', fontSize: '0.9rem', flexWrap: 'wrap' }}>
               <span>Published {new Date(blog.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
               <span>•</span>
-              <span>📖 {blog.readTimeMinutes || 2} min read</span>
+              <span>{blog.readTimeMinutes || 2} min read</span>
               <span>•</span>
-              <span>👁️ {viewCount} Views</span>
+              <span>{viewCount} Reads</span>
             </div>
           </header>
 
@@ -191,12 +191,12 @@ export default function BlogDetail() {
                   background: liked ? '#ef4444' : 'transparent',
                   color: liked ? '#ffffff' : '#ef4444',
                   fontWeight: 700,
-                  fontSize: '1rem',
+                  fontSize: '0.95rem',
                   cursor: liked ? 'default' : 'pointer',
                   transition: 'all 0.2s ease'
                 }}
               >
-                <span>{liked ? '❤️ Liked' : '🤍 Like Article'}</span>
+                <span>{liked ? 'Liked' : 'Like Article'}</span>
                 <span style={{ background: liked ? 'rgba(255,255,255,0.2)' : '#fee2e2', padding: '0.2rem 0.6rem', borderRadius: '99px', fontSize: '0.85rem' }}>
                   {likeCount}
                 </span>
@@ -204,9 +204,9 @@ export default function BlogDetail() {
 
               {/* Views Pill */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.95rem', background: '#f8fafc', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <span>👁️ <strong>{viewCount}</strong> Total Reads</span>
+                <span><strong>{viewCount}</strong> Total Reads</span>
                 <span>•</span>
-                <span>📤 <strong>{shareCount}</strong> Shares</span>
+                <span><strong>{shareCount}</strong> Shares</span>
               </div>
 
             </div>
@@ -214,20 +214,20 @@ export default function BlogDetail() {
             {/* Social Share Buttons */}
             <div style={{ background: '#ffffff', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', border: '1px solid #e2e8f0' }}>
               <p style={{ margin: '0 0 1rem 0', fontWeight: 700, color: 'var(--charcoal)', fontSize: '0.95rem' }}>
-                Found this article helpful? Share with friends:
+                Share this article:
               </p>
               <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                 <button onClick={() => handleShare('whatsapp')} style={{ background: '#25D366', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  📲 WhatsApp
+                  WhatsApp
                 </button>
                 <button onClick={() => handleShare('facebook')} style={{ background: '#1877F2', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  📘 Facebook
+                  Facebook
                 </button>
                 <button onClick={() => handleShare('twitter')} style={{ background: '#000000', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  𝕏 Twitter / X
+                  X (Twitter)
                 </button>
                 <button onClick={() => handleShare('copy')} style={{ background: '#64748b', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>
-                  📋 Copy Link
+                  Copy Link
                 </button>
               </div>
             </div>

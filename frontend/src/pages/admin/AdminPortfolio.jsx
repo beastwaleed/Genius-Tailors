@@ -225,13 +225,13 @@ export default function AdminPortfolio() {
                       onClick={() => openEditModal(item)}
                       style={{ flex: 1, padding: '8px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, color: 'var(--onyx)' }}
                     >
-                      ✏️ Edit
+                      Edit
                     </button>
                     <button
                       onClick={() => handleDelete(item._id, item.title)}
                       style={{ flex: 1, padding: '8px', background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, color: '#dc2626' }}
                     >
-                      🗑️ Delete
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -246,7 +246,7 @@ export default function AdminPortfolio() {
             <div style={{ background: 'white', borderRadius: '14px', width: '100%', maxWidth: '650px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }} onClick={e => e.stopPropagation()}>
               <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--onyx)' }}>
-                  {editingItem ? '✏️ Edit Portfolio Item' : '➕ Add Portfolio Image'}
+                  {editingItem ? 'Edit Portfolio Item' : 'Add Portfolio Image'}
                 </h2>
                 <button onClick={() => setModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#64748b' }}>&times;</button>
               </div>

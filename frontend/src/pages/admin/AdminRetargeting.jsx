@@ -235,7 +235,7 @@ export default function AdminRetargeting() {
                 color: activeTab === 'history' ? '#ffffff' : '#94a3b8', transition: '0.2s'
               }}
             >
-              📊 Past Campaigns ({history.length})
+              Past Campaigns ({history.length})
             </button>
           </div>
         </div>
@@ -255,7 +255,7 @@ export default function AdminRetargeting() {
                     WHOM to Retarget (Audience Rules)
                   </h3>
                   <span style={{ background: '#0F172A', color: '#10B981', border: '1px solid #10B981', padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700 }}>
-                    {loadingAudience ? 'Calculating...' : `🎯 Audience: ${audienceType === 'specific' ? (selectedUserId ? 1 : 0) : audienceCount} Customer${(audienceType === 'specific' ? (selectedUserId ? 1 : 0) : audienceCount) !== 1 ? 's' : ''}`}
+                    {loadingAudience ? 'Calculating...' : `Audience: ${audienceType === 'specific' ? (selectedUserId ? 1 : 0) : audienceCount} Customer${(audienceType === 'specific' ? (selectedUserId ? 1 : 0) : audienceCount) !== 1 ? 's' : ''}`}
                   </span>
                 </div>
 
@@ -267,12 +267,12 @@ export default function AdminRetargeting() {
                       onChange={e => setAudienceType(e.target.value)}
                       style={{ width: '100%', padding: '0.65rem 1rem', background: '#0F172A', border: '1px solid #334155', borderRadius: '8px', color: '#FFFFFF', outline: 'none', fontSize: '0.9rem' }}
                     >
-                      <option value="all">🌐 All Registered Customers</option>
-                      <option value="tier">🏆 By Membership Tier (Bronze, Silver, Gold)</option>
-                      <option value="tag">🏷️ By Customer Tag (e.g. VIP, Prefers Shalwar)</option>
-                      <option value="inactive">⏳ Inactive Customers (No orders in 30+ days)</option>
-                      <option value="high_ltv">💎 High-Value VIP Customers (LTV &gt; Rs. 5,000)</option>
-                      <option value="specific">👤 Single Specific Customer</option>
+                      <option value="all">All Registered Customers</option>
+                      <option value="tier">By Membership Tier (Bronze, Silver, Gold)</option>
+                      <option value="tag">By Customer Tag (e.g. VIP, Prefers Shalwar)</option>
+                      <option value="inactive">Inactive Customers (No orders in 30+ days)</option>
+                      <option value="high_ltv">High-Value VIP Customers (LTV &gt; Rs. 5,000)</option>
+                      <option value="specific">Single Specific Customer</option>
                     </select>
                   </div>
 
@@ -453,7 +453,7 @@ export default function AdminRetargeting() {
                       style={{ width: '18px', height: '18px', accentColor: '#3B82F6' }}
                     />
                     <div>
-                      <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.95rem' }}>✉️ Automated Email Campaign</div>
+                      <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.95rem' }}>Automated Email Campaign</div>
                       <div style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '0.2rem' }}>Sends formatted HTML promo email to customer's registered inbox.</div>
                     </div>
                   </label>
@@ -467,7 +467,7 @@ export default function AdminRetargeting() {
                       style={{ width: '18px', height: '18px', accentColor: '#25D366' }}
                     />
                     <div>
-                      <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.95rem' }}>💬 WhatsApp Direct API Broadcast</div>
+                      <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.95rem' }}>WhatsApp Direct API Broadcast</div>
                       <div style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '0.2rem' }}>Sends automated WhatsApp message to customer's mobile number.</div>
                     </div>
                   </label>
@@ -481,7 +481,7 @@ export default function AdminRetargeting() {
                       style={{ width: '18px', height: '18px', accentColor: '#F59E0B' }}
                     />
                     <div>
-                      <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.95rem' }}>🔔 Live In-App Promotional Popup Banner</div>
+                      <div style={{ fontWeight: 700, color: '#F8FAFC', fontSize: '0.95rem' }}>Live In-App Promotional Popup Banner</div>
                       <div style={{ fontSize: '0.8rem', color: '#94A3B8', marginTop: '0.2rem' }}>Creates an active promo modal banner for returning visitors on the website.</div>
                     </div>
                   </label>
