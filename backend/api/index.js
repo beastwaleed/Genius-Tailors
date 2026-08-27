@@ -2833,7 +2833,7 @@ app.post('/api/admin/crm/users/:id/retarget', protect, admin, async (req, res) =
 
     if (user.email) {
       try {
-        await sendPromoEmail(user.email, user.name, promoCode, discountText);
+        await sendPromoEmail(user.email, user.name, promoCode, discountText, 0, null, formattedMsg);
         emSent = true;
       } catch (e) {
         console.error('Email single retarget error:', e);
@@ -2873,7 +2873,7 @@ app.post('/api/admin/crm/retarget-segment', protect, admin, async (req, res) => 
         count++;
       }
       if (user.email) {
-        await sendPromoEmail(user.email, user.name, promoCode, discountText);
+        await sendPromoEmail(user.email, user.name, promoCode, discountText, 0, null, formattedMsg);
       }
     }
 
@@ -3002,7 +3002,13 @@ app.post('/api/admin/crm/retargeting/launch', protect, admin, async (req, res) =
       for (const u of targetUsers) {
         if (u.email) {
           try {
-            await sendPromoEmail(u.email, u.name, promoCode, discountText, 0, expDate);
+            const formattedMsg = customMessage ? customMessage
+              .replace(/\{name\}/gi, u.name || 'Valued Customer')
+              .replace(/\{code\}/gi, promoCode)
+              .replace(/\{discount\}/gi, discountText)
+              .replace(/\{link\}/gi, 'https://geniustailors.com/services') : '';
+
+            await sendPromoEmail(u.email, u.name, promoCode, discountText, 0, expDate, formattedMsg);
             emailsSent++;
           } catch (e) {
             console.error(`Failed to send email to ${u.email}:`, e);

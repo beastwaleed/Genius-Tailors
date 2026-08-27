@@ -3,13 +3,12 @@ const { Resend } = require('resend');
 
 // Helper function to send email via Resend (HTTP) or NodeMailer (SMTP)
 const sendEmail = async ({ to, subject, html, replyTo, fromName = "Genius Tailors" }) => {
-  try {
-    // OPTION 2: Use Resend HTTP API (Bypasses cPanel Firewall)
-    if (process.env.RESEND_API_KEY) {
+  let resendErr = null;
+
+  // OPTION 1: Resend HTTP API (Primary for Production / cPanel)
+  if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY.trim()) {
+    try {
       const resend = new Resend(process.env.RESEND_API_KEY.trim());
-      
-      // Resend requires verified domain emails. 
-      // Replace info@geniustailors.com with the email you verify in Resend
       const fromEmail = process.env.RESEND_FROM_EMAIL || 'info@geniustailors.com';
       
       const payload = {
@@ -21,19 +20,27 @@ const sendEmail = async ({ to, subject, html, replyTo, fromName = "Genius Tailor
       };
 
       const { data, error } = await resend.emails.send(payload);
-      if (error) throw new Error(error.message);
-      return data;
-    } 
-    
-    // OPTION 1: Fallback to NodeMailer (Local testing or if SMTP is somehow unblocked)
-    const safePass = process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.replace(/['"]/g, '').trim() : 'ccscwamdquwizimb';
-    const safeUser = process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/['"]/g, '').trim() : 'geniustailors110@gmail.com';
+      if (error) {
+        resendErr = error.message;
+        console.warn('Resend API failed, falling back to Nodemailer SMTP:', error.message);
+      } else {
+        return data;
+      }
+    } catch (e) {
+      resendErr = e.message;
+      console.warn('Resend exception, falling back to Nodemailer SMTP:', e.message);
+    }
+  } 
+  
+  // OPTION 2: Fallback to NodeMailer SMTP (Port 465 SSL)
+  const safePass = process.env.EMAIL_APP_PASSWORD ? process.env.EMAIL_APP_PASSWORD.replace(/['"]/g, '').trim() : 'ccscwamdquwizimb';
+  const safeUser = process.env.EMAIL_USER ? process.env.EMAIL_USER.replace(/['"]/g, '').trim() : 'geniustailors110@gmail.com';
 
+  try {
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      requireTLS: true,
+      port: 465,
+      secure: true, // Port 465 SSL bypasses cPanel TLS restrictions
       auth: {
         user: safeUser,         
         pass: safePass  
@@ -50,9 +57,9 @@ const sendEmail = async ({ to, subject, html, replyTo, fromName = "Genius Tailor
       html,
       replyTo: replyTo || safeUser
     });
-  } catch (error) {
-    console.error('Email sending failed:', error.message);
-    throw error;
+  } catch (smtpError) {
+    console.error('All email transports failed:', smtpError.message, 'Resend error:', resendErr);
+    return { error: smtpError.message };
   }
 };
 
@@ -361,23 +368,31 @@ const sendWelcomeEmail = async (customerEmail, customerName) => {
 };
 
 // ── Email 8: Promo Code Campaign ─────────────────────────────────────────────
-const sendPromoEmail = async (customerEmail, customerName, promoCode, discountText, minSpend, expiryDate) => {
+const sendPromoEmail = async (customerEmail, customerName, promoCode, discountText, minSpend = 0, expiryDate = null, customMsgText = '') => {
+  const customMessageSnippet = customMsgText ? `
+    <div style="background: #fdfbf7; border-left: 4px solid #1a1a2e; padding: 16px; margin: 20px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #1a1a2e; font-size: 15px; line-height: 1.6;">${customMsgText}</p>
+    </div>
+  ` : '<p style="color: #555;">We have generated a special discount code just for you! Use the code below during your next order to claim your discount.</p>';
+
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
       <div style="background: #1a1a2e; padding: 24px; text-align: center;">
-        <h1 style="color: #ffd700; margin: 0; font-size: 22px;">✂️ Exclusive Offer for You!</h1>
+        <h1 style="color: #ffd700; margin: 0; font-size: 22px;">✂️ Exclusive Offer from Genius Tailors</h1>
       </div>
       <div style="padding: 32px;">
-        <h2 style="color: #1a1a2e;">A Special Gift from Genius Tailors 🎉</h2>
+        <h2 style="color: #1a1a2e;">A Special Gift for You 🎉</h2>
         <p style="color: #333;">Dear <strong>${customerName}</strong>,</p>
-        <p style="color: #555;">We have generated a special discount code just for you! Use the code below during your next order to claim your discount.</p>
+        ${customMessageSnippet}
         <div style="background: #f9f9f9; border-left: 4px solid #ffd700; padding: 16px; margin: 20px 0; border-radius: 4px; text-align: center;">
           <p style="margin: 0; color: #1a1a2e; font-size: 24px; font-weight: 900; letter-spacing: 2px;">${promoCode}</p>
           <p style="margin: 8px 0 0 0; color: #27ae60; font-weight: bold;">${discountText}</p>
           ${minSpend > 0 ? `<p style="margin: 4px 0 0 0; color: #777; font-size: 13px;">Minimum Spend: Rs. ${minSpend}</p>` : ''}
           ${expiryDate ? `<p style="margin: 4px 0 0 0; color: #e74c3c; font-size: 13px;">Valid until: ${new Date(expiryDate).toLocaleDateString()}</p>` : ''}
         </div>
-        <p style="color: #999; font-size: 13px;">You can apply this code at checkout. Don't wait, book your custom tailored fit today!</p>
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${process.env.FRONTEND_URL || 'https://geniustailors.com'}/services" style="display: inline-block; background: #ffd700; color: #1a1a2e; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Claim & Book Fit Now</a>
+        </div>
       </div>
       <div style="background: #f0f0f0; padding: 16px; text-align: center;">
         <p style="color: #999; font-size: 12px; margin: 0;">© ${new Date().getFullYear()} Genius Tailors, Hyderabad. All rights reserved.</p>
@@ -387,7 +402,7 @@ const sendPromoEmail = async (customerEmail, customerName, promoCode, discountTe
 
   await sendEmail({
     to: customerEmail,
-    subject: `🎁 A special gift for you: ${promoCode}`,
+    subject: `🎁 Special Gift from Genius Tailors: ${promoCode} (${discountText})`,
     html
   });
 };
