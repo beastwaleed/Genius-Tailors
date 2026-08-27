@@ -408,14 +408,14 @@ export default function Booking() {
   const listSubTotal = garmentsList.reduce((sum, g) => sum + g.basePrice + g.styleExtras + g.effectiveFabricPrice, 0);
   const allGarmentsSubTotal = listSubTotal + currentGarmentSubTotal;
 
-  // Calculate 10% first-order discount (excluding Kameez Shalwar and Kameez Shalwar Design)
+  // Calculate 10% first-order discount (excluding ONLY plain 'Kameez Shalwar')
   let eligibleSubTotal = 0;
   garmentsList.forEach(g => {
-    if (g.serviceName !== 'Kameez Shalwar' && g.serviceName !== 'Kameez Shalwar Design') {
+    if (g.serviceName !== 'Kameez Shalwar') {
       eligibleSubTotal += (g.basePrice + g.styleExtras + g.effectiveFabricPrice);
     }
   });
-  if (serviceName !== 'Kameez Shalwar' && serviceName !== 'Kameez Shalwar Design') {
+  if (serviceName !== 'Kameez Shalwar') {
     eligibleSubTotal += currentGarmentSubTotal;
   }
 
