@@ -28,8 +28,8 @@ const RetargetingCampaign = require('../src/models/RetargetingCampaign');
 // Import Middleware
 const { protect, admin } = require('../src/middlewares/authMiddleware');
 const { upload } = require('../src/config/upload');
-const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendWelcomeEmail, sendPromoEmail, sendAdminAbandonedCartEmail } = require('../src/config/email');
-const { initWhatsApp, resetWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR } = require('../src/config/whatsapp');
+const { sendStatusUpdateEmail, sendPasswordResetEmail, sendOrderConfirmationEmail, sendContactEmail, sendAdminNewOrderNotification, sendAccountCreationEmail, sendWelcomeEmail, sendPromoEmail, sendAdminAbandonedCartEmail, sendNewBlogEmail } = require('../src/config/email');
+const { initWhatsApp, resetWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, sendNewBlogWhatsapp, getWhatsAppQR } = require('../src/config/whatsapp');
 const postexService = require('../src/services/postexService');
 
 const app = express();
@@ -2564,6 +2564,21 @@ app.post('/api/blogs', protect, admin, async (req, res) => {
     const blog = await Blog.create({
       title, slug, content, summary, featuredImage, altText, tags, metaTitle, metaDescription, status
     });
+
+    // Notify all customers via WhatsApp and Email if published
+    if (status === 'published') {
+      User.find({ role: { $ne: 'admin' } }).then(customers => {
+        customers.forEach(c => {
+          if (c.phone) {
+            sendNewBlogWhatsapp(c.phone, c.name, blog.title, blog.summary, blog.slug).catch(e => console.error('Blog WA broadcast error:', e));
+          }
+          if (c.email) {
+            sendNewBlogEmail(c.email, c.name, blog.title, blog.summary, blog.slug).catch(e => console.error('Blog Email broadcast error:', e));
+          }
+        });
+      }).catch(err => console.error('Fetch customers for blog broadcast error:', err));
+    }
+
     res.status(201).json(blog);
   } catch (error) {
     res.status(500).json({ message: 'Failed to create blog post', error: error.message });
@@ -2609,10 +2624,26 @@ app.get('/api/blogs/:slug', async (req, res) => {
 // Update a blog post (Admin)
 app.put('/api/blogs/:id', protect, admin, async (req, res) => {
   try {
+    const previousBlog = await Blog.findById(req.params.id);
     const blog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
+
+    // If blog was just changed from draft to published, notify customers
+    if (blog.status === 'published' && (!previousBlog || previousBlog.status !== 'published')) {
+      User.find({ role: { $ne: 'admin' } }).then(customers => {
+        customers.forEach(c => {
+          if (c.phone) {
+            sendNewBlogWhatsapp(c.phone, c.name, blog.title, blog.summary, blog.slug).catch(e => console.error('Blog WA broadcast error:', e));
+          }
+          if (c.email) {
+            sendNewBlogEmail(c.email, c.name, blog.title, blog.summary, blog.slug).catch(e => console.error('Blog Email broadcast error:', e));
+          }
+        });
+      }).catch(err => console.error('Fetch customers for blog broadcast error:', err));
+    }
+
     res.json(blog);
   } catch (error) {
     res.status(500).json({ message: 'Failed to update blog', error: error.message });

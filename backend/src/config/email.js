@@ -425,6 +425,40 @@ const sendAdminAbandonedCartEmail = async (customerName, serviceName, totalPrice
   });
 };
 
+// ── Email 10: New Blog Article Notification ──────────────────────────────
+const sendNewBlogEmail = async (customerEmail, customerName, blogTitle, blogSummary, blogSlug) => {
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
+  const blogUrl = `${baseUrl}/blog/${blogSlug}`;
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background: #1a1a2e; padding: 24px; text-align: center;">
+        <h1 style="color: #ffd700; margin: 0; font-size: 22px;">✂️ Genius Tailors Blog</h1>
+        <p style="color: #ccc; margin: 4px 0 0 0; font-size: 13px;">New Article Published!</p>
+      </div>
+      <div style="padding: 32px;">
+        <h2 style="color: #1a1a2e;">${blogTitle}</h2>
+        <p style="color: #333;">Dear <strong>${customerName}</strong>,</p>
+        <p style="color: #555;">We just published a brand new article on fashion, tailoring tips, and style guides!</p>
+        <div style="background: #f9f9f9; border-left: 4px solid #ffd700; padding: 16px; margin: 20px 0; border-radius: 4px;">
+          <p style="margin: 0; color: #555; font-style: italic;">"${blogSummary || blogTitle}"</p>
+        </div>
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${blogUrl}" style="display: inline-block; background: #ffd700; color: #1a1a2e; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">Read Full Article</a>
+        </div>
+      </div>
+      <div style="background: #f0f0f0; padding: 16px; text-align: center;">
+        <p style="color: #999; font-size: 12px; margin: 0;">© ${new Date().getFullYear()} Genius Tailors, Hyderabad. All rights reserved.</p>
+      </div>
+    </div>
+  `;
+
+  await sendEmail({
+    to: customerEmail,
+    subject: `📰 New Article: ${blogTitle} — Genius Tailors`,
+    html
+  });
+};
+
 module.exports = { 
   sendStatusUpdateEmail, 
   sendPasswordResetEmail, 
@@ -434,5 +468,6 @@ module.exports = {
   sendAccountCreationEmail, 
   sendWelcomeEmail,
   sendPromoEmail, 
-  sendAdminAbandonedCartEmail 
+  sendAdminAbandonedCartEmail,
+  sendNewBlogEmail
 };

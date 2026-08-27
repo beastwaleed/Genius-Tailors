@@ -339,4 +339,11 @@ const sendWhatsappPasswordReset = async (customerPhone, customerName, resetUrl) 
   await sendWhatsappMessage(customerPhone, message);
 };
 
-module.exports = { initWhatsApp, resetWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, getWhatsAppQR };
+const sendNewBlogWhatsapp = async (customerPhone, customerName, blogTitle, blogSummary, blogSlug) => {
+  const baseUrl = process.env.FRONTEND_URL || 'https://geniustailors.com';
+  const blogUrl = `${baseUrl}/blog/${blogSlug}`;
+  const message = `*New Article from Genius Tailors!* ✂️📰\n\nHi ${customerName},\n\nWe just published a new article: *${blogTitle}*\n\n_${blogSummary || blogTitle}_\n\n*Read the full article here:*\n${blogUrl}`;
+  await sendWhatsappMessage(customerPhone, message);
+};
+
+module.exports = { initWhatsApp, resetWhatsApp, sendWhatsappOrderConfirmation, sendWhatsappStatusUpdate, sendWhatsappAccountCreation, sendWelcomeWhatsapp, sendPromoWhatsapp, sendRecoveryWhatsapp, sendAdminAbandonedCartWhatsapp, sendAdminNewOrderWhatsapp, sendWhatsappPasswordReset, sendNewBlogWhatsapp, getWhatsAppQR };
