@@ -408,7 +408,18 @@ export default function Booking() {
   const listSubTotal = garmentsList.reduce((sum, g) => sum + g.basePrice + g.styleExtras + g.effectiveFabricPrice, 0);
   const allGarmentsSubTotal = listSubTotal + currentGarmentSubTotal;
 
-  const discountAmount = hasDiscount ? (allGarmentsSubTotal * 0.1) : 0;
+  // Calculate 10% first-order discount (excluding Kameez Shalwar and Kameez Shalwar Design)
+  let eligibleSubTotal = 0;
+  garmentsList.forEach(g => {
+    if (g.serviceName !== 'Kameez Shalwar' && g.serviceName !== 'Kameez Shalwar Design') {
+      eligibleSubTotal += (g.basePrice + g.styleExtras + g.effectiveFabricPrice);
+    }
+  });
+  if (serviceName !== 'Kameez Shalwar' && serviceName !== 'Kameez Shalwar Design') {
+    eligibleSubTotal += currentGarmentSubTotal;
+  }
+
+  const discountAmount = hasDiscount ? Math.round(eligibleSubTotal * 0.1) : 0;
   const deliveryCharge = 250;
 
   const subTotal = allGarmentsSubTotal - discountAmount + (isRush ? 1000 : 0) + deliveryCharge;
@@ -1417,7 +1428,7 @@ export default function Booking() {
                   <span>{profiles.find(p => p._id === selectedProfileId)?.profileName}</span>
                 </div>
                 <div className="receipt-divider"></div>
-                {hasDiscount && (
+                {hasDiscount && discountAmount > 0 && (
                   <div className="receipt-row" style={{ color: '#16a34a', fontWeight: 500 }}>
                     <span>First Order Promo (10% Off)</span>
                     <span>- Rs. {discountAmount.toLocaleString()}</span>
