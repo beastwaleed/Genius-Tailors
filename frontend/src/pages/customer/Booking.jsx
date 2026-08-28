@@ -368,10 +368,13 @@ export default function Booking() {
     }
   }
 
-  // 1099 Stitching offer ONLY for Kameez Shalwar when selecting from our given fabric options vs 1800 when providing own fabric
+  // Stitching offer for Kameez Shalwar when selecting from our given fabric options (reads active DB service basePrice or defaults to 1199 vs 1800 when providing own fabric)
+  const activeKSService = dbServices?.find(s => s.name && s.name.toLowerCase().trim() === 'kameez shalwar');
+  const ksFabricPrice = (activeKSService && activeKSService.basePrice) ? activeKSService.basePrice : 1199;
+
   if (serviceName === 'Kameez Shalwar') {
     if (selectedFabric && selectedFabric.name !== 'Provide my own fabric') {
-      basePrice = 1099;
+      basePrice = ksFabricPrice;
     } else {
       basePrice = 1800;
     }
@@ -929,10 +932,10 @@ export default function Booking() {
                   <span style={{ fontSize: '1.6rem' }}>🎁</span>
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#92400E', fontWeight: 700 }}>
-                      SPECIAL STITCHING OFFER: Get Stitching for ONLY Rs. 1,099!
+                      SPECIAL STITCHING OFFER: Get Stitching for ONLY Rs. {ksFabricPrice.toLocaleString()}!
                     </h4>
                     <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.825rem', color: '#B45309', lineHeight: 1.4 }}>
-                      Select any of our premium fabrics below to unlock discounted stitching for <strong>Rs. 1,099</strong> (Save Rs. 701 vs Rs. 1,800 stitching when providing your own fabric)!
+                      Select any of our premium fabrics below to unlock discounted stitching for <strong>Rs. {ksFabricPrice.toLocaleString()}</strong> (Save Rs. {(1800 - ksFabricPrice).toLocaleString()} vs Rs. 1,800 stitching when providing your own fabric)!
                     </p>
                   </div>
                 </div>
@@ -1015,7 +1018,7 @@ export default function Booking() {
 
                             {serviceName === 'Kameez Shalwar' && opt.name !== 'Provide my own fabric' && (
                               <div style={{ fontSize: '0.725rem', color: '#D97706', fontWeight: 700, marginTop: '0.4rem', background: '#FEF3C7', padding: '0.2rem 0.4rem', borderRadius: '4px', display: 'inline-block' }}>
-                                🔥 Includes Rs. 1,099 Stitching Offer
+                                Includes Rs. {ksFabricPrice.toLocaleString()} Stitching Offer
                               </div>
                             )}
                           </div>

@@ -67,7 +67,7 @@ export const ALL_SERVICES = [
     urdu: 'قمیض شلوار',
     tagline: 'The Timeless Pakistani Classic',
     desc: 'Our most-ordered garment. A perfectly fitted Kameez Shalwar is the foundation of every Pakistani wardrobe — comfortable for daily wear, sharp enough for formal events.',
-    price: 'From Rs. 1,099',
+    price: 'From Rs. 1,199',
     deliveryDays: '5–7 working days',
     img: ShalwarKameezFeaturedImage,
     badge: 'Most Popular',
