@@ -16,6 +16,7 @@ import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpe
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
 import bestKurtaPajamaTailor from '../assets/best kurta pajama tailor in pakistan.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
+import waistcoatTailorPak from '../assets/waistcoat tailor in pakistan.jpeg'
 import urbanCoreMain from '../assets/UrbanCoreMain.jpeg'
 import urbanCore01 from '../assets/UrbanCore01.jpeg'
 import urbanCore02 from '../assets/UrbanCore02.jpeg'
@@ -124,7 +125,7 @@ export const ALL_SERVICES = [
     desc: 'A well-cut waistcoat instantly elevates any outfit. Pair it with your Kameez Shalwar for a formal look or over a Kurta for a smart-casual ensemble.',
     price: 'From Rs. 3,500',
     deliveryDays: '4–6 working days',
-    img: WaistcoatFront,
+    img: waistcoatTailorPak,
     badge: 'Best Companion',
     badgeColor: '#1A1A1A',
     stars: 5,
