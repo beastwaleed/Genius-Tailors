@@ -27,6 +27,7 @@ import eliteAura01 from '../assets/EliteAura01.jpeg'
 import eliteAura02 from '../assets/EliteAura02.jpeg'
 import eliteAura03 from '../assets/EliteAura03.jpeg'
 import skDesignPak from '../assets/shalwar kameez design in pakistan.jpeg'
+import zardariSuitPak from '../assets/zardari suit in pakistan.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
 import angularEdge01 from '../assets/AngularEdge01.jpeg'
@@ -180,7 +181,7 @@ export const ALL_SERVICES = [
     desc: 'The ultimate statement of power and elegance. A complete Kurta Shalwar and Waistcoat suit crafted from the exact same premium fabric.',
     price: 'From Rs. 5,300',
     deliveryDays: '8–12 working days',
-    img: urbanCoreMain,
+    img: zardariSuitPak,
     badge: 'Signature',
     badgeColor: '#C0392B',
     stars: 5,
