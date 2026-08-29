@@ -175,16 +175,6 @@ export default function ServiceDetail() {
                       transition: 'all 300ms ease'
                     }}
                   />
-                  <span className="svc-badge" style={{
-                    background: service.badgeColor || '#C9A96E',
-                    position: 'absolute',
-                    top: 16,
-                    left: 16,
-                    fontSize: '0.68rem',
-                    padding: '0.22rem 0.65rem'
-                  }}>
-                    {service.badge}
-                  </span>
                 </div>
 
                 {/* Gallery Thumbnails */}

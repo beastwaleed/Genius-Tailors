@@ -300,9 +300,6 @@ export default function Services() {
                 {/* Image */}
                 <div className="sp-card-img-wrap">
                   <img src={svc.img} alt={svc.name} className="sp-card-img" />
-                  <span className="svc-badge" style={{ background: svc.badgeColor }}>
-                    {svc.badge}
-                  </span>
                   <div className="sp-card-overlay">
                     <span className="sp-view-btn">View Details →</span>
                   </div>
@@ -354,9 +351,6 @@ export default function Services() {
               <div className="sp-modal-img-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', borderRadius: '12px', overflow: 'hidden' }}>
                   <img src={activeImage} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.3s' }} />
-                  <span className="svc-badge" style={{ background: selected.badgeColor, position: 'absolute', top: 16, left: 16 }}>
-                    {selected.badge}
-                  </span>
                 </div>
                 
                 {/* Image Gallery Row */}

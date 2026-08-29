@@ -350,13 +350,6 @@ export default function Home() {
                     {/* Image */}
                     <div className="svc-card-img-wrap">
                       <img src={svc.img} alt={svc.name} className="svc-card-img" />
-                      {/* Badge */}
-                      <span
-                        className="svc-badge"
-                        style={{ background: svc.badgeColor }}
-                      >
-                        {svc.badge}
-                      </span>
                       <div className="svc-card-overlay">
                         <span className="svc-view-btn">View Details →</span>
                       </div>
@@ -690,9 +683,6 @@ export default function Home() {
                 <div className="sp-modal-img-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div style={{ position: 'relative', width: '100%', aspectRatio: '3/4', borderRadius: '12px', overflow: 'hidden' }}>
                     <img src={activeImage} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.3s' }} />
-                    <span className="svc-badge" style={{ background: selected.badgeColor, position: 'absolute', top: 16, left: 16 }}>
-                      {selected.badge}
-                    </span>
                   </div>
 
                   {/* Image Gallery Row */}
