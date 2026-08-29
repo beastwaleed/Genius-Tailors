@@ -364,6 +364,9 @@ export default function Home() {
                       {getHoverImg(svc) !== svc.img && (
                         <img src={getHoverImg(svc)} alt={svc.name} className="sp-card-img hover-img" />
                       )}
+                      <div className="sp-card-img-footer-hint">
+                        <span>View Details →</span>
+                      </div>
                     </div>
 
                     {/* Body */}

@@ -2116,6 +2116,36 @@ a.btn {
   transform: scale(1.05);
 }
 
+/* ── Small View Details Hint Pill ── */
+.sp-card-img-footer-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  pointer-events: none;
+  background: rgba(10, 10, 10, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: background 300ms ease, border-color 300ms ease, transform 300ms ease;
+  white-space: nowrap;
+}
+
+.svc-card:hover .sp-card-img-footer-hint,
+.sp-card:hover .sp-card-img-footer-hint {
+  background: var(--onyx);
+  border-color: var(--gold);
+  transform: translateX(-50%) translateY(-2px);
+}
+
 /* ── Badge ── */
 .svc-badge {
   position: absolute;
@@ -3405,6 +3435,7 @@ a.btn {
 
 .svc-card,
 .sp-card {
+  cursor: pointer;
   background: #FFFFFF;
   border: 1px solid var(--ivory-border);
   border-radius: 20px;
