@@ -39,15 +39,6 @@ const WHATSAPP_REVIEWS = [
   { id: 3, img: imgReviewSKOnline, title: 'Online Tailoring Experience', subtitle: 'Customer WhatsApp Feedback' }
 ];
 
-const PORTFOLIO_IMAGES = [
-  { id: 1, src: ShalwarKameezFeaturedImage, title: 'Bespoke Kameez Shalwar' },
-  { id: 2, src: angularEdgeMain, title: 'Angular Edge Kurta' },
-  { id: 3, src: MainShalwarKameez, title: 'Classic Finish' },
-  { id: 4, src: WaistcoatFront, title: 'Premium Waistcoat' },
-  { id: 5, src: ShalwarKameezGallery0, title: 'Tailoring Details' },
-  { id: 6, src: urbanCore02, title: 'Zardari Suit Fit' },
-];
-
 import { ALL_SERVICES as SERVICES_PREVIEW } from './Services';
 
 const PROCESS_STEPS = [
@@ -123,7 +114,7 @@ export default function Home() {
     return !sessionStorage.getItem('gt_banner_dismissed');
   });
   const [servicesData, setServicesData] = useState(SERVICES_PREVIEW);
-  const [portfolioItems, setPortfolioItems] = useState(PORTFOLIO_IMAGES);
+  const [portfolioItems, setPortfolioItems] = useState([]);
   const [selected, setSelected] = useState(null);
   const [activeImage, setActiveImage] = useState(null);
 
@@ -136,9 +127,7 @@ export default function Home() {
             src: p.imageUrl,
             title: p.title
           }));
-          if (liveFeatured.length > 0) {
-            setPortfolioItems([...liveFeatured, ...PORTFOLIO_IMAGES]);
-          }
+          setPortfolioItems(liveFeatured);
         }
       })
       .catch(() => { });
@@ -419,38 +408,40 @@ export default function Home() {
         </section>
 
         {/* ── Portfolio Preview ────────────────────────────── */}
-        <section className="section portfolio-preview-section" style={{ background: 'white', overflow: 'hidden' }}>
-          <div className="container" style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <span className="text-label" style={{ color: 'var(--onyx)' }}>Our Craftsmanship</span>
-            <h2 className="text-heading-2">Recent Work</h2>
-            <p className="text-subtitle" style={{ maxWidth: '540px', margin: '0.5rem auto 0', color: 'var(--stone)' }}>
-              A glimpse into the fine tailoring that defines Genius Tailors.
-            </p>
-          </div>
-
-          <div className="portfolio-marquee">
-            <div className="portfolio-track">
-              {portfolioItems.map((item, idx) => (
-                <div key={item.id || idx} className="portfolio-slide">
-                  <img src={item.src} alt={item.title} />
-                </div>
-              ))}
+        {portfolioItems.length > 0 && (
+          <section className="section portfolio-preview-section" style={{ background: 'white', overflow: 'hidden' }}>
+            <div className="container" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+              <span className="text-label" style={{ color: 'var(--onyx)' }}>Our Craftsmanship</span>
+              <h2 className="text-heading-2">Recent Work</h2>
+              <p className="text-subtitle" style={{ maxWidth: '540px', margin: '0.5rem auto 0', color: 'var(--stone)' }}>
+                A glimpse into the fine tailoring that defines Genius Tailors.
+              </p>
             </div>
-            <div className="portfolio-track" aria-hidden="true">
-              {portfolioItems.map((item, idx) => (
-                <div key={(item.id || idx) + '-copy'} className="portfolio-slide">
-                  <img src={item.src} alt={item.title} />
-                </div>
-              ))}
-            </div>
-          </div>
 
-          <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-            <Link to="/portfolio" className="btn btn-outline btn-lg" style={{ paddingLeft: '3rem', paddingRight: '3rem' }}>
-              See All Work
-            </Link>
-          </div>
-        </section>
+            <div className="portfolio-marquee">
+              <div className="portfolio-track">
+                {portfolioItems.map((item, idx) => (
+                  <div key={item.id || idx} className="portfolio-slide">
+                    <img src={item.src} alt={item.title} />
+                  </div>
+                ))}
+              </div>
+              <div className="portfolio-track" aria-hidden="true">
+                {portfolioItems.map((item, idx) => (
+                  <div key={(item.id || idx) + '-copy'} className="portfolio-slide">
+                    <img src={item.src} alt={item.title} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+              <Link to="/portfolio" className="btn btn-outline btn-lg" style={{ paddingLeft: '3rem', paddingRight: '3rem' }}>
+                See All Work
+              </Link>
+            </div>
+          </section>
+        )}
 
 
 
