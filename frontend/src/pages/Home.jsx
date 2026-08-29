@@ -22,6 +22,7 @@ import ShalwarKameezGallery2 from '../assets/ShalwarKameezGallery2.jpeg';
 import angularEdge01 from '../assets/AngularEdge01.jpeg'
 import urbanCore02 from '../assets/UrbanCore02.jpeg'
 import websiteHeroImg from '../assets/website-hero-image-upscaled.png';
+import mobileHeroImg from '../assets/hero-image-mobile-version.png';
 
 import proc1 from '../assets/process_1.png';
 import proc2 from '../assets/process_2.png';
@@ -253,15 +254,54 @@ export default function Home() {
 
         {/* ── Full Width Hero Banner ──────────────────────── */}
         <section className="hero" style={{ minHeight: 'auto', paddingTop: (activeSeason && isBannerVisible) ? 'calc(var(--nav-height) + 44px)' : 'var(--nav-height)', paddingBottom: 0, paddingLeft: 0, paddingRight: 0, overflow: 'hidden' }}>
-          <div style={{ width: '100%', maxWidth: '100%', maxHeight: '615px', overflow: 'hidden' }}>
+          <div className="hero-banner-container">
             <Link to="/services" style={{ display: 'block', cursor: 'pointer' }}>
+              {/* Desktop Hero Image */}
               <img
                 src={websiteHeroImg}
                 alt="Genius Tailors Bespoke Tailoring"
-                style={{ width: '100%', height: '615px', display: 'block', objectFit: 'cover', objectPosition: 'top center' }}
+                className="hero-img-desktop"
+              />
+              {/* Mobile Hero Image */}
+              <img
+                src={mobileHeroImg}
+                alt="Genius Tailors Bespoke Tailoring"
+                className="hero-img-mobile"
               />
             </Link>
           </div>
+          <style>{`
+            .hero-banner-container {
+              width: 100%;
+              max-width: 100%;
+              max-height: 615px;
+              overflow: hidden;
+            }
+            .hero-img-desktop {
+              width: 100%;
+              height: 615px;
+              display: block;
+              object-fit: cover;
+              object-position: top center;
+            }
+            .hero-img-mobile {
+              display: none;
+              width: 100%;
+              height: auto;
+              object-fit: contain;
+            }
+            @media (max-width: 768px) {
+              .hero-banner-container {
+                max-height: none;
+              }
+              .hero-img-desktop {
+                display: none !important;
+              }
+              .hero-img-mobile {
+                display: block !important;
+              }
+            }
+          `}</style>
         </section>
 
         {/* ── Order Flow (Process) ────────────────────────── */}
