@@ -27,6 +27,16 @@ import proc2 from '../assets/process_2.png';
 import proc3 from '../assets/process_3.png';
 import proc4 from '../assets/process_4.png';
 
+import imgReviewShirt from '../assets/best shirt tailor in pakistan.png';
+import imgReviewOnlineSK from '../assets/best online shalwar kameez tailor in pakistan.png';
+import imgReviewSKOnline from '../assets/shalwar kameez online tailor in pakistan.png';
+
+const WHATSAPP_REVIEWS = [
+  { id: 1, img: imgReviewOnlineSK, title: 'Bespoke Kameez Shalwar Review', subtitle: 'Customer WhatsApp Feedback' },
+  { id: 2, img: imgReviewShirt, title: 'Custom Shirt Tailoring Review', subtitle: 'Verified Client Feedback' },
+  { id: 3, img: imgReviewSKOnline, title: 'Online Tailoring Experience', subtitle: 'Customer WhatsApp Feedback' }
+];
+
 const PORTFOLIO_IMAGES = [
   { id: 1, src: ShalwarKameezFeaturedImage, title: 'Bespoke Kameez Shalwar' },
   { id: 2, src: angularEdgeMain, title: 'Angular Edge Kurta' },
@@ -84,6 +94,7 @@ export default function Home() {
   const [activeCard, setActiveCard] = useState(0);
   const [showPromo, setShowPromo] = useState(false);
   const [realReviews, setRealReviews] = useState(null);
+  const [viewingReviewImg, setViewingReviewImg] = useState(null);
 
   useEffect(() => {
     const fetchGmbReviews = async () => {
@@ -468,53 +479,66 @@ export default function Home() {
 
 
 
-          {/* ── Google Reviews ────────────────────────────────── */}
+          {/* ── Customer Reviews & Feedback ─────────────────────── */}
           <section className="section testimonials-section" style={{ background: '#f8f9fa' }}>
             <div className="container">
-              <div className="section-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="section-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '2.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style={{ width: '28px', height: '28px' }}><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-                  <h2 className="text-heading-2" style={{ margin: 0, fontFamily: 'var(--font-sans)', fontWeight: 600, color: '#202124', letterSpacing: '-0.5px' }}>Google Reviews</h2>
+                  <h2 className="text-heading-2" style={{ margin: 0, fontFamily: 'var(--font-sans)', fontWeight: 600, color: '#202124', letterSpacing: '-0.5px' }}>Customer Reviews & Feedback</h2>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
                   <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#202124' }}>
                     {realReviews ? realReviews.rating : '5.0'}
                   </span>
                   <span style={{ color: '#fbbc04', fontSize: '1.25rem', letterSpacing: '2px' }}>★★★★★</span>
                   <span style={{ color: '#5f6368', fontSize: '0.85rem' }}>
-                    ({realReviews ? realReviews.user_ratings_total : '150+'}) reviews
+                    ({realReviews ? realReviews.user_ratings_total : '150+'}) verified reviews
                   </span>
                 </div>
-                <a href="https://g.page/r/CbOAKdiLA07KEBM/review" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ background: '#1a73e8', borderColor: '#1a73e8', borderRadius: '4px', padding: '0.6rem 1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  Write a review
+                <a 
+                  href="https://www.google.com/search?q=genius+tailors&rlz=1C1CHZN_enPK1227PK1227&oq=genius+tailors&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARAjGCcyBwgCEAAYgAQyBwgDEAAYgAQyCAgEEAAYFhgeMgYIBRBFGDwyBggGEEUYPDIGCAcQRRg80gEIMjUwMWowajeoAgCwAgA&sourceid=chrome&source=chrome.ob&ie=UTF-8#sv=CAESzQEKuQEStgEKd0FKaVQ0dEpnTlE2dlJzb3hLbm9CN1FLY0JVeDFmS1JtMEhuNERNVy15VU5NVWlzeU1fUmV6RFpzNDk2QWRrSEVVR0J3cGZzSjM3R1VjS0VCLVdVa1AxdG1mWmlfS2lMVVExbGFXaWNDVkt6Sks2a3k3dFNnVGtJEhdMc0tTYXNlME9lS2drZFVQNGFiWmtRSRoiQURzcjlmVEhaSzFtYXA5STBRTWVDS054d0huMGw0UUthQRIEODA1MRoBMyoAMAA4AUAAGAAg4c6vmApKAhAC" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn btn-primary" 
+                  style={{ background: '#1a73e8', borderColor: '#1a73e8', borderRadius: '6px', padding: '0.65rem 1.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.9rem', color: '#ffffff', textDecoration: 'none' }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  View All Reviews
                 </a>
               </div>
-              <div className="testi-grid animate-children">
-                {(realReviews ? realReviews.reviews : TESTIMONIALS).slice(0, 3).map((t, i) => (
-                  <div key={i} className="testi-card animate-fade-in" style={{ background: 'white', borderRadius: '8px', padding: '1.5rem', border: '1px solid #e8eaed', boxShadow: '0 1px 2px rgba(60,64,67,0.1)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                      {t.profile_photo_url ? (
-                        <img src={t.profile_photo_url} alt={t.author_name} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
-                      ) : (
-                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: t.avatarColor || '#4285F4', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontWeight: 500 }}>
-                          {(t.author_name || t.name || 'G').charAt(0).toUpperCase()}
-                        </div>
-                      )}
+
+              {/* Review Screenshots Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.75rem' }}>
+                {WHATSAPP_REVIEWS.map(r => (
+                  <div 
+                    key={r.id} 
+                    style={{
+                      background: '#ffffff',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    className="review-img-card"
+                    onClick={() => setViewingReviewImg(r.img)}
+                  >
+                    <div style={{ width: '100%', background: '#075E54', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ffffff' }}>
+                      <span style={{ fontSize: '1.1rem' }}>💬</span>
                       <div>
-                        <h4 style={{ margin: 0, fontSize: '0.95rem', color: '#202124', fontFamily: 'var(--font-sans)', fontWeight: 500 }}>{t.author_name || t.name}</h4>
-                        <span style={{ fontSize: '0.8rem', color: '#70757a' }}>{t.relative_time_description || t.time}</span>
-                      </div>
-                      <div style={{ marginLeft: 'auto' }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style={{ width: '16px', height: '16px', opacity: 0.8 }}><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{r.title}</div>
+                        <div style={{ fontSize: '0.725rem', opacity: 0.85 }}>{r.subtitle}</div>
                       </div>
                     </div>
-                    <div style={{ marginBottom: '0.5rem', color: '#fbbc04', fontSize: '1.25rem', letterSpacing: '2px' }}>
-                      {'★'.repeat(t.rating || t.stars)}
+                    <div style={{ padding: '0.75rem', background: '#f0f2f5', display: 'flex', justifyContent: 'center' }}>
+                      <img 
+                        src={r.img} 
+                        alt={r.title} 
+                        style={{ width: '100%', maxHeight: '420px', objectFit: 'contain', borderRadius: '8px' }} 
+                      />
                     </div>
-                    <p style={{ margin: 0, color: '#3c4043', fontSize: '0.9rem', lineHeight: 1.6, fontFamily: 'var(--font-sans)', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {t.text}
-                    </p>
                   </div>
                 ))}
               </div>
@@ -799,6 +823,24 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Lightbox Modal for Review Screenshots */}
+          {viewingReviewImg && (
+            <div 
+              style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}
+              onClick={() => setViewingReviewImg(null)}
+            >
+              <div style={{ position: 'relative', maxWidth: '900px', maxHeight: '90vh' }} onClick={e => e.stopPropagation()}>
+                <button 
+                  onClick={() => setViewingReviewImg(null)}
+                  style={{ position: 'absolute', top: '-40px', right: '0', background: 'none', border: 'none', color: '#ffffff', fontSize: '2rem', cursor: 'pointer' }}
+                >
+                  ✕
+                </button>
+                <img src={viewingReviewImg} alt="Customer WhatsApp Review Screenshot" style={{ width: '100%', maxHeight: '85vh', objectFit: 'contain', borderRadius: '12px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }} />
               </div>
             </div>
           )}
