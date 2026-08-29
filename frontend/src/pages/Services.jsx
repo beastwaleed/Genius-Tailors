@@ -63,7 +63,8 @@ const kurtaShalwarGallery = [kurtaShalwar0, kurtaShalwar1, kurtaShalwar2];
 
 import kurtaPajama1 from '../assets/KurtaPajama1.jpeg';
 import kurtaPajama2 from '../assets/KurtaPajama2.jpeg';
-const kurtaPajamaGallery = [kurtaPajama1, kurtaPajama2];
+import kurtaPajamaSecondImg from '../assets/kurta pajama second image.jpeg';
+const kurtaPajamaGallery = [kurtaPajamaSecondImg, kurtaPajama1, kurtaPajama2];
 
 export const ALL_SERVICES = [
   {
