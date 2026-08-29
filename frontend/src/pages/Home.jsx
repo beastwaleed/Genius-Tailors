@@ -351,37 +351,31 @@ export default function Home() {
               <div id="services-grid-home" className="services-grid animate-children">
                 {servicesData.map((svc) => (
                   <div
-                    key={svc.name}
-                    className="svc-card animate-fade-in"
+                    key={svc.id || svc.name}
+                    className="sp-card animate-fade-in"
                     onClick={() => navigate(`/services/${svc.id}`)}
-                    style={{ cursor: 'pointer' }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={e => e.key === 'Enter' && navigate(`/services/${svc.id}`)}
                   >
-
                     {/* Image */}
-                    <div className="svc-card-img-wrap">
-                      <img src={svc.img} alt={svc.name} className="svc-card-img primary-img" />
+                    <div className="sp-card-img-wrap">
+                      <img src={svc.img} alt={svc.name} className="sp-card-img primary-img" />
                       {getHoverImg(svc) !== svc.img && (
-                        <img src={getHoverImg(svc)} alt={svc.name} className="svc-card-img hover-img" />
+                        <img src={getHoverImg(svc)} alt={svc.name} className="sp-card-img hover-img" />
                       )}
                     </div>
 
                     {/* Body */}
-                    <div className="svc-card-body">
-                      {/* Name + Urdu on Separate Lines */}
+                    <div className="sp-card-body">
                       <div className="svc-card-title-block">
                         <h3 className="svc-card-name">{svc.name}</h3>
                         <span className="svc-card-urdu">{svc.urdu}</span>
                       </div>
-
-                      {/* Stars */}
                       <div className="svc-stars-row">
-                        <span className="svc-stars">
-                          {'★'.repeat(svc.stars)}{'☆'.repeat(5 - svc.stars)}
-                        </span>
+                        <span className="svc-stars">{'★'.repeat(svc.stars)}{'☆'.repeat(5 - svc.stars)}</span>
                         <span className="svc-reviews">({svc.reviews} reviews)</span>
                       </div>
-
-                      {/* Footer: Order Button */}
                       <div className="svc-card-footer" style={{ marginTop: '1.25rem' }}>
                         <Link
                           to={`/book?service=${encodeURIComponent(svc.name)}`}
@@ -393,7 +387,6 @@ export default function Home() {
                         </Link>
                       </div>
                     </div>
-
                   </div>
                 ))}
               </div>
