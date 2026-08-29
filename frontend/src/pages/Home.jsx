@@ -261,12 +261,16 @@ export default function Home() {
                 src={websiteHeroImg}
                 alt="Genius Tailors Bespoke Tailoring"
                 className="hero-img-desktop"
+                loading="eager"
+                fetchPriority="high"
               />
               {/* Mobile Hero Image */}
               <img
                 src={mobileHeroImg}
                 alt="Genius Tailors Bespoke Tailoring"
                 className="hero-img-mobile"
+                loading="eager"
+                fetchPriority="high"
               />
             </Link>
           </div>
