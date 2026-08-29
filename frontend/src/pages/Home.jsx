@@ -464,39 +464,47 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Review Screenshots Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.75rem' }}>
-              {WHATSAPP_REVIEWS.map(r => (
-                <div
-                  key={r.id}
-                  style={{
-                    background: '#ffffff',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    border: '1px solid #e2e8f0',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  className="review-img-card"
-                  onClick={() => setViewingReviewImg(r.img)}
-                >
-                  <div style={{ width: '100%', background: '#075E54', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ffffff' }}>
-                    <span style={{ fontSize: '1.1rem' }}>💬</span>
-                    <div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{r.title}</div>
-                      <div style={{ fontSize: '0.725rem', opacity: 0.85 }}>{r.subtitle}</div>
+            {/* Review Screenshots Grid / Carousel */}
+            <div className="services-carousel-wrapper" style={{ position: 'relative' }}>
+              <button className="carousel-btn prev-btn" onClick={() => scrollGrid(-1, 'reviews-grid-home')} aria-label="Previous">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
+              </button>
+              <div id="reviews-grid-home" className="reviews-grid services-grid">
+                {WHATSAPP_REVIEWS.map(r => (
+                  <div
+                    key={r.id}
+                    style={{
+                      background: '#ffffff',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                      cursor: 'pointer'
+                    }}
+                    className="review-img-card sp-card"
+                    onClick={() => setViewingReviewImg(r.img)}
+                  >
+                    <div style={{ width: '100%', background: '#075E54', padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ffffff' }}>
+                      <span style={{ fontSize: '1.1rem' }}>💬</span>
+                      <div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{r.title}</div>
+                        <div style={{ fontSize: '0.725rem', opacity: 0.85 }}>{r.subtitle}</div>
+                      </div>
+                    </div>
+                    <div style={{ padding: '0.75rem', background: '#f0f2f5', display: 'flex', justifyContent: 'center' }}>
+                      <img
+                        src={r.img}
+                        alt={r.title}
+                        style={{ width: '100%', maxHeight: '420px', objectFit: 'contain', borderRadius: '8px' }}
+                      />
                     </div>
                   </div>
-                  <div style={{ padding: '0.75rem', background: '#f0f2f5', display: 'flex', justifyContent: 'center' }}>
-                    <img
-                      src={r.img}
-                      alt={r.title}
-                      style={{ width: '100%', maxHeight: '420px', objectFit: 'contain', borderRadius: '8px' }}
-                    />
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <button className="carousel-btn next-btn" onClick={() => scrollGrid(1, 'reviews-grid-home')} aria-label="Next">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
+              </button>
             </div>
           </div>
         </section>

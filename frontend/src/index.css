@@ -2255,7 +2255,8 @@ a.btn {
   .prev-btn { left: -10px; }
   .next-btn { right: -10px; }
 
-  .services-grid {
+  .services-grid,
+  .reviews-grid {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
@@ -2264,11 +2265,13 @@ a.btn {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  .services-grid::-webkit-scrollbar {
+  .services-grid::-webkit-scrollbar,
+  .reviews-grid::-webkit-scrollbar {
     display: none;
   }
   .svc-card,
-  .sp-card {
+  .sp-card,
+  .review-img-card {
     flex: 0 0 100%;
     scroll-snap-align: center;
   }
