@@ -50,7 +50,8 @@ import closeupButtons from '../assets/closeup_buttons.png';
 const gallery = [closeupCollar, closeupCuff, closeupFabric, closeupButtons];
 import waistcoatCloseupShot from '../assets/waistcoat closeup shot.jpeg';
 const waistcoatGallery = [waistcoatCloseupShot, WaistcoatV, WaistcoatRound, WaistcoatSherwani];
-const shirtGallery = [ShirtMain, ShirtCollar, ShirtCuff];
+import shirtCloseupShot from '../assets/shirt closeup shot.jpeg';
+const shirtGallery = [shirtCloseupShot, ShirtMain, ShirtCollar, ShirtCuff];
 
 import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
 import ShalwarKameezGallery1 from '../assets/ShalwarKameezGallery1.jpeg';
