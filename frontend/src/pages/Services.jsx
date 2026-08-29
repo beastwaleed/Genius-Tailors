@@ -28,6 +28,7 @@ import eliteAura02 from '../assets/EliteAura02.jpeg'
 import eliteAura03 from '../assets/EliteAura03.jpeg'
 import skDesignPak from '../assets/shalwar kameez design in pakistan.jpeg'
 import zardariSuitPak from '../assets/zardari suit in pakistan.jpeg'
+import shirtStitchingPak from '../assets/shirt stitching online tailor in pakistan.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
 import angularEdge01 from '../assets/AngularEdge01.jpeg'
@@ -199,7 +200,7 @@ export const ALL_SERVICES = [
     desc: 'A perfectly tailored bespoke dress shirt for a crisp, professional look. Built to your exact measurements for unparalleled comfort and style.',
     price: 'From Rs. 1,200',
     deliveryDays: '4–6 working days',
-    img: ShirtMain,
+    img: shirtStitchingPak,
     badge: 'New',
     badgeColor: '#E67E22',
     stars: 5,
