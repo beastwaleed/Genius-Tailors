@@ -313,19 +313,15 @@ export default function Services() {
                     <h3 className="svc-card-name">{svc.name}</h3>
                     <span className="svc-card-urdu">{svc.urdu}</span>
                   </div>
-                  <p className="sp-card-tagline">{svc.tagline}</p>
                   <div className="svc-stars-row">
                     <span className="svc-stars">{'★'.repeat(svc.stars)}{'☆'.repeat(5 - svc.stars)}</span>
                     <span className="svc-reviews">({svc.reviews} reviews)</span>
                   </div>
-                  <div className="svc-card-footer">
-                    <div className="svc-price-block">
-                      <span className="svc-price-label">Starting Price</span>
-                      <span className="svc-card-price">{svc.price}</span>
-                    </div>
+                  <div className="svc-card-footer" style={{ marginTop: '1.25rem' }}>
                     <Link
                       to={`/book?service=${encodeURIComponent(svc.name)}`}
                       className="svc-order-btn"
+                      style={{ width: '100%', textAlign: 'center' }}
                       onClick={e => e.stopPropagation()}
                     >
                       Order Now →
@@ -588,7 +584,7 @@ export default function Services() {
 
         .sp-card-img-wrap {
           position: relative;
-          height: 420px;
+          height: 520px;
           overflow: hidden;
           background: var(--ivory-dark);
         }

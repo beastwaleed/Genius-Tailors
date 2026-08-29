@@ -371,18 +371,12 @@ export default function Home() {
                         <span className="svc-reviews">({svc.reviews} reviews)</span>
                       </div>
 
-                      {/* Description */}
-                      <p className="svc-card-desc">{svc.desc}</p>
-
-                      {/* Footer: Price on Line 1, Order Button on Line 2 */}
-                      <div className="svc-card-footer">
-                        <div className="svc-price-block">
-                          <span className="svc-price-label">Starting Price</span>
-                          <span className="svc-card-price">{svc.price}</span>
-                        </div>
+                      {/* Footer: Order Button */}
+                      <div className="svc-card-footer" style={{ marginTop: '1.25rem' }}>
                         <Link
                           to={`/book?service=${encodeURIComponent(svc.name)}`}
                           className="svc-order-btn"
+                          style={{ width: '100%', textAlign: 'center' }}
                           onClick={e => e.stopPropagation()}
                         >
                           Order Now →
