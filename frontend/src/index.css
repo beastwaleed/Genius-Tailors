@@ -2087,12 +2087,33 @@ a.btn {
   background: var(--ivory-dark);
 }
 
-.svc-card-img {
+.svc-card-img,
+.sp-card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 500ms ease;
+  transition: transform 500ms ease, opacity 500ms ease;
+}
+
+.svc-card-img.hover-img,
+.sp-card-img.hover-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.svc-card:hover .hover-img,
+.sp-card:hover .hover-img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.svc-card:hover .primary-img,
+.sp-card:hover .primary-img {
+  transform: scale(1.05);
 }
 
 /* ── Badge ── */

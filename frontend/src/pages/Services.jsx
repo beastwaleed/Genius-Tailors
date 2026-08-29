@@ -212,6 +212,16 @@ export const ALL_SERVICES = [
   }
 ];
 
+const getHoverImg = (svc) => {
+  if (svc.images && svc.images.length > 0) {
+    const secondary = svc.images.find(img => img !== svc.img);
+    if (secondary) return secondary;
+    if (svc.images[1]) return svc.images[1];
+    if (svc.images[0]) return svc.images[0];
+  }
+  return svc.img;
+};
+
 const CATEGORIES = ['All', 'Traditional', 'Formal', 'Casual'];
 
 export default function Services() {
@@ -301,10 +311,10 @@ export default function Services() {
               >
                 {/* Image */}
                 <div className="sp-card-img-wrap">
-                  <img src={svc.img} alt={svc.name} className="sp-card-img" />
-                  <div className="sp-card-overlay">
-                    <span className="sp-view-btn">View Details →</span>
-                  </div>
+                  <img src={svc.img} alt={svc.name} className="sp-card-img primary-img" />
+                  {getHoverImg(svc) !== svc.img && (
+                    <img src={getHoverImg(svc)} alt={svc.name} className="sp-card-img hover-img" />
+                  )}
                 </div>
 
                 {/* Body */}

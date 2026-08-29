@@ -41,6 +41,16 @@ const WHATSAPP_REVIEWS = [
 
 import { ALL_SERVICES as SERVICES_PREVIEW } from './Services';
 
+const getHoverImg = (svc) => {
+  if (svc.images && svc.images.length > 0) {
+    const secondary = svc.images.find(img => img !== svc.img);
+    if (secondary) return secondary;
+    if (svc.images[1]) return svc.images[1];
+    if (svc.images[0]) return svc.images[0];
+  }
+  return svc.img;
+};
+
 const PROCESS_STEPS = [
   { num: '01', title: 'Choose Your Garment', desc: 'Browse our catalog and select the style that speaks to you.', bgImg: proc1 },
   { num: '02', title: 'Enter Measurements', desc: 'Use saved profiles or enter fresh measurements for a perfect fit.', bgImg: proc2 },
@@ -349,10 +359,10 @@ export default function Home() {
 
                     {/* Image */}
                     <div className="svc-card-img-wrap">
-                      <img src={svc.img} alt={svc.name} className="svc-card-img" />
-                      <div className="svc-card-overlay">
-                        <span className="svc-view-btn">View Details →</span>
-                      </div>
+                      <img src={svc.img} alt={svc.name} className="svc-card-img primary-img" />
+                      {getHoverImg(svc) !== svc.img && (
+                        <img src={getHoverImg(svc)} alt={svc.name} className="svc-card-img hover-img" />
+                      )}
                     </div>
 
                     {/* Body */}
