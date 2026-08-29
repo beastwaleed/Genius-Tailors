@@ -28,6 +28,7 @@ import eliteAura02 from '../assets/EliteAura02.jpeg'
 import eliteAura03 from '../assets/EliteAura03.jpeg'
 import skDesignPak from '../assets/shalwar kameez design in pakistan.jpeg'
 import zardariSuitPak from '../assets/zardari suit in pakistan.jpeg'
+import zardariSuitCloseup from '../assets/zardari suit closeup.jpeg'
 import shirtStitchingPak from '../assets/shirt stitching online tailor in pakistan.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
@@ -193,7 +194,7 @@ export const ALL_SERVICES = [
     category: 'Formal',
     features: ['Matching fabric 3-piece', 'Perfectly coordinated look', 'Zardari style cut', 'Premium inner lining'],
     occasions: ['Weddings', 'Political events', 'High-profile gatherings'],
-    images: [urbanCoreMain, urbanCore01, urbanCore02, royalSlateClassicMain, royalSlateClassic01],
+    images: [zardariSuitCloseup, urbanCoreMain, urbanCore01, urbanCore02, royalSlateClassicMain, royalSlateClassic01],
   },
   {
     id: 'shirt',
