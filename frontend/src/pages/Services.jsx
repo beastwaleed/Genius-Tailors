@@ -14,6 +14,7 @@ const tryImg = (heroImg, fallback) => {
 
 import ShalwarKameezFeaturedImage from '../assets/ShalwarKameezFeaturedImage.jpeg'
 import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg'
+import bestKurtaPajamaTailor from '../assets/best kurta pajama tailor in pakistan.jpeg'
 import WaistcoatFront from '../assets/waistcoatfront.jpeg'
 import urbanCoreMain from '../assets/UrbanCoreMain.jpeg'
 import urbanCore01 from '../assets/UrbanCore01.jpeg'
@@ -105,7 +106,7 @@ export const ALL_SERVICES = [
     desc: 'An elegant ethnic option perfect for events, evenings, and festive wear. Tailored with precision to give you a sharp, distinguished look.',
     price: 'From Rs. 2,000',
     deliveryDays: '5–7 working days',
-    img: HeroKurtaPajama,
+    img: bestKurtaPajamaTailor,
     badge: 'Trending',
     badgeColor: '#27AE60',
     stars: 4,
