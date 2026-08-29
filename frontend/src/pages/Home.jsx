@@ -254,11 +254,13 @@ export default function Home() {
         {/* ── Full Width Hero Banner ──────────────────────── */}
         <section className="hero" style={{ minHeight: 'auto', paddingTop: (activeSeason && isBannerVisible) ? 'calc(var(--nav-height) + 44px)' : 'var(--nav-height)', paddingBottom: 0, paddingLeft: 0, paddingRight: 0, overflow: 'hidden' }}>
           <div style={{ width: '100%', maxWidth: '100%', maxHeight: '615px', overflow: 'hidden' }}>
-            <img
-              src={websiteHeroImg}
-              alt="Genius Tailors Bespoke Tailoring"
-              style={{ width: '100%', height: '615px', display: 'block', objectFit: 'cover', objectPosition: 'top center' }}
-            />
+            <Link to="/services" style={{ display: 'block', cursor: 'pointer' }}>
+              <img
+                src={websiteHeroImg}
+                alt="Genius Tailors Bespoke Tailoring"
+                style={{ width: '100%', height: '615px', display: 'block', objectFit: 'cover', objectPosition: 'top center' }}
+              />
+            </Link>
           </div>
         </section>
 
