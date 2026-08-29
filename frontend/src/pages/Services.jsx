@@ -48,7 +48,8 @@ import closeupFabric from '../assets/closeup_fabric.png';
 import closeupButtons from '../assets/closeup_buttons.png';
 
 const gallery = [closeupCollar, closeupCuff, closeupFabric, closeupButtons];
-const waistcoatGallery = [WaistcoatV, WaistcoatRound, WaistcoatSherwani];
+import waistcoatCloseupShot from '../assets/waistcoat closeup shot.jpeg';
+const waistcoatGallery = [waistcoatCloseupShot, WaistcoatV, WaistcoatRound, WaistcoatSherwani];
 const shirtGallery = [ShirtMain, ShirtCollar, ShirtCuff];
 
 import ShalwarKameezGallery0 from '../assets/ShalwarKameezGallery0.jpeg';
