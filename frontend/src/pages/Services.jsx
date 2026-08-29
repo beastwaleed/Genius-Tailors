@@ -26,6 +26,7 @@ import eliteAuraMain from '../assets/EliteAuraMain.jpeg'
 import eliteAura01 from '../assets/EliteAura01.jpeg'
 import eliteAura02 from '../assets/EliteAura02.jpeg'
 import eliteAura03 from '../assets/EliteAura03.jpeg'
+import skDesignPak from '../assets/shalwar kameez design in pakistan.jpeg'
 import kurtaShalwarFeatured from '../assets/kurtaShalwarFeatured.jpeg'
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg'
 import angularEdge01 from '../assets/AngularEdge01.jpeg'
@@ -143,7 +144,7 @@ export const ALL_SERVICES = [
     desc: 'Take your Kameez Shalwar to the next level with our premium design options. Select from a range of exclusive patterns and cuts.',
     price: 'From Rs. 2,200',
     deliveryDays: '7–10 working days',
-    img: eliteAuraMain,
+    img: skDesignPak,
     badge: 'Premium',
     badgeColor: '#8E44AD',
     stars: 5,
