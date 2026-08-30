@@ -70,8 +70,10 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
+      <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/track" element={<TrackOrder />} />
+      <Route path="/terms" element={<TermsConditions />} />
       <Route path="/terms-conditions" element={<TermsConditions />} />
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />

@@ -1,8 +1,18 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Serve sitemap.xml, robots.txt, llms.txt, agent-instructions.txt directly
+  RewriteRule ^(sitemap\.xml|robots\.txt|llms\.txt|agent-instructions\.txt)$ - [L]
+
+  # SPA fallback routing
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
+</IfModule>
+
+# MIME types & CORS headers for AI Agents & Search Engines
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
 </IfModule>

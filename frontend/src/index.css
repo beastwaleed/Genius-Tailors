@@ -2124,7 +2124,7 @@ a.btn {
   transform: translateX(-50%);
   z-index: 3;
   pointer-events: none;
-  background: rgba(10, 10, 10, 0.55);
+  background: rgba(10, 10, 10, 0.7);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   color: #ffffff;
@@ -2135,12 +2135,14 @@ a.btn {
   padding: 0.35rem 0.9rem;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: background 300ms ease, border-color 300ms ease, transform 300ms ease;
+  opacity: 0;
+  transition: opacity 300ms ease, background 300ms ease, border-color 300ms ease, transform 300ms ease;
   white-space: nowrap;
 }
 
 .svc-card:hover .sp-card-img-footer-hint,
 .sp-card:hover .sp-card-img-footer-hint {
+  opacity: 1;
   background: var(--onyx);
   border-color: var(--gold);
   transform: translateX(-50%) translateY(-2px);
