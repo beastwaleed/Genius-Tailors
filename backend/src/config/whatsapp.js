@@ -201,17 +201,30 @@ const sendWhatsappMessage = async (toPhone, message) => {
         cleanPhone = '92' + cleanPhone;
     }
 
-    const jid = `${cleanPhone}@s.whatsapp.net`;
-
     if (!waSocket || !isConnected) {
         addWALog(`WhatsApp offline. Waking up WhatsApp socket for ${cleanPhone}...`);
         getWhatsAppQR();
-        messageQueue.push({ jid, message, cleanPhone });
+        messageQueue.push({ jid: `${cleanPhone}@s.whatsapp.net`, message, cleanPhone });
         return false;
     }
 
     try {
-        await waSocket.sendMessage(jid, { text: message });
+        let targetJid = `${cleanPhone}@s.whatsapp.net`;
+
+        // Query WhatsApp server to verify number and resolve canonical JID for new unsaved contacts
+        try {
+            const results = await waSocket.onWhatsApp(cleanPhone);
+            if (results && results.length > 0 && results[0]?.exists) {
+                targetJid = results[0].jid;
+                addWALog(`🔍 Verified WhatsApp JID for ${cleanPhone}: ${targetJid}`);
+            } else {
+                addWALog(`⚠️ Warning: ${cleanPhone} may not be registered on WhatsApp`);
+            }
+        } catch (onWaErr) {
+            addWALog(`⚠️ onWhatsApp lookup warning for ${cleanPhone}: ${onWaErr.message}`);
+        }
+
+        await waSocket.sendMessage(targetJid, { text: message });
         addWALog(`✅ WhatsApp message sent instantly to ${cleanPhone}`);
         return true;
     } catch (error) {
