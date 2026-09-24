@@ -2049,6 +2049,15 @@ a.btn {
   grid-template-columns: repeat(4, 1fr);
 }
 
+/* 3-column grid for reviews on desktop, centered */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 /* ── Card Shell ── */
 .svc-card {
   display: flex;

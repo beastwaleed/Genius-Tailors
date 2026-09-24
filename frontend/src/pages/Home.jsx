@@ -472,7 +472,7 @@ export default function Home() {
               <button className="carousel-btn prev-btn" onClick={() => scrollGrid(-1, 'reviews-grid-home')} aria-label="Previous">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
               </button>
-              <div id="reviews-grid-home" className="reviews-grid services-grid">
+              <div id="reviews-grid-home" className="reviews-grid">
                 {WHATSAPP_REVIEWS.map(r => (
                   <div
                     key={r.id}
