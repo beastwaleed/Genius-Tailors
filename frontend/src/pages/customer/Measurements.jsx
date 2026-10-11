@@ -12,7 +12,7 @@ import imgWaistcoat from '../../assets/model_waistcoat.png';
 import imgZardari from '../../assets/model_zardari_suit.png';
 import imgShirt from '../../assets/service_shirt.png';
 import imgShirtStraight from '../../assets/shirtMeasurementImage.png';
-import gurkhaPantFeatured from '../../assets/Gurkha-pants-featured-image.png';
+import gurkhaPantMeasurementsImg from '../../assets/Gurkha-pant-measurments.png';
 
 export const IMAGE_MAP = {
   'Kameez Shalwar': imgKameez,
@@ -21,8 +21,8 @@ export const IMAGE_MAP = {
   'Waistcoat': imgWaistcoat,
   'Zardari Suit': imgZardari,
   'Shirt': imgShirtStraight,
-  'Custom Gurkha Pants Stitching': gurkhaPantFeatured,
-  'Gurkha Pants': gurkhaPantFeatured
+  'Custom Gurkha Pants Stitching': gurkhaPantMeasurementsImg,
+  'Gurkha Pants': gurkhaPantMeasurementsImg
 };
 
 export const SERVICE_FIELDS = {
@@ -162,8 +162,9 @@ export const STANDARD_SIZES = {
 
 export function getMeasurementVisualConfig(fieldKey) {
   if (!fieldKey) return null;
+  if (fieldKey.toLowerCase().includes('gurkha')) return null;
   const isTop = fieldKey.includes('Kameez') || fieldKey.includes('Kurta') || fieldKey.includes('Waistcoat') || fieldKey.includes('Shirt');
-  const isBottom = fieldKey.includes('Shalwar') || fieldKey.includes('Pajama') || fieldKey.includes('Gurkha');
+  const isBottom = fieldKey.includes('Shalwar') || fieldKey.includes('Pajama');
 
   if (fieldKey.includes('Length')) {
     if (fieldKey.includes('Shirt')) return { top: '32%', left: '38%', height: '42%', width: '3px', transform: 'translateX(-50%)', label: 'Shirt Length' };
@@ -728,112 +729,127 @@ export default function Measurements() {
               {/* Right Side: Interactive Visual Model */}
               <div key={activeField || 'empty'} className={`interactive-visual-side ${showMobileGuide ? 'show-mobile-guide' : ''}`}>
                 <button type="button" className="mobile-guide-close" onClick={() => setShowMobileGuide(false)}>✕</button>
-                <div className="mannequin-container">
-                  <img src={IMAGE_MAP[selectedService] || imgKameez} alt="Tailor Model" className="mannequin-img" />
+                {(() => {
+                  const isGurkha = selectedService?.toLowerCase().includes('gurkha');
+                  return (
+                    <>
+                      <div className={`mannequin-container ${isGurkha ? 'gurkha-container' : ''}`}>
+                        <img 
+                          src={IMAGE_MAP[selectedService] || imgKameez} 
+                          alt="Tailor Model" 
+                          className={`mannequin-img ${isGurkha ? 'gurkha-img' : ''}`} 
+                        />
 
-                  {/* Overlay dynamic pointers */}
-                  {showMobileGuide ? (
-                    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 20, filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.5))' }}>
-                      <defs>
-                        <marker id="arrowHead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.5" markerHeight="3.5" orient="auto-start-reverse">
-                          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffffff" />
-                        </marker>
-                      </defs>
+                        {/* Overlay dynamic pointers (bypassed for Gurkha Pants as the diagram image already has embedded labels & measurement lines) */}
+                        {!isGurkha && (
+                          showMobileGuide ? (
+                            <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 20, filter: 'drop-shadow(0px 1px 2px rgba(0,0,0,0.5))' }}>
+                              <defs>
+                                <marker id="arrowHead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.5" markerHeight="3.5" orient="auto-start-reverse">
+                                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffffff" />
+                                </marker>
+                              </defs>
 
-                      {/* 1. Top Length */}
-                      <g className="infographic-fade-in" style={{ animationDelay: '0ms' }}>
-                        <line x1="38%" y1="30%" x2="38%" y2="65%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
-                        <circle cx="22%" cy="47.5%" r="9" fill="#ffffff" />
-                        <text x="22%" y="47.5%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">1</text>
-                        <text x="16%" y="47.5%" fill="#ffffff" fontSize="9px" textAnchor="end" dy=".3em" fontWeight="700">Top Length</text>
-                      </g>
+                              {/* 1. Top Length */}
+                              <g className="infographic-fade-in" style={{ animationDelay: '0ms' }}>
+                                <line x1="38%" y1="30%" x2="38%" y2="65%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
+                                <circle cx="22%" cy="47.5%" r="9" fill="#ffffff" />
+                                <text x="22%" y="47.5%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">1</text>
+                                <text x="16%" y="47.5%" fill="#ffffff" fontSize="9px" textAnchor="end" dy=".3em" fontWeight="700">Top Length</text>
+                              </g>
 
-                      {/* 2. Shoulder */}
-                      <g className="infographic-fade-in" style={{ animationDelay: '100ms' }}>
-                        <line x1="35%" y1="27%" x2="65%" y2="27%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
-                        <circle cx="75%" cy="27%" r="9" fill="#ffffff" />
-                        <text x="75%" y="27%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">2</text>
-                        <text x="80%" y="27%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Shoulder</text>
-                      </g>
+                              {/* 2. Shoulder */}
+                              <g className="infographic-fade-in" style={{ animationDelay: '100ms' }}>
+                                <line x1="35%" y1="27%" x2="65%" y2="27%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
+                                <circle cx="75%" cy="27%" r="9" fill="#ffffff" />
+                                <text x="75%" y="27%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">2</text>
+                                <text x="80%" y="27%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Shoulder</text>
+                              </g>
 
-                      {/* 3. Sleeves */}
-                      <g className="infographic-fade-in" style={{ animationDelay: '200ms' }}>
-                        <line x1="68%" y1="26%" x2="68%" y2="51%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
-                        <circle cx="80%" cy="38.5%" r="9" fill="#ffffff" />
-                        <text x="80%" y="38.5%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">3</text>
-                        <text x="85%" y="38.5%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Sleeves</text>
-                      </g>
+                              {/* 3. Sleeves */}
+                              <g className="infographic-fade-in" style={{ animationDelay: '200ms' }}>
+                                <line x1="68%" y1="26%" x2="68%" y2="51%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
+                                <circle cx="80%" cy="38.5%" r="9" fill="#ffffff" />
+                                <text x="80%" y="38.5%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">3</text>
+                                <text x="85%" y="38.5%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Sleeves</text>
+                              </g>
 
-                      {/* 4. Chest */}
-                      <g className="infographic-fade-in" style={{ animationDelay: '300ms' }}>
-                        <ellipse cx="50%" cy="32%" rx="15%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
-                        <circle cx="72%" cy="32%" r="9" fill="#ffffff" />
-                        <text x="72%" y="32%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">4</text>
-                        <text x="77%" y="32%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Chest</text>
-                      </g>
+                              {/* 4. Chest */}
+                              <g className="infographic-fade-in" style={{ animationDelay: '300ms' }}>
+                                <ellipse cx="50%" cy="32%" rx="15%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
+                                <circle cx="72%" cy="32%" r="9" fill="#ffffff" />
+                                <text x="72%" y="32%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">4</text>
+                                <text x="77%" y="32%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Chest</text>
+                              </g>
 
-                      {/* 5. Waist */}
-                      <g className="infographic-fade-in" style={{ animationDelay: '400ms' }}>
-                        <ellipse cx="50%" cy="44%" rx="14%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
-                        <circle cx="70%" cy="44%" r="9" fill="#ffffff" />
-                        <text x="70%" y="44%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">5</text>
-                        <text x="75%" y="44%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Waist</text>
-                      </g>
+                              {/* 5. Waist */}
+                              <g className="infographic-fade-in" style={{ animationDelay: '400ms' }}>
+                                <ellipse cx="50%" cy="44%" rx="14%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
+                                <circle cx="70%" cy="44%" r="9" fill="#ffffff" />
+                                <text x="70%" y="44%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">5</text>
+                                <text x="75%" y="44%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Waist</text>
+                              </g>
 
-                      {/* 6. Hips */}
-                      <g className="infographic-fade-in" style={{ animationDelay: '500ms' }}>
-                        <ellipse cx="50%" cy="58%" rx="16%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
-                        <circle cx="72%" cy="58%" r="9" fill="#ffffff" />
-                        <text x="72%" y="58%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">6</text>
-                        <text x="77%" y="58%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Hips</text>
-                      </g>
+                              {/* 6. Hips */}
+                              <g className="infographic-fade-in" style={{ animationDelay: '500ms' }}>
+                                <ellipse cx="50%" cy="58%" rx="16%" ry="2.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
+                                <circle cx="72%" cy="58%" r="9" fill="#ffffff" />
+                                <text x="72%" y="58%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">6</text>
+                                <text x="77%" y="58%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Hips</text>
+                              </g>
 
-                      {/* 7. Bottom Length */}
-                      <g className="infographic-fade-in" style={{ animationDelay: '600ms' }}>
-                        <line x1="60%" y1="56%" x2="60%" y2="84%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
-                        <circle cx="74%" cy="70%" r="9" fill="#ffffff" />
-                        <text x="74%" y="70%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">7</text>
-                        <text x="79%" y="70%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Bottom Length</text>
-                      </g>
+                              {/* 7. Bottom Length */}
+                              <g className="infographic-fade-in" style={{ animationDelay: '600ms' }}>
+                                <line x1="60%" y1="56%" x2="60%" y2="84%" stroke="#ffffff" strokeWidth="1.5" strokeDasharray="4,3" markerStart="url(#arrowHead)" markerEnd="url(#arrowHead)" />
+                                <circle cx="74%" cy="70%" r="9" fill="#ffffff" />
+                                <text x="74%" y="70%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">7</text>
+                                <text x="79%" y="70%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Bottom Length</text>
+                              </g>
 
-                      {/* 8. Pancha */}
-                      <g className="infographic-fade-in" style={{ animationDelay: '700ms' }}>
-                        <ellipse cx="60%" cy="84%" rx="7%" ry="1.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
-                        <circle cx="77%" cy="84%" r="9" fill="#ffffff" />
-                        <text x="77%" y="84%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">8</text>
-                        <text x="82%" y="84%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Ankle (Pancha)</text>
-                      </g>
-                    </svg>
-                  ) : (
-                    (() => {
-                      const config = getMeasurementVisualConfig(activeField);
-                      if (!config) return null;
-                      return (
-                        <div
-                          className="mannequin-indicator"
-                          style={{
-                            top: config.top,
-                            left: config.left,
-                            width: config.width,
-                            height: config.height,
-                            transform: config.transform
-                          }}
-                        >
-                          <div className="mannequin-tooltip">
-                            {config.label}
-                          </div>
-                        </div>
-                      );
-                    })()
-                  )}
-                </div>
-                <p style={{ textAlign: 'center', marginTop: '1rem', color: '#64748b', fontSize: '0.85rem' }}>
-                  {showMobileGuide
-                    ? 'Measurement Reference Guide'
-                    : (activeField
-                      ? `Enter the exact ${activeField.toLowerCase()} measurement in inches.`
-                      : 'Click on any measurement field to see where to measure.')}
-                </p>
+                              {/* 8. Pancha */}
+                              <g className="infographic-fade-in" style={{ animationDelay: '700ms' }}>
+                                <ellipse cx="60%" cy="84%" rx="7%" ry="1.5%" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="3,2" />
+                                <circle cx="77%" cy="84%" r="9" fill="#ffffff" />
+                                <text x="77%" y="84%" fill="#0f172a" fontSize="10px" textAnchor="middle" dy=".3em" fontWeight="bold">8</text>
+                                <text x="82%" y="84%" fill="#ffffff" fontSize="9px" dy=".3em" fontWeight="700">Ankle (Pancha)</text>
+                              </g>
+                            </svg>
+                          ) : (
+                            (() => {
+                              const config = getMeasurementVisualConfig(activeField);
+                              if (!config) return null;
+                              return (
+                                <div
+                                  className="mannequin-indicator"
+                                  style={{
+                                    top: config.top,
+                                    left: config.left,
+                                    width: config.width,
+                                    height: config.height,
+                                    transform: config.transform
+                                  }}
+                                >
+                                  <div className="mannequin-tooltip">
+                                    {config.label}
+                                  </div>
+                                </div>
+                              );
+                            })()
+                          )
+                        )}
+                      </div>
+                      <p style={{ textAlign: 'center', marginTop: '1rem', color: '#64748b', fontSize: '0.85rem' }}>
+                        {isGurkha
+                          ? 'Refer to the diagram above to take accurate measurements for Gurkha Pants.'
+                          : showMobileGuide
+                            ? 'Measurement Reference Guide'
+                            : (activeField
+                              ? `Enter the exact ${activeField.toLowerCase()} measurement in inches.`
+                              : 'Click on any measurement field to see where to measure.')}
+                      </p>
+                    </>
+                  );
+                })()}
               </div>
             </div>
 
@@ -1016,6 +1032,11 @@ export default function Measurements() {
           justify-content: center;
         }
 
+        .mannequin-container.gurkha-container {
+          max-width: 360px;
+          aspect-ratio: auto;
+        }
+
         .mannequin-img {
           width: auto;
           height: 100%;
@@ -1023,6 +1044,14 @@ export default function Measurements() {
           border-radius: var(--radius-lg);
           object-fit: cover;
           box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .mannequin-img.gurkha-img {
+          width: 100%;
+          height: auto;
+          max-height: 520px;
+          object-fit: contain;
+          background: #ffffff;
         }
 
         .mannequin-indicator {
@@ -1189,7 +1218,9 @@ export default function Measurements() {
           }
 
           .mannequin-container { max-width: 180px; }
+          .mannequin-container.gurkha-container { max-width: 310px; aspect-ratio: auto; }
           .mannequin-img { max-height: 380px; }
+          .mannequin-img.gurkha-img { width: 100%; height: auto; max-height: 460px; object-fit: contain; }
           
           .measurements-input-grid { grid-template-columns: 1fr; gap: 0 1rem; }
           .modal-header { padding: 1.25rem 1.5rem; }
