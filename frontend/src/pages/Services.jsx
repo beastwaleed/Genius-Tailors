@@ -69,6 +69,11 @@ import kurtaPajama2 from '../assets/KurtaPajama2.jpeg';
 import kurtaPajamaSecondImg from '../assets/kurta pajama second image.jpeg';
 const kurtaPajamaGallery = [kurtaPajamaSecondImg, kurtaPajama1, kurtaPajama2];
 
+import gurkhaPantFeatured from '../assets/Gurkha-pants-featured-image.png';
+import gurkhaPant2 from '../assets/Gurkha-pants-image-2.png';
+import gurkhaPant3 from '../assets/Gurkha-pants-image-3.png';
+const gurkhaGallery = [gurkhaPantFeatured, gurkhaPant2, gurkhaPant3];
+
 export const ALL_SERVICES = [
   {
     id: 'kameez-shalwar',
@@ -213,6 +218,35 @@ export const ALL_SERVICES = [
     features: ['Custom collar (Normal / Arrow)', 'Double or Single cuffs', 'Pocket preferences', 'Perfect body fit'],
     occasions: ['Office wear', 'Formal events', 'Business meetings'],
     images: shirtGallery,
+  },
+  {
+    id: 'gurkha-pants',
+    name: 'Custom Gurkha Pants Stitching',
+    urdu: 'گورکھا پینٹس',
+    tagline: 'Classic Heritage. Modern Elegance.',
+    desc: 'Elevate your wardrobe with expertly tailored Gurkha Pants by Genius Tailors. Featuring a signature high-waisted design, adjustable buckle closure, sharp front pleats, and a refined silhouette, these trousers combine timeless sophistication with modern comfort. Perfectly suited for both smart-casual styling and formal occasions.',
+    price: 'From Rs. 3,500',
+    deliveryDays: '4–6 working days',
+    img: gurkhaPantFeatured,
+    badge: 'Trending',
+    badgeColor: '#1A1A1A',
+    stars: 5,
+    reviews: 28,
+    category: 'Formal',
+    features: [
+      'Signature Gurkha Waistband',
+      'High-Waisted Fit',
+      'Sharp Front Pleats',
+      'Premium Custom Tailoring'
+    ],
+    occasions: [
+      'Office & Business Meetings',
+      'Smart-Casual Outfits',
+      'Formal Dinners & Events',
+      'Weddings & Celebrations',
+      'Premium Everyday Wear'
+    ],
+    images: gurkhaGallery,
   }
 ];
 

@@ -23,6 +23,7 @@ import angularEdge01 from '../assets/AngularEdge01.jpeg'
 import urbanCore02 from '../assets/UrbanCore02.jpeg'
 import websiteHeroImg from '../assets/website-hero-image-upscaled.png';
 import mobileHeroImg from '../assets/hero-image-mobile-version.png';
+import gurkhaPantFeatured from '../assets/Gurkha-pants-featured-image.png';
 
 import proc1 from '../assets/process_1.png';
 import proc2 from '../assets/process_2.png';
@@ -184,6 +185,7 @@ export default function Home() {
     { name: 'Kameez Shalwar Design', label: 'Premium Look', img: eliteAuraMain },
     { name: 'Kurta Shalwar Design', label: 'Modern Aesthetic', img: angularEdgeMain },
     { name: 'Zardari Waistcoat', label: '3-Piece Suit', img: WaistcoatFront },
+    { name: 'Custom Gurkha Pants Stitching', label: 'Classic Heritage', img: gurkhaPantFeatured },
   ];
 
   useEffect(() => {

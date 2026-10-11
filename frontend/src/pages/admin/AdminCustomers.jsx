@@ -60,6 +60,22 @@ const ADMIN_STYLE_CONFIGS = {
     pockets: ['1 Pocket', 'No Pocket'],
     bottomPockets: [],
     bottomDesigns: ['Round Bottom', 'Square with Side Chalk']
+  },
+  'Custom Gurkha Pants Stitching': {
+    collarTypes: [],
+    collarSubs: {},
+    cuffs: [],
+    pockets: [],
+    bottomPockets: [],
+    bottomDesigns: []
+  },
+  'Gurkha Pants': {
+    collarTypes: [],
+    collarSubs: {},
+    cuffs: [],
+    pockets: [],
+    bottomPockets: [],
+    bottomDesigns: []
   }
 };
 
@@ -75,7 +91,9 @@ const MEASUREMENT_TEMPLATES = {
     'Shalwar Length': '', 'Shalwar Bottom': '', 'Shalwar Crotch Depth': '',
     'Waistcoat Length': '', 'Waistcoat Shoulder': '', 'Waistcoat Collar': '', 'Waistcoat Chest': '', 'Waistcoat Abdomen': '', 'Waistcoat Hip': '' 
   },
-  'Shirt': { 'Shirt Length': '', 'Shirt Shoulder': '', 'Shirt Sleeves': '', 'Shirt Chest': '', 'Shirt Abdomen': '', 'Shirt Hips': '', 'Shirt Collar': '' }
+  'Shirt': { 'Shirt Length': '', 'Shirt Shoulder': '', 'Shirt Sleeves': '', 'Shirt Chest': '', 'Shirt Abdomen': '', 'Shirt Hips': '', 'Shirt Collar': '' },
+  'Custom Gurkha Pants Stitching': { 'Gurkha Pants Length': '', 'Gurkha Pants Bottom': '', 'Gurkha Pants Hips': '', 'Gurkha Pants Waist': '' },
+  'Gurkha Pants': { 'Gurkha Pants Length': '', 'Gurkha Pants Bottom': '', 'Gurkha Pants Hips': '', 'Gurkha Pants Waist': '' }
 };
 
 export default function AdminCustomers() {

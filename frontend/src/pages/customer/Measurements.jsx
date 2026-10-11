@@ -12,6 +12,7 @@ import imgWaistcoat from '../../assets/model_waistcoat.png';
 import imgZardari from '../../assets/model_zardari_suit.png';
 import imgShirt from '../../assets/service_shirt.png';
 import imgShirtStraight from '../../assets/shirtMeasurementImage.png';
+import gurkhaPantFeatured from '../../assets/Gurkha-pants-featured-image.png';
 
 export const IMAGE_MAP = {
   'Kameez Shalwar': imgKameez,
@@ -19,7 +20,9 @@ export const IMAGE_MAP = {
   'Kurta Pajama': imgKurta,
   'Waistcoat': imgWaistcoat,
   'Zardari Suit': imgZardari,
-  'Shirt': imgShirtStraight
+  'Shirt': imgShirtStraight,
+  'Custom Gurkha Pants Stitching': gurkhaPantFeatured,
+  'Gurkha Pants': gurkhaPantFeatured
 };
 
 export const SERVICE_FIELDS = {
@@ -47,6 +50,14 @@ export const SERVICE_FIELDS = {
   'Shirt': {
     top: { label: 'Shirt', fields: ['Length', 'Shoulder', 'Sleeves', 'Chest', 'Abdomen', 'Hips', 'Collar'] },
     bottom: { label: null, fields: [] }
+  },
+  'Custom Gurkha Pants Stitching': {
+    top: { label: null, fields: [] },
+    bottom: { label: 'Gurkha Pants', fields: ['Length', 'Bottom', 'Hips', 'Waist'] }
+  },
+  'Gurkha Pants': {
+    top: { label: null, fields: [] },
+    bottom: { label: 'Gurkha Pants', fields: ['Length', 'Bottom', 'Hips', 'Waist'] }
   }
 };
 
@@ -138,13 +149,25 @@ export const STANDARD_SIZES = {
     'M': { 'Shirt Length': '29', 'Shirt Shoulder': '18.5', 'Shirt Sleeves': '24.5', 'Shirt Chest': '22', 'Shirt Abdomen': '21', 'Shirt Hips': '23', 'Shirt Collar': '16' },
     'L': { 'Shirt Length': '30', 'Shirt Shoulder': '19.5', 'Shirt Sleeves': '25.5', 'Shirt Chest': '24', 'Shirt Abdomen': '23', 'Shirt Hips': '25', 'Shirt Collar': '17' },
     'XL': { 'Shirt Length': '31', 'Shirt Shoulder': '20.5', 'Shirt Sleeves': '26', 'Shirt Chest': '26', 'Shirt Abdomen': '25', 'Shirt Hips': '27', 'Shirt Collar': '18' }
+  },
+  'Custom Gurkha Pants Stitching': {
+    'S': { 'Gurkha Pants Waist': '30', 'Gurkha Pants Length': '38', 'Gurkha Pants Hips': '38', 'Gurkha Pants Bottom': '7' },
+    'M': { 'Gurkha Pants Waist': '32', 'Gurkha Pants Length': '40', 'Gurkha Pants Hips': '40', 'Gurkha Pants Bottom': '7.5' },
+    'L': { 'Gurkha Pants Waist': '34', 'Gurkha Pants Length': '41', 'Gurkha Pants Hips': '42', 'Gurkha Pants Bottom': '8' },
+    'XL': { 'Gurkha Pants Waist': '36', 'Gurkha Pants Length': '42', 'Gurkha Pants Hips': '44', 'Gurkha Pants Bottom': '8.5' }
+  },
+  'Gurkha Pants': {
+    'S': { 'Gurkha Pants Waist': '30', 'Gurkha Pants Length': '38', 'Gurkha Pants Hips': '38', 'Gurkha Pants Bottom': '7' },
+    'M': { 'Gurkha Pants Waist': '32', 'Gurkha Pants Length': '40', 'Gurkha Pants Hips': '40', 'Gurkha Pants Bottom': '7.5' },
+    'L': { 'Gurkha Pants Waist': '34', 'Gurkha Pants Length': '41', 'Gurkha Pants Hips': '42', 'Gurkha Pants Bottom': '8' },
+    'XL': { 'Gurkha Pants Waist': '36', 'Gurkha Pants Length': '42', 'Gurkha Pants Hips': '44', 'Gurkha Pants Bottom': '8.5' }
   }
 };
 
 export function getMeasurementVisualConfig(fieldKey) {
   if (!fieldKey) return null;
   const isTop = fieldKey.includes('Kameez') || fieldKey.includes('Kurta') || fieldKey.includes('Waistcoat') || fieldKey.includes('Shirt');
-  const isBottom = fieldKey.includes('Shalwar') || fieldKey.includes('Pajama');
+  const isBottom = fieldKey.includes('Shalwar') || fieldKey.includes('Pajama') || fieldKey.includes('Gurkha');
 
   if (fieldKey.includes('Length')) {
     if (fieldKey.includes('Shirt')) return { top: '32%', left: '38%', height: '42%', width: '3px', transform: 'translateX(-50%)', label: 'Shirt Length' };

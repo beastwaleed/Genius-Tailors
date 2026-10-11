@@ -82,7 +82,9 @@ const SERVICES_PRICES = {
   'Kameez Shalwar Design': 2200,
   'Kurta Shalwar Design': 2200,
   'Zardari Suit': 5300,
-  'Shirt': 1200
+  'Shirt': 1200,
+  'Custom Gurkha Pants Stitching': 3500,
+  'Gurkha Pants': 3500
 };
 
 const STYLE_CONFIGS = {
@@ -199,6 +201,20 @@ const STYLE_CONFIGS = {
       { name: 'Round Bottom', img: imgShalwarNoDesign, price: 0 },
       { name: 'Square with Side Chalk', img: imgShalwarNoDesign, price: 0 }
     ]
+  },
+  'Custom Gurkha Pants Stitching': {
+    collarTypes: [],
+    cuffs: [],
+    pockets: [],
+    bottomPockets: [],
+    bottomDesigns: []
+  },
+  'Gurkha Pants': {
+    collarTypes: [],
+    cuffs: [],
+    pockets: [],
+    bottomPockets: [],
+    bottomDesigns: []
   }
 };
 

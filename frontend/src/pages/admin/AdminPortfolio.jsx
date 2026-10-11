@@ -23,7 +23,7 @@ export default function AdminPortfolio() {
   const [imagePreview, setImagePreview] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const categories = ['Kameez Shalwar', 'Kurta Shalwar', 'Kurta Pajama', 'Waistcoat', 'Zardari Suit', 'Shirt', 'General Craftsmanship'];
+  const categories = ['Kameez Shalwar', 'Kurta Shalwar', 'Kurta Pajama', 'Waistcoat', 'Zardari Suit', 'Shirt', 'Gurkha Pants', 'General Craftsmanship'];
 
   const fetchItems = async () => {
     try {
