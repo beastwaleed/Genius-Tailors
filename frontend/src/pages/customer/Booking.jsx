@@ -89,8 +89,7 @@ const SERVICES_PRICES = {
   'Kurta Shalwar Design': 2200,
   'Zardari Suit': 5300,
   'Shirt': 1200,
-  'Custom Gurkha Pants Stitching': 3500,
-  'Gurkha Pants': 3500
+  'Custom Gurkha Pants Stitching': 3500
 };
 
 const STYLE_CONFIGS = {
@@ -256,7 +255,8 @@ export default function Booking() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const initialService = searchParams.get('service') || 'Kameez Shalwar';
+  const rawService = searchParams.get('service') || 'Kameez Shalwar';
+  const initialService = rawService.toLowerCase().includes('gurkha') ? 'Custom Gurkha Pants Stitching' : rawService;
 
   const [step, setStep] = useState(1);
   
@@ -343,7 +343,7 @@ export default function Booking() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
 
   const handleOpenInlineMeasurement = () => {
-    navigate('/measurements');
+    navigate(`/measurements?service=${encodeURIComponent(serviceName)}&new=true`);
   };
 
   useEffect(() => {
@@ -593,7 +593,7 @@ export default function Booking() {
       pockets: conf.pockets?.length > 0 ? conf.pockets[0].name : '',
       bottomPocket: conf.bottomPockets?.length > 0 ? conf.bottomPockets[0].name : '',
       bottomDesign: conf.bottomDesigns?.length > 0 ? conf.bottomDesigns[0].name : '',
-      design: ''
+      design: conf.designs?.length > 0 ? conf.designs[0].name : ''
     });
     setSelectedFabric(fabricList[0]);
     setSelectedColor('');
@@ -832,6 +832,10 @@ export default function Booking() {
 
     if (serviceName === 'Shirt') {
       return (keysStr.includes('shirt') || isOldGeneric) && !hasWaistcoat && !hasOldBottom;
+    }
+
+    if (serviceName === 'Custom Gurkha Pants Stitching' || serviceName === 'Gurkha Pants') {
+      return keysStr.includes('gurkha');
     }
 
     return true; // Fallback

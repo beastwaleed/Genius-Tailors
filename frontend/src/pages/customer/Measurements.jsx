@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import CustomerLayout from '../../components/CustomerLayout';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
@@ -205,14 +205,15 @@ export function getMeasurementVisualConfig(fieldKey) {
   if (fieldKey.includes('Bottom')) {
     return { top: '84%', left: '60%', width: '12%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Ankle/Pancha' };
   }
-  if (fieldKey.includes('Crotch Depth')) {
-    return { top: '52%', left: '50%', height: '14%', width: '3px', transform: 'translateX(-50%)', label: 'Asan / Crotch Depth' };
+  if (fieldKey.includes('Waist')) {
+    return { top: '50%', left: '50%', width: '30%', height: '3px', transform: 'translate(-50%, -50%)', label: 'Waist Circumference' };
   }
   return null;
 }
 
 export default function Measurements() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -235,6 +236,30 @@ export default function Measurements() {
 
   useEffect(() => {
     fetchProfiles();
+
+    const serviceParam = searchParams.get('service');
+    const isNew = searchParams.get('new') === 'true';
+    if (isNew && serviceParam) {
+      const matched = Object.keys(SERVICE_FIELDS).find(
+        s => s.toLowerCase() === serviceParam.toLowerCase()
+      ) || (serviceParam.toLowerCase().includes('gurkha') ? 'Custom Gurkha Pants Stitching' : 'Kameez Shalwar');
+
+      setEditingProfileId(null);
+      setProfileName('');
+      setSelectedService(matched);
+      setActiveField(null);
+
+      const initialFields = {};
+      const config = SERVICE_FIELDS[matched] || SERVICE_FIELDS['Kameez Shalwar'];
+      if (config.top && config.top.fields) {
+        config.top.fields.forEach(f => initialFields[`${config.top.label} ${f}`] = '');
+      }
+      if (config.bottom && config.bottom.fields) {
+        config.bottom.fields.forEach(f => initialFields[`${config.bottom.label} ${f}`] = '');
+      }
+      setMeasurements(initialFields);
+      setIsModalOpen(true);
+    }
   }, []);
 
   const fetchProfiles = async () => {
@@ -267,8 +292,12 @@ export default function Measurements() {
 
     const initialFields = {};
     const config = SERVICE_FIELDS['Kameez Shalwar'];
-    config.top.fields.forEach(f => initialFields[`${config.top.label} ${f}`] = '');
-    config.bottom.fields.forEach(f => initialFields[`${config.bottom.label} ${f}`] = '');
+    if (config.top && config.top.fields) {
+      config.top.fields.forEach(f => initialFields[`${config.top.label} ${f}`] = '');
+    }
+    if (config.bottom && config.bottom.fields) {
+      config.bottom.fields.forEach(f => initialFields[`${config.bottom.label} ${f}`] = '');
+    }
 
     setMeasurements(initialFields);
     setIsModalOpen(true);
@@ -283,7 +312,8 @@ export default function Measurements() {
 
     // Attempt to guess the service based on keys stored
     let guessedService = 'Kameez Shalwar';
-    if (keys.some(k => k.includes('Pajama'))) guessedService = 'Kurta Pajama';
+    if (keys.some(k => k.includes('Gurkha'))) guessedService = 'Custom Gurkha Pants Stitching';
+    else if (keys.some(k => k.includes('Pajama'))) guessedService = 'Kurta Pajama';
     else if (keys.some(k => k.includes('Kurta'))) guessedService = 'Kurta Shalwar';
     else if (keys.some(k => k.includes('Waistcoat')) && keys.some(k => k.includes('Kameez'))) guessedService = 'Zardari Suit';
     else if (keys.some(k => k.includes('Waistcoat'))) guessedService = 'Waistcoat';
@@ -294,15 +324,19 @@ export default function Measurements() {
     const config = SERVICE_FIELDS[guessedService];
     const updatedMeasurements = {};
 
-    config.top.fields.forEach(f => {
-      const key = `${config.top.label} ${f}`;
-      updatedMeasurements[key] = profile.measurements ? (profile.measurements[key] || '') : '';
-    });
-    config.bottom.fields.forEach(f => {
-      const key = `${config.bottom.label} ${f}`;
-      updatedMeasurements[key] = profile.measurements ? (profile.measurements[key] || '') : '';
-    });
-    if (config.outer) {
+    if (config.top && config.top.fields) {
+      config.top.fields.forEach(f => {
+        const key = `${config.top.label} ${f}`;
+        updatedMeasurements[key] = profile.measurements ? (profile.measurements[key] || '') : '';
+      });
+    }
+    if (config.bottom && config.bottom.fields) {
+      config.bottom.fields.forEach(f => {
+        const key = `${config.bottom.label} ${f}`;
+        updatedMeasurements[key] = profile.measurements ? (profile.measurements[key] || '') : '';
+      });
+    }
+    if (config.outer && config.outer.fields) {
       config.outer.fields.forEach(f => {
         const key = `${config.outer.label} ${f}`;
         updatedMeasurements[key] = profile.measurements ? (profile.measurements[key] || '') : '';
@@ -321,17 +355,19 @@ export default function Measurements() {
     const newMeasurements = {};
     const config = SERVICE_FIELDS[s];
 
-    config.top.fields.forEach(f => {
-      const key = `${config.top.label} ${f}`;
-      newMeasurements[key] = measurements[key] || '';
-    });
-    if (config.bottom.fields) {
+    if (config.top && config.top.fields) {
+      config.top.fields.forEach(f => {
+        const key = `${config.top.label} ${f}`;
+        newMeasurements[key] = measurements[key] || '';
+      });
+    }
+    if (config.bottom && config.bottom.fields) {
       config.bottom.fields.forEach(f => {
         const key = `${config.bottom.label} ${f}`;
         newMeasurements[key] = measurements[key] || '';
       });
     }
-    if (config.outer) {
+    if (config.outer && config.outer.fields) {
       config.outer.fields.forEach(f => {
         const key = `${config.outer.label} ${f}`;
         newMeasurements[key] = measurements[key] || '';
@@ -458,6 +494,7 @@ export default function Measurements() {
       if (SERVICE_FIELDS[selectedService].bottom.fields.includes('Bottom')) newMeasurements[`${bottomLabel} Bottom`] = bottom.toFixed(1);
       if (SERVICE_FIELDS[selectedService].bottom.fields.includes('Crotch Depth')) newMeasurements[`${bottomLabel} Crotch Depth`] = crotch.toFixed(1);
       if (SERVICE_FIELDS[selectedService].bottom.fields.includes('Hips')) newMeasurements[`${bottomLabel} Hips`] = hips.toFixed(1);
+      if (SERVICE_FIELDS[selectedService].bottom.fields.includes('Waist')) newMeasurements[`${bottomLabel} Waist`] = (abdomen - 2).toFixed(1);
     }
 
     setMeasurements(newMeasurements);
@@ -605,35 +642,38 @@ export default function Measurements() {
                     </div>
                   )}
 
-                  <div style={{ marginTop: '2rem' }}>
-                    <div className="mobile-guide-btn-wrapper">
-                      <button type="button" className="btn btn-outline" style={{ width: '100%', borderColor: '#64748b', color: '#475569' }} onClick={() => setShowMobileGuide(true)}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '0.5rem' }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
-                        View Measurement Guide
-                      </button>
-                    </div>
-                    <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--onyx)', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
-                      {SERVICE_FIELDS[selectedService].top.label} Measurements (Inches)
-                    </h4>
-                    <div className="measurements-input-grid">
-                      {SERVICE_FIELDS[selectedService].top.fields.map(field => {
-                        const key = `${SERVICE_FIELDS[selectedService].top.label} ${field}`;
-                        return (
-                          <div className="luxury-form-group" key={key}>
-                            <label>{field}</label>
-                            <input
-                              type="number"
-                              step="0.25"
-                              placeholder="e.g., 40"
-                              value={measurements[key] || ''}
-                              onChange={(e) => setMeasurements({ ...measurements, [key]: e.target.value })}
-                              onFocus={() => setActiveField(key)}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
+                  <div className="mobile-guide-btn-wrapper" style={{ marginTop: '1.5rem' }}>
+                    <button type="button" className="btn btn-outline" style={{ width: '100%', borderColor: '#64748b', color: '#475569' }} onClick={() => setShowMobileGuide(true)}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '0.5rem' }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+                      View Measurement Guide
+                    </button>
                   </div>
+
+                  {SERVICE_FIELDS[selectedService].top && SERVICE_FIELDS[selectedService].top.fields && SERVICE_FIELDS[selectedService].top.fields.length > 0 && (
+                    <div style={{ marginTop: '1rem' }}>
+                      <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--onyx)', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                        {SERVICE_FIELDS[selectedService].top.label} Measurements (Inches)
+                      </h4>
+                      <div className="measurements-input-grid">
+                        {SERVICE_FIELDS[selectedService].top.fields.map(field => {
+                          const key = `${SERVICE_FIELDS[selectedService].top.label} ${field}`;
+                          return (
+                            <div className="luxury-form-group" key={key}>
+                              <label>{field}</label>
+                              <input
+                                type="number"
+                                step="0.25"
+                                placeholder="e.g., 40"
+                                value={measurements[key] || ''}
+                                onChange={(e) => setMeasurements({ ...measurements, [key]: e.target.value })}
+                                onFocus={() => setActiveField(key)}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   {SERVICE_FIELDS[selectedService].bottom && SERVICE_FIELDS[selectedService].bottom.fields.length > 0 && (
                     <div style={{ marginTop: '1.5rem' }}>
