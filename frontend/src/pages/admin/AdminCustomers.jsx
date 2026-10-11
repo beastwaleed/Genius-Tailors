@@ -83,7 +83,6 @@ const MEASUREMENT_TEMPLATES = {
     'Waistcoat Length': '', 'Waistcoat Shoulder': '', 'Waistcoat Collar': '', 'Waistcoat Chest': '', 'Waistcoat Abdomen': '', 'Waistcoat Hip': '' 
   },
   'Shirt': { 'Shirt Length': '', 'Shirt Shoulder': '', 'Shirt Sleeves': '', 'Shirt Chest': '', 'Shirt Abdomen': '', 'Shirt Hips': '', 'Shirt Collar': '' },
-  'Custom Gurkha Pants Stitching': { 'Gurkha Pants Length': '', 'Gurkha Pants Bottom': '', 'Gurkha Pants Hips': '', 'Gurkha Pants Waist': '' },
   'Gurkha Pants': { 'Gurkha Pants Length': '', 'Gurkha Pants Bottom': '', 'Gurkha Pants Hips': '', 'Gurkha Pants Waist': '' }
 };
 

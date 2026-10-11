@@ -51,10 +51,6 @@ export const SERVICE_FIELDS = {
     top: { label: 'Shirt', fields: ['Length', 'Shoulder', 'Sleeves', 'Chest', 'Abdomen', 'Hips', 'Collar'] },
     bottom: { label: null, fields: [] }
   },
-  'Custom Gurkha Pants Stitching': {
-    top: { label: null, fields: [] },
-    bottom: { label: 'Gurkha Pants', fields: ['Length', 'Bottom', 'Hips', 'Waist'] }
-  },
   'Gurkha Pants': {
     top: { label: null, fields: [] },
     bottom: { label: 'Gurkha Pants', fields: ['Length', 'Bottom', 'Hips', 'Waist'] }
@@ -242,7 +238,7 @@ export default function Measurements() {
     if (isNew && serviceParam) {
       const matched = Object.keys(SERVICE_FIELDS).find(
         s => s.toLowerCase() === serviceParam.toLowerCase()
-      ) || (serviceParam.toLowerCase().includes('gurkha') ? 'Custom Gurkha Pants Stitching' : 'Kameez Shalwar');
+      ) || (serviceParam.toLowerCase().includes('gurkha') ? 'Gurkha Pants' : 'Kameez Shalwar');
 
       setEditingProfileId(null);
       setProfileName('');
@@ -312,7 +308,7 @@ export default function Measurements() {
 
     // Attempt to guess the service based on keys stored
     let guessedService = 'Kameez Shalwar';
-    if (keys.some(k => k.includes('Gurkha'))) guessedService = 'Custom Gurkha Pants Stitching';
+    if (keys.some(k => k.includes('Gurkha'))) guessedService = 'Gurkha Pants';
     else if (keys.some(k => k.includes('Pajama'))) guessedService = 'Kurta Pajama';
     else if (keys.some(k => k.includes('Kurta'))) guessedService = 'Kurta Shalwar';
     else if (keys.some(k => k.includes('Waistcoat')) && keys.some(k => k.includes('Kameez'))) guessedService = 'Zardari Suit';
