@@ -378,7 +378,7 @@ export default function ServiceDetail() {
                       lineHeight: 1.3
                     }}
                   >
-                    Order {service.name} Now →
+                    Order {service.id === 'gurkha-pants' || service.name === 'Custom Gurkha Pants Stitching' ? 'Gurkha Pants' : service.name} Now →
                   </Link>
                   <Link 
                     to="/contact" 
