@@ -75,7 +75,7 @@ export default function ServiceDetail() {
     "@type": "Product",
     "name": service.name,
     "image": [service.img, ...(service.images || [])],
-    "description": service.desc,
+    "description": service.metaDescription || service.desc,
     "sku": `GT-SVC-${service.id.toUpperCase()}`,
     "brand": {
       "@type": "Brand",
@@ -104,17 +104,23 @@ export default function ServiceDetail() {
   return (
     <>
       <Helmet>
-        <title>Bespoke {service.name} Stitching Online | Genius Tailors Pakistan</title>
-        <meta name="description" content={`Order custom-stitched ${service.name} (${service.urdu}) online in Pakistan. ${service.desc.substring(0, 140)}... Perfect fit guaranteed.`} />
-        <meta name="keywords" content={`custom ${service.name.toLowerCase()} stitching pakistan, gents ${service.name.toLowerCase()} online, best online tailor pakistan, ${service.name.toLowerCase()} design`} />
+        <title>{service.metaTitle || `Bespoke ${service.name} Stitching Online | Genius Tailors Pakistan`}</title>
+        <meta name="description" content={service.metaDescription || `Order custom-stitched ${service.name} (${service.urdu}) online in Pakistan. ${service.desc.substring(0, 140)}... Perfect fit guaranteed.`} />
+        <meta name="keywords" content={service.metaKeywords || `custom ${service.name.toLowerCase()} stitching pakistan, gents ${service.name.toLowerCase()} online, best online tailor pakistan, ${service.name.toLowerCase()} design`} />
         <link rel="canonical" href={`https://geniustailors.com/services/${service.id}`} />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="product" />
-        <meta property="og:title" content={`Bespoke ${service.name} Stitching — Genius Tailors`} />
-        <meta property="og:description" content={service.desc} />
+        <meta property="og:title" content={service.metaTitle || `Bespoke ${service.name} Stitching — Genius Tailors`} />
+        <meta property="og:description" content={service.metaDescription || service.desc} />
         <meta property="og:image" content={service.img} />
         <meta property="og:url" content={`https://geniustailors.com/services/${service.id}`} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={service.metaTitle || `Bespoke ${service.name} Stitching — Genius Tailors`} />
+        <meta name="twitter:description" content={service.metaDescription || service.desc} />
+        <meta name="twitter:image" content={service.img} />
 
         {/* Schema.org Structured Data */}
         <script type="application/ld+json">

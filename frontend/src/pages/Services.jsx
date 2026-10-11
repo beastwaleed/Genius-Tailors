@@ -83,6 +83,9 @@ export const ALL_SERVICES = [
     urdu: 'قمیض شلوار',
     tagline: 'The Timeless Pakistani Classic',
     desc: 'Our most-ordered garment. A perfectly fitted Kameez Shalwar is the foundation of every Pakistani wardrobe — comfortable for daily wear, sharp enough for formal events.',
+    metaTitle: 'Custom Gents Kameez Shalwar Stitching Online | Genius Tailors Pakistan',
+    metaDescription: 'Order custom-tailored gents Kameez Shalwar online in Pakistan. Master tailoring, premium ban & collar styling, doorstep measurement pickup & 100% fit guarantee.',
+    metaKeywords: 'gents kameez shalwar stitching online, custom shalwar kameez pakistan, best online tailor pakistan, gents suit tailor lahore karachi islamabad',
     price: 'From Rs. 1,199',
     deliveryDays: '5–7 working days',
     img: ShalwarKameezFeaturedImage,
@@ -101,6 +104,9 @@ export const ALL_SERVICES = [
     urdu: 'کرتا شلوار',
     tagline: 'Relaxed, Refined, Everyday',
     desc: 'A shorter, lighter alternative. Our Kurta Shalwars are cut for comfort without sacrificing style — ideal for everyday wear and casual gatherings.',
+    metaTitle: "Bespoke Men's Kurta Shalwar Stitching Online | Genius Tailors",
+    metaDescription: "Get expertly tailored men's Kurta Shalwar delivered to your doorstep across Pakistan. Premium breathable fabrics, relaxed modern cuts & custom stitching.",
+    metaKeywords: 'men kurta shalwar stitching pakistan, custom gents kurta online, best kurta tailor pakistan, everyday kurta shalwar gents',
     price: 'From Rs. 1,800',
     deliveryDays: '4–6 working days',
     img: kurtaShalwarFeatured,
@@ -119,6 +125,9 @@ export const ALL_SERVICES = [
     urdu: 'کرتا پاجامہ',
     tagline: 'Evening Elegance',
     desc: 'An elegant ethnic option perfect for events, evenings, and festive wear. Tailored with precision to give you a sharp, distinguished look.',
+    metaTitle: 'Custom Kurta Pajama Stitching for Men | Genius Tailors Pakistan',
+    metaDescription: 'Order bespoke Kurta Pajama for festive, Eid & evening wear online. Tailored to your exact measurements with slim pajama cuts & premium master stitching.',
+    metaKeywords: 'custom kurta pajama men pakistan, eid kurta pajama tailoring, designer kurta pajama online tailor, formal ethnic wear gents',
     price: 'From Rs. 2,000',
     deliveryDays: '5–7 working days',
     img: bestKurtaPajamaTailor,
@@ -137,6 +146,9 @@ export const ALL_SERVICES = [
     urdu: 'واسکٹ',
     tagline: 'Sharp Layering for Any Look',
     desc: 'A well-cut waistcoat instantly elevates any outfit. Pair it with your Kameez Shalwar for a formal look or over a Kurta for a smart-casual ensemble.',
+    metaTitle: 'Custom Waistcoat Stitching for Men Online | Genius Tailors',
+    metaDescription: 'Elevate your traditional look with custom-tailored gents waistcoats. Single & double-breasted cuts, V-collar & Ban styles, perfect for weddings & formal events.',
+    metaKeywords: 'custom waistcoat men pakistan, gents waistcoat tailor online, wedding waistcoat stitching, formal vest coat pakistan',
     price: 'From Rs. 3,500',
     deliveryDays: '4–6 working days',
     img: waistcoatTailorPak,
@@ -155,6 +167,9 @@ export const ALL_SERVICES = [
     urdu: 'قمیض شلوار ڈیزائن',
     tagline: 'Custom Designed Masterpiece',
     desc: 'Take your Kameez Shalwar to the next level with our premium design options. Select from a range of exclusive patterns and cuts.',
+    metaTitle: 'Designer Gents Kameez Shalwar Custom Stitching | Genius Tailors',
+    metaDescription: 'Stand out with exclusive designer Kameez Shalwar patterns, triple edge stitches & modern cuts. Premium bespoke tailoring delivered nationwide in Pakistan.',
+    metaKeywords: 'designer gents shalwar kameez stitching, modern kameez shalwar design pakistan, wedding kameez shalwar gents, stylish kurta shalwar',
     price: 'From Rs. 2,200',
     deliveryDays: '7–10 working days',
     img: skDesignPak,
@@ -173,6 +188,9 @@ export const ALL_SERVICES = [
     urdu: 'کرتا شلوار ڈیزائن',
     tagline: 'Modern Designer Kurta',
     desc: 'A designer take on the classic Kurta Shalwar. Featuring unique cuts, elegant details, and a flawless finish for standing out.',
+    metaTitle: 'Modern Designer Kurta Shalwar for Men | Genius Tailors Pakistan',
+    metaDescription: 'Explore modern designer Kurta Shalwar cuts with angular edge stitching, designer plackets & bespoke fits. Handcrafted by master tailors in Pakistan.',
+    metaKeywords: 'designer kurta shalwar men pakistan, stylish gents kurta stitching, modern cuts kurta gents, luxury online tailor pakistan',
     price: 'From Rs. 2,200',
     deliveryDays: '7–10 working days',
     img: angularEdgeMain,
@@ -191,6 +209,9 @@ export const ALL_SERVICES = [
     urdu: 'زرداری سوٹ',
     tagline: 'Complete 3-Piece Suit',
     desc: 'The ultimate statement of power and elegance. A complete Kurta Shalwar and Waistcoat suit crafted from the exact same premium fabric.',
+    metaTitle: 'Custom 3-Piece Zardari Suit Stitching Online | Genius Tailors',
+    metaDescription: 'Bespoke 3-piece Zardari Suits crafted from matching luxury fabric. Kurta Shalwar with matching Waistcoat for weddings, high-profile events & formal elegance.',
+    metaKeywords: 'zardari suit stitching pakistan, 3 piece kurta shalwar waistcoat, presidential suit gents pakistan, bespoke wedding zardari suit',
     price: 'From Rs. 5,300',
     deliveryDays: '8–12 working days',
     img: zardariSuitPak,
@@ -209,6 +230,9 @@ export const ALL_SERVICES = [
     urdu: 'شرٹ',
     tagline: 'The Perfect Bespoke Fit',
     desc: 'A perfectly tailored bespoke dress shirt for a crisp, professional look. Built to your exact measurements for unparalleled comfort and style.',
+    metaTitle: 'Custom Bespoke Dress Shirt Stitching Online | Genius Tailors',
+    metaDescription: "Experience the perfect fit with custom-tailored men's dress shirts. Personalized collars, single & double cuffs, premium fabrics & doorstep delivery in Pakistan.",
+    metaKeywords: 'custom dress shirt tailoring pakistan, bespoke formal shirts online, gents shirt tailor karachi lahore islamabad, tailored office shirts',
     price: 'From Rs. 1,200',
     deliveryDays: '4–6 working days',
     img: shirtStitchingPak,
@@ -227,6 +251,9 @@ export const ALL_SERVICES = [
     urdu: 'گورکھا پینٹس',
     tagline: 'Classic Heritage. Modern Elegance.',
     desc: 'Elevate your wardrobe with expertly tailored Gurkha Pants by Genius Tailors. Featuring a signature high-waisted design, adjustable buckle closure, sharp front pleats, and a refined silhouette, these trousers combine timeless sophistication with modern comfort. Perfectly suited for both smart-casual styling and formal occasions.',
+    metaTitle: 'Custom Gurkha Pants Stitching Online in Pakistan | Genius Tailors',
+    metaDescription: 'Order bespoke high-waisted Gurkha Pants online. Heritage & Royale styling, adjustable side buckles, sharp front pleats & tailored silhouette delivered across Pakistan.',
+    metaKeywords: 'gurkha pants stitching pakistan, custom high waisted trousers men, bespoke gurkha pants online, pleated trousers gents pakistan',
     price: 'From Rs. 3,200',
     deliveryDays: '4–6 working days',
     img: gurkhaPantFeatured,
@@ -313,9 +340,9 @@ export default function Services() {
   return (
     <>
       <Helmet>
-        <title>Premium Men's Shalwar Kameez & Kurta Pakistan | Genius Tailors</title>
-        <meta name="description" content="Browse our premium gents shalwar kameez design, designer kurta for men, and wedding waistcoat for men in pakistan. Custom stitched by the best online tailor." />
-        <meta name="keywords" content="gents shalwar kameez design, designer kurta for men pakistan, wedding waistcoat for men pakistan, embroidered kurta design for gents, custom stitching shalwar kameez online" />
+        <title>Premium Gents Tailoring & Online Stitching Services | Genius Tailors Pakistan</title>
+        <meta name="description" content="Explore Pakistan's finest gents custom tailoring services: Kameez Shalwar, Kurta Pajama, Waistcoats, Zardari Suits, Shirts & Gurkha Pants. 100% Fit Guarantee." />
+        <meta name="keywords" content="gents tailoring services pakistan, online stitching catalog, bespoke kameez shalwar, designer kurta men, wedding waistcoat, gurkha pants pakistan" />
       </Helmet>
       <div style={{ minHeight: '100vh', background: 'var(--ivory)' }}>
       <Navbar />
