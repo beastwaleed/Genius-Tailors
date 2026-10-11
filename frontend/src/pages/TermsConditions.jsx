@@ -24,7 +24,7 @@ export default function TermsConditions() {
               <p>By accessing and using the Genius Tailors website and services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
               
               <h2>2. Services Offered</h2>
-              <p>Genius Tailors provides bespoke tailoring services for men's traditional wear, including Kameez Shalwar, Kurta Shalwar, Waistcoats, and Zardari Suits. We offer both online measurement submissions and an AI measurement estimation tool.</p>
+              <p>Genius Tailors provides bespoke tailoring services for men's traditional and contemporary wear, including Kameez Shalwar, Kurta Shalwar, Waistcoats, Zardari Suits, Bespoke Shirts, and Custom Gurkha Pants. We offer both online measurement submissions and an AI measurement estimation tool.</p>
               
               <h2>3. Order and Payment</h2>
               <ul>

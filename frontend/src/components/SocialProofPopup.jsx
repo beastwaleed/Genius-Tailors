@@ -4,12 +4,16 @@ import HeroKurtaPajama from '../assets/HeroKurtaPajama.jpeg';
 import WaistcoatFront from '../assets/waistcoatfront.jpeg';
 import MainShalwarKameez from '../assets/MainShalwarKameez.jpeg';
 import angularEdgeMain from '../assets/AngularEdgeMain.jpeg';
+import gurkhaPantFeatured from '../assets/Gurkha-pants-featured-image.png';
+import royaleGurkhaFeatured from '../assets/The-royale-gurkha-pants-featured.png';
 
 const mockData = [
   { name: 'Majid Idrees', city: 'Karachi', service: 'Shalwar Kameez', time: '1 hour ago', img: ShalwarKameezFeaturedImage },
   { name: 'Ali Khan', city: 'Lahore', service: 'Kurta Pajama', time: '2 hours ago', img: HeroKurtaPajama },
+  { name: 'Hamza Farooq', city: 'Islamabad', service: 'Gurkha Pants', time: '45 mins ago', img: gurkhaPantFeatured },
   { name: 'Zain Abbas', city: 'Islamabad', service: 'Waistcoat', time: '5 hours ago', img: WaistcoatFront },
   { name: 'Faizan Tariq', city: 'Faisalabad', service: 'Premium Kameez Shalwar', time: '1 day ago', img: MainShalwarKameez },
+  { name: 'Danyal Malik', city: 'Lahore', service: 'The Royale Gurkha Pants', time: '4 hours ago', img: royaleGurkhaFeatured },
   { name: 'Usman Ghani', city: 'Rawalpindi', service: 'Angular Edge Kurta', time: '3 hours ago', img: angularEdgeMain },
   { name: 'Ahmed Raza', city: 'Multan', service: 'Shalwar Kameez', time: '30 mins ago', img: ShalwarKameezFeaturedImage },
   { name: 'Bilal Ahmed', city: 'Hyderabad', service: 'Kurta Pajama', time: '10 mins ago', img: HeroKurtaPajama },

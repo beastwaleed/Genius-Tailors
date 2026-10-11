@@ -68,6 +68,28 @@ mongoose.connect(MONGO_URI).then(async () => {
       description: 'Complete 3-Piece Suit.',
       basePrice: 5300,
       customizations: { collarStyles: [], sleeveStyles: [], frontStyles: [], bottomStyles: [] }
+    },
+    {
+      name: 'Shirt',
+      description: 'A perfectly tailored bespoke dress shirt for a crisp, professional look.',
+      basePrice: 1200,
+      customizations: {
+        collarStyles: ['Normal Style', 'Arrow Collar'],
+        sleeveStyles: ['Square Cuff', 'Double Cuff'],
+        frontStyles: ['1 Pocket', 'No Pocket'],
+        bottomStyles: ['Round Bottom', 'Square with Side Chalk']
+      }
+    },
+    {
+      name: 'Custom Gurkha Pants Stitching',
+      description: 'Classic Heritage. Modern Elegance. Signature high-waisted design with adjustable side buckles and sharp front pleats.',
+      basePrice: 3200,
+      customizations: {
+        collarStyles: [],
+        sleeveStyles: [],
+        frontStyles: [],
+        bottomStyles: ['The Heritage Gurkha Pants', 'The Royale Gurkha Pants']
+      }
     }
   ];
 

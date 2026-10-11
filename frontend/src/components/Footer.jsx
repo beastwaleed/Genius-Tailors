@@ -33,6 +33,8 @@ export default function Footer() {
               <Link to="/services">Kurta Shalwar</Link>
               <Link to="/services">Kurta Pajama</Link>
               <Link to="/services">Waistcoat</Link>
+              <Link to="/services/gurkha-pants">Gurkha Pants</Link>
+              <Link to="/services/shirt">Bespoke Shirts</Link>
             </div>
             <div className="footer-col">
               <h4 className="footer-col-title">Quick Links</h4>

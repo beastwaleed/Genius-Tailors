@@ -34,7 +34,7 @@ export default function Portfolio() {
     <>
       <Helmet>
         <title>Portfolio | Premium Tailoring Gallery | Genius Tailors</title>
-        <meta name="description" content="View the portfolio of Genius Tailors. Discover our finely stitched bespoke garments including Kameez Shalwar, Kurta Shalwar, and Waistcoats in Pakistan." />
+        <meta name="description" content="View the portfolio of Genius Tailors. Discover our finely stitched bespoke garments including Kameez Shalwar, Kurta Shalwar, Waistcoats, and Gurkha Pants in Pakistan." />
       </Helmet>
       <div style={{ minHeight: '100vh', background: 'var(--ivory)', display: 'flex', flexDirection: 'column' }}>
       <Navbar />

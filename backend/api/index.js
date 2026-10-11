@@ -512,7 +512,45 @@ app.put('/api/profile', protect, async (req, res) => {
 // Get all active services (Public)
 app.get('/api/services', async (req, res) => {
   try {
-    const services = await Service.find({ isActive: true });
+    let services = await Service.find({ isActive: true });
+    
+    // Auto-seed missing core catalog services if not yet present in DB
+    const existingNames = new Set((services || []).map(s => s.name?.toLowerCase().trim()));
+    const missing = [];
+    if (!existingNames.has('custom gurkha pants stitching') && !existingNames.has('gurkha pants')) {
+      missing.push({
+        name: 'Custom Gurkha Pants Stitching',
+        description: 'Elevate your wardrobe with expertly tailored Gurkha Pants by Genius Tailors. Signature high-waisted design, adjustable side buckles, and sharp front pleats.',
+        basePrice: 3200,
+        customizations: {
+          collarStyles: [],
+          sleeveStyles: [],
+          frontStyles: [],
+          bottomStyles: ['The Heritage Gurkha Pants', 'The Royale Gurkha Pants']
+        },
+        isActive: true
+      });
+    }
+    if (!existingNames.has('shirt')) {
+      missing.push({
+        name: 'Shirt',
+        description: 'A perfectly tailored bespoke dress shirt for a crisp, professional look.',
+        basePrice: 1200,
+        customizations: {
+          collarStyles: ['Normal Style', 'Arrow Collar'],
+          sleeveStyles: ['Square Cuff', 'Double Cuff'],
+          frontStyles: ['1 Pocket', 'No Pocket'],
+          bottomStyles: ['Round Bottom', 'Square with Side Chalk']
+        },
+        isActive: true
+      });
+    }
+
+    if (missing.length > 0) {
+      await Service.insertMany(missing);
+      services = await Service.find({ isActive: true });
+    }
+
     res.json(services);
   } catch (error) {
     res.status(500).json({ message: 'Server error fetching services', error: error.message });
@@ -2127,7 +2165,8 @@ app.post('/api/chat', async (req, res) => {
    - Points can be redeemed for promotional discounts.
 4. **Ordering a Service (Booking)**: 
    - Customers can browse our "Services" page, or click "Browse Services" directly from the Measurements section.
-   - Standard services require 4 meters of fabric, BUT a Zardari Suit automatically requires 5 meters by default.
+   - We stitch Kameez Shalwar, Kurta Shalwar, Kurta Pajama, Waistcoats, Kameez Shalwar Design, Kurta Shalwar Design, Zardari Suits, Dress Shirts, and Custom Gurkha Pants (heritage and royale variants with adjustable buckle tabs and front pleats).
+   - Standard services require 4 meters of fabric, BUT a Zardari Suit automatically requires 5 meters by default, and Gurkha Pants require trousers-length fabric.
    - Checkout allows selecting fabric color, collars, cuffs, pocket styles, etc.
 5. **Payment Methods**:
    - Cash on Delivery or Bank Transfer.

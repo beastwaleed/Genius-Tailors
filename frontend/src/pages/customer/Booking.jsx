@@ -310,7 +310,12 @@ export default function Booking() {
 
   const [dbFabrics, setDbFabrics] = useState([]);
   const [dbServices, setDbServices] = useState([]);
-  const filteredDbFabrics = dbFabrics.filter(f => !f.allowedServices || f.allowedServices.length === 0 || f.allowedServices.includes(serviceName));
+  const filteredDbFabrics = dbFabrics.filter(f => {
+    if (!f.allowedServices || f.allowedServices.length === 0) return true;
+    if (f.allowedServices.includes(serviceName)) return true;
+    if (serviceName.toLowerCase().includes('gurkha') && f.allowedServices.some(s => s.toLowerCase().includes('gurkha'))) return true;
+    return false;
+  });
   const fabricList = [
     { name: 'Provide my own fabric', price: 0, desc: 'Send your unstitched fabric to us through a courier service within 3 days.', img: imgFabricOwn },
     ...filteredDbFabrics

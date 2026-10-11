@@ -4,6 +4,7 @@ import AdminLayout from '../../components/AdminLayout';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import Papa from 'papaparse';
+import { ALL_SERVICES } from '../Services';
 
 const ADMIN_STYLE_CONFIGS = {
   'Kameez Shalwar': {
@@ -159,9 +160,27 @@ export default function AdminCustomers() {
   const fetchServices = async () => {
     try {
       const { data } = await api.get('/api/services');
-      setServices(data.filter(s => s.isActive));
+      const active = (Array.isArray(data) ? data : []).filter(s => s.isActive);
+      const dbNames = new Set(active.map(s => s.name?.toLowerCase().trim()));
+      
+      const missingFromAll = ALL_SERVICES
+        .filter(s => !dbNames.has(s.name?.toLowerCase().trim()))
+        .map(s => ({
+          _id: s.name,
+          name: s.name,
+          basePrice: parseInt(s.price?.replace(/\D/g, '')) || 3200,
+          isActive: true
+        }));
+
+      setServices([...active, ...missingFromAll]);
     } catch (error) {
       console.error('Failed to fetch services', error);
+      setServices(ALL_SERVICES.map(s => ({
+        _id: s.name,
+        name: s.name,
+        basePrice: parseInt(s.price?.replace(/\D/g, '')) || 3200,
+        isActive: true
+      })));
     }
   };
 
@@ -696,7 +715,7 @@ export default function AdminCustomers() {
             <form onSubmit={async (e) => {
               e.preventDefault();
               try {
-                const service = services.find(s => s._id === orderForm.serviceName);
+                const service = services.find(s => s._id === orderForm.serviceName || s.name === orderForm.serviceName);
                 if (!service) return toast.error('Select a service');
                 
                 const profile = customerProfiles.find(p => p._id === orderForm.profileId);
@@ -733,7 +752,7 @@ export default function AdminCustomers() {
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Service *</label>
                 <select style={{ width: '100%', padding: '0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.5rem' }} value={orderForm.serviceName} onChange={(e) => {
                   const sId = e.target.value;
-                  const s = services.find(s => s._id === sId);
+                  const s = services.find(s => s._id === sId || s.name === sId);
                   
                   const sName = s ? s.name : 'Kameez Shalwar';
                   const config = ADMIN_STYLE_CONFIGS[sName] || ADMIN_STYLE_CONFIGS['Kameez Shalwar'];
@@ -799,7 +818,7 @@ export default function AdminCustomers() {
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#475569' }}>Styling Variations</label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
                   {(() => {
-                    const s = services.find(serv => serv._id === orderForm.serviceName);
+                    const s = services.find(serv => serv._id === orderForm.serviceName || serv.name === orderForm.serviceName);
                     const sName = s ? s.name : 'Kameez Shalwar';
                     const config = ADMIN_STYLE_CONFIGS[sName] || ADMIN_STYLE_CONFIGS['Kameez Shalwar'];
                     

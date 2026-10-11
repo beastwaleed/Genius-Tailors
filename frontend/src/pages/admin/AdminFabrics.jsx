@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/AdminLayout';
 import api from '../../api';
 import toast from 'react-hot-toast';
+import { ALL_SERVICES } from '../Services';
 
 export default function AdminFabrics() {
   const [fabrics, setFabrics] = useState([]);
@@ -32,9 +33,27 @@ export default function AdminFabrics() {
   const fetchServices = async () => {
     try {
       const { data } = await api.get('/api/services');
-      setServices(data);
+      const dbServices = Array.isArray(data) ? data : [];
+      const dbNames = new Set(dbServices.map(s => s.name?.toLowerCase().trim()));
+      
+      const missingFromAll = ALL_SERVICES
+        .filter(s => !dbNames.has(s.name?.toLowerCase().trim()))
+        .map(s => ({
+          _id: s.name,
+          name: s.name,
+          basePrice: parseInt(s.price?.replace(/\D/g, '')) || 0,
+          isActive: true
+        }));
+
+      setServices([...dbServices, ...missingFromAll]);
     } catch (error) {
-      console.error('Failed to fetch services');
+      console.error('Failed to fetch services', error);
+      setServices(ALL_SERVICES.map(s => ({
+        _id: s.name,
+        name: s.name,
+        basePrice: parseInt(s.price?.replace(/\D/g, '')) || 0,
+        isActive: true
+      })));
     }
   };
 
@@ -137,12 +156,16 @@ export default function AdminFabrics() {
   };
 
   const handleServiceToggle = (serviceName) => {
-    const current = [...formData.allowedServices];
-    if (current.includes(serviceName)) {
-      setFormData({ ...formData, allowedServices: current.filter(s => s !== serviceName) });
+    const isGurkha = serviceName.toLowerCase().includes('gurkha');
+    let current = [...formData.allowedServices];
+    const isCurrentlyChecked = current.includes(serviceName) || (isGurkha && current.some(s => s.toLowerCase().includes('gurkha')));
+
+    if (isCurrentlyChecked) {
+      current = current.filter(s => isGurkha ? !s.toLowerCase().includes('gurkha') : s !== serviceName);
     } else {
-      setFormData({ ...formData, allowedServices: [...current, serviceName] });
+      current.push(serviceName);
     }
+    setFormData({ ...formData, allowedServices: current });
   };
 
   const handleSubmit = async (e) => {
@@ -381,16 +404,38 @@ export default function AdminFabrics() {
                 <label style={{ fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Allowed Services</label>
                 <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.75rem' }}>Select which services this fabric is available for. Leave empty to allow for all services.</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                  {services.map(s => (
-                    <label key={s._id} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', fontSize: '0.9rem' }}>
-                      <input 
-                        type="checkbox" 
-                        checked={formData.allowedServices.includes(s.name)}
-                        onChange={() => handleServiceToggle(s.name)}
-                      />
-                      {s.name}
-                    </label>
-                  ))}
+                  {services.map(s => {
+                    const isGurkha = s.name.toLowerCase().includes('gurkha');
+                    const isChecked = formData.allowedServices.includes(s.name) || 
+                      (isGurkha && formData.allowedServices.some(as => as.toLowerCase().includes('gurkha')));
+
+                    return (
+                      <label 
+                        key={s._id || s.name} 
+                        style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '0.45rem', 
+                          cursor: 'pointer', 
+                          fontSize: '0.9rem',
+                          background: isGurkha ? '#fffbeb' : '#ffffff',
+                          padding: '0.35rem 0.65rem',
+                          borderRadius: '6px',
+                          border: isGurkha ? '1px solid #fde68a' : '1px solid #e2e8f0',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <input 
+                          type="checkbox" 
+                          checked={isChecked}
+                          onChange={() => handleServiceToggle(s.name)}
+                        />
+                        <span style={{ fontWeight: isGurkha ? 600 : 400, color: isGurkha ? '#92400e' : '#334155' }}>
+                          {s.name}
+                        </span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
               
