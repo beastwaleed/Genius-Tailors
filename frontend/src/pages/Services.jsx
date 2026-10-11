@@ -74,7 +74,7 @@ import gurkhaPant2 from '../assets/Gurkha-pants-image-2.png';
 import gurkhaPant3 from '../assets/Gurkha-pants-image-3.png';
 import royaleGurkhaFeatured from '../assets/The-royale-gurkha-pants-featured.png';
 import royaleGurkhaGallery from '../assets/the-royale-gurkha-pants.png';
-const gurkhaGallery = [gurkhaPantFeatured, royaleGurkhaFeatured, gurkhaPant2, gurkhaPant3, royaleGurkhaGallery];
+const gurkhaGallery = [gurkhaPantFeatured, gurkhaPant2, gurkhaPant3, royaleGurkhaFeatured, royaleGurkhaGallery];
 
 export const ALL_SERVICES = [
   {
@@ -257,6 +257,7 @@ export const ALL_SERVICES = [
     price: 'From Rs. 3,200',
     deliveryDays: '4–6 working days',
     img: gurkhaPantFeatured,
+    hoverImg: gurkhaPant2,
     badge: 'Trending',
     badgeColor: '#1A1A1A',
     stars: 5,
@@ -280,6 +281,7 @@ export const ALL_SERVICES = [
 ];
 
 const getHoverImg = (svc) => {
+  if (svc.hoverImg) return svc.hoverImg;
   if (svc.images && svc.images.length > 0) {
     const secondary = svc.images.find(img => img !== svc.img);
     if (secondary) return secondary;

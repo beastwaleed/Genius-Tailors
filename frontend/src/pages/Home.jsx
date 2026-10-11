@@ -43,6 +43,7 @@ const WHATSAPP_REVIEWS = [
 import { ALL_SERVICES as SERVICES_PREVIEW } from './Services';
 
 const getHoverImg = (svc) => {
+  if (svc.hoverImg) return svc.hoverImg;
   if (svc.images && svc.images.length > 0) {
     const secondary = svc.images.find(img => img !== svc.img);
     if (secondary) return secondary;
