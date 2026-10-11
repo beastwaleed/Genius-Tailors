@@ -62,20 +62,10 @@ const ADMIN_STYLE_CONFIGS = {
     bottomDesigns: ['Round Bottom', 'Square with Side Chalk']
   },
   'Custom Gurkha Pants Stitching': {
-    collarTypes: [],
-    collarSubs: {},
-    cuffs: [],
-    pockets: [],
-    bottomPockets: [],
-    bottomDesigns: []
+    designs: ['The Heritage Gurkha Pants', 'The Royale Gurkha Pants']
   },
   'Gurkha Pants': {
-    collarTypes: [],
-    collarSubs: {},
-    cuffs: [],
-    pockets: [],
-    bottomPockets: [],
-    bottomDesigns: []
+    designs: ['The Heritage Gurkha Pants', 'The Royale Gurkha Pants']
   }
 };
 

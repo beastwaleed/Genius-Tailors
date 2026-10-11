@@ -74,6 +74,12 @@ import angularEdgeMain from '../../assets/AngularEdgeMain.jpeg';
 import angularEdge01 from '../../assets/AngularEdge01.jpeg';
 import angularEdge02 from '../../assets/AngularEdge02.jpeg';
 
+import gurkhaPantFeatured from '../../assets/Gurkha-pants-featured-image.png';
+import gurkhaPant2 from '../../assets/Gurkha-pants-image-2.png';
+import gurkhaPant3 from '../../assets/Gurkha-pants-image-3.png';
+import royaleGurkhaFeatured from '../../assets/The-royale-gurkha-pants-featured.png';
+import royaleGurkhaGallery from '../../assets/the-royale-gurkha-pants.png';
+
 const SERVICES_PRICES = {
   'Kameez Shalwar': 1800,
   'Kurta Shalwar': 1800,
@@ -203,18 +209,36 @@ const STYLE_CONFIGS = {
     ]
   },
   'Custom Gurkha Pants Stitching': {
-    collarTypes: [],
-    cuffs: [],
-    pockets: [],
-    bottomPockets: [],
-    bottomDesigns: []
+    designs: [
+      {
+        name: 'The Heritage Gurkha Pants',
+        img: gurkhaPantFeatured,
+        price: 3500,
+        gallery: [gurkhaPantFeatured, gurkhaPant2, gurkhaPant3]
+      },
+      {
+        name: 'The Royale Gurkha Pants',
+        img: royaleGurkhaFeatured,
+        price: 3200,
+        gallery: [royaleGurkhaFeatured, royaleGurkhaGallery]
+      }
+    ]
   },
   'Gurkha Pants': {
-    collarTypes: [],
-    cuffs: [],
-    pockets: [],
-    bottomPockets: [],
-    bottomDesigns: []
+    designs: [
+      {
+        name: 'The Heritage Gurkha Pants',
+        img: gurkhaPantFeatured,
+        price: 3500,
+        gallery: [gurkhaPantFeatured, gurkhaPant2, gurkhaPant3]
+      },
+      {
+        name: 'The Royale Gurkha Pants',
+        img: royaleGurkhaFeatured,
+        price: 3200,
+        gallery: [royaleGurkhaFeatured, royaleGurkhaGallery]
+      }
+    ]
   }
 };
 
@@ -280,7 +304,7 @@ export default function Booking() {
       pockets: config.pockets?.length > 0 ? config.pockets[0].name : '',
       bottomPocket: config.bottomPockets?.length > 0 ? config.bottomPockets[0].name : '',
       bottomDesign: config.bottomDesigns?.length > 0 ? config.bottomDesigns[0].name : '',
-      design: ''
+      design: config.designs?.length > 0 ? config.designs[0].name : ''
     });
   }, [serviceName]);
 
@@ -1142,7 +1166,7 @@ export default function Booking() {
                   <div className="style-grid" style={{ marginBottom: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
                     {config.designs.map(opt => (
                       <div key={opt.name} className={`style-card ${styleVariations.design === opt.name ? 'selected' : ''}`}
-                        onClick={() => { setSelectedDesignModal(opt); setActiveGalleryIndex(0); }}
+                        onClick={() => { setStyleVariations(prev => ({ ...prev, design: opt.name })); setSelectedDesignModal(opt); setActiveGalleryIndex(0); }}
                         style={{ height: '340px', display: 'flex', flexDirection: 'column', padding: '0', overflow: 'hidden' }}
                       >
                         <div className="design-img-container" style={{ height: '260px', width: '100%', position: 'relative' }}>
