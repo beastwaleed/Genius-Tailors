@@ -15,10 +15,15 @@ const popupSchema = new mongoose.Schema({
     type: String, 
     default: '' 
   },
+  template: {
+    type: String,
+    enum: ['hero-card', 'circular-badge', 'luxury-dark', 'split-card', 'bottom-banner'],
+    default: 'hero-card'
+  },
   imagePlacement: { 
     type: String, 
     enum: ['left', 'right', 'top', 'bottom'], 
-    default: 'left' 
+    default: 'top' 
   },
   badgeText: { 
     type: String, 

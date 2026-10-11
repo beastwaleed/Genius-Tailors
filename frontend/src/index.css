@@ -3668,3 +3668,344 @@ a.btn {
   color: var(--onyx);
   transform: translateY(-2px);
 }
+
+/* ==========================================================================
+   PROMOTIONAL POPUP SYSTEM & PREBUILT TEMPLATES (RESPONSIVE)
+   ========================================================================== */
+
+@keyframes gtPopupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes gtOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes gtSlideUpDrawer {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gt-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: gtOverlayFadeIn 0.25s ease-out;
+  box-sizing: border-box;
+}
+
+.gt-popup-overlay.is-bottom-sheet {
+  align-items: flex-end;
+  padding: 0;
+}
+
+.gt-popup-card {
+  position: relative;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  animation: gtPopupFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+/* Template 1: Hero Card (matches User Ref 1) */
+.gt-popup-card--hero-card {
+  max-width: 440px;
+  border-radius: 22px;
+}
+
+/* Template 2: Circular Badge (matches User Ref 2) */
+.gt-popup-card--circular-badge {
+  max-width: 420px;
+  min-height: 420px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.75rem 2.25rem;
+  box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Template 3: Luxury Dark (Royal Bespoke) */
+.gt-popup-card--luxury-dark {
+  max-width: 460px;
+  border-radius: 22px;
+  border: 1.5px solid #C9A96E;
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(201, 169, 110, 0.18);
+}
+
+/* Template 4: Editorial Split Card */
+.gt-popup-card--split-card {
+  max-width: 780px;
+}
+
+@media (min-width: 768px) {
+  .gt-popup-card--split-card {
+    flex-direction: row;
+  }
+  .gt-popup-card--split-card.split-reverse {
+    flex-direction: row-reverse;
+  }
+  .gt-popup-card--split-card .gt-popup-img-wrap {
+    flex: 1;
+    min-height: 380px;
+    height: auto;
+  }
+  .gt-popup-card--split-card .gt-popup-body {
+    flex: 1.2;
+    padding: 2.25rem 2rem;
+  }
+}
+
+/* Template 5: Bottom Banner */
+.gt-popup-card--bottom-banner {
+  max-width: 580px;
+  border-radius: 22px 22px 0 0;
+  margin-bottom: 0;
+  animation: gtSlideUpDrawer 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Common Image Container */
+.gt-popup-img-wrap {
+  width: 100%;
+  height: 210px;
+  position: relative;
+  overflow: hidden;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.gt-popup-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Body Content */
+.gt-popup-body {
+  padding: 1.85rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* Close Button */
+.gt-popup-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.65);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  line-height: 1;
+}
+
+.gt-popup-close-btn:hover {
+  background: rgba(15, 23, 42, 0.9);
+  transform: scale(1.08);
+}
+
+.gt-popup-close-btn:active {
+  transform: scale(0.92);
+}
+
+/* Typography & Elements */
+.gt-popup-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 0.65rem;
+  width: fit-content;
+}
+
+.gt-popup-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.gt-popup-desc {
+  font-size: 0.925rem;
+  line-height: 1.48;
+  margin: 0 0 1.25rem 0;
+}
+
+.gt-popup-timer {
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  text-align: center;
+  font-weight: 700;
+}
+
+.gt-popup-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.925rem;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gt-popup-input:focus {
+  outline: none;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.gt-popup-btn {
+  width: 100%;
+  padding: 13px 20px;
+  min-height: 48px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+  letter-spacing: 0.01em;
+}
+
+.gt-popup-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+.gt-popup-btn:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   MOBILE-SPECIFIC REFINEMENTS (Max Width: 640px)
+   Eliminates all squishing, misalignments, and overflow issues
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .gt-popup-overlay {
+    padding: 12px;
+  }
+
+  .gt-popup-card {
+    max-width: 380px !important;
+    max-height: 86vh !important;
+    border-radius: 18px !important;
+    flex-direction: column !important; /* Forces top-to-bottom layout on mobile */
+  }
+
+  /* Circular Badge becomes a friendly squircle pill on mobile so text never wraps oddly */
+  .gt-popup-card--circular-badge {
+    aspect-ratio: auto !important;
+    min-height: auto !important;
+    border-radius: 36px !important;
+    padding: 2.25rem 1.35rem !important;
+    max-width: 350px !important;
+  }
+
+  .gt-popup-card--bottom-banner {
+    border-radius: 20px 20px 0 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 80vh !important;
+  }
+
+  .gt-popup-img-wrap {
+    height: 180px !important;
+    max-height: 190px !important;
+    width: 100% !important;
+    flex: none !important;
+  }
+
+  .gt-popup-body {
+    padding: 1.25rem 1.15rem !important;
+  }
+
+  .gt-popup-title {
+    font-size: 1.3rem !important;
+    line-height: 1.28 !important;
+    margin-bottom: 0.45rem !important;
+  }
+
+  .gt-popup-desc {
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.95rem !important;
+  }
+
+  .gt-popup-btn {
+    padding: 12px 16px !important;
+    min-height: 46px !important;
+    font-size: 0.95rem !important;
+  }
+
+  .gt-popup-input {
+    padding: 10px 12px !important;
+    font-size: 0.875rem !important;
+  }
+
+  .gt-popup-close-btn {
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+}

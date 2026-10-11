@@ -179,119 +179,57 @@ export default function PromotionalPopup() {
 
   if (!visible || !popup) return null;
 
-  const placement = popup.imagePlacement || 'left';
+  const template = popup.template || (popup.imagePlacement === 'left' || popup.imagePlacement === 'right' ? 'split-card' : 'hero-card');
+  const placement = popup.imagePlacement || 'top';
   const hasImage = Boolean(popup.imageUrl);
-
-  const isHorizontalSplit = hasImage && (placement === 'left' || placement === 'right');
-  const isTopImage = hasImage && placement === 'top';
-  const isBottomImage = hasImage && placement === 'bottom';
+  const isBottomSheet = template === 'bottom-banner';
+  const isCircular = template === 'circular-badge';
 
   return (
     <div 
-      style={{
-        position: 'fixed',
-        top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: 'rgba(15, 23, 42, 0.75)',
-        backdropFilter: 'blur(5px)',
-        zIndex: 99999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1rem'
-      }}
+      className={`gt-popup-overlay ${isBottomSheet ? 'is-bottom-sheet' : ''}`}
       onClick={handleClose}
     >
       <div
+        className={`gt-popup-card gt-popup-card--${template} ${template === 'split-card' && placement === 'right' ? 'split-reverse' : ''}`}
         style={{
-          position: 'relative',
-          backgroundColor: popup.backgroundColor || '#ffffff',
-          borderRadius: '16px',
-          overflow: 'hidden',
-          maxWidth: isHorizontalSplit ? '780px' : '520px',
-          width: '100%',
-          maxHeight: '92vh',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
-          display: 'flex',
-          flexDirection: isHorizontalSplit ? (placement === 'left' ? 'row' : 'row-reverse') : (isBottomImage ? 'column-reverse' : 'column'),
-          color: popup.descriptionColor || '#475569'
+          backgroundColor: popup.backgroundColor || (template === 'luxury-dark' ? '#141414' : isCircular ? '#1e1b4b' : '#ffffff'),
+          color: popup.descriptionColor || (template === 'luxury-dark' ? '#d4d4d8' : isCircular ? '#e0e7ff' : '#475569')
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={handleClose}
-          style={{
-            position: 'absolute',
-            top: '12px',
-            right: '12px',
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            color: '#ffffff',
-            border: 'none',
-            fontSize: '18px',
-            cursor: 'pointer',
-            zIndex: 10,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            lineHeight: 1
-          }}
+          className="gt-popup-close-btn"
+          aria-label="Close popup"
           title="Close Popup"
         >
           &times;
         </button>
 
-        {/* Image Section */}
-        {hasImage && (
-          <div
-            style={{
-              flex: isHorizontalSplit ? 1 : 'none',
-              height: isHorizontalSplit ? 'auto' : (isTopImage || isBottomImage ? '220px' : 'auto'),
-              minHeight: isHorizontalSplit ? '320px' : 'auto',
-              position: 'relative',
-              background: '#f8fafc',
-              overflow: 'hidden'
-            }}
-          >
+        {/* Top / Side Image (Not shown for circular template unless specified, but if provided shown cleanly) */}
+        {hasImage && !isCircular && (
+          <div className="gt-popup-img-wrap">
             <img
               src={popup.imageUrl}
               alt={popup.title}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover'
-              }}
+              className="gt-popup-img"
+              loading="lazy"
             />
           </div>
         )}
 
         {/* Content Section */}
-        <div
-          style={{
-            flex: isHorizontalSplit ? 1.2 : 1,
-            padding: '2rem 1.75rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            overflowY: 'auto'
-          }}
-        >
+        <div className="gt-popup-body">
           {/* Badge */}
           {popup.badgeText && (
-            <div style={{ marginBottom: '0.75rem' }}>
+            <div style={{ textAlign: isCircular ? 'center' : 'inherit' }}>
               <span
+                className="gt-popup-badge"
                 style={{
-                  backgroundColor: popup.badgeBgColor || '#ef4444',
-                  color: popup.badgeTextColor || '#ffffff',
-                  fontSize: '0.75rem',
-                  fontWeight: '800',
-                  letterSpacing: '1px',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  textTransform: 'uppercase',
-                  display: 'inline-block'
+                  backgroundColor: popup.badgeBgColor || (template === 'luxury-dark' ? '#C9A96E' : isCircular ? '#ec4899' : '#ef4444'),
+                  color: popup.badgeTextColor || (template === 'luxury-dark' ? '#000000' : '#ffffff')
                 }}
               >
                 {popup.badgeText}
@@ -301,13 +239,11 @@ export default function PromotionalPopup() {
 
           {/* Title */}
           <h2
+            className="gt-popup-title"
             style={{
-              color: popup.titleColor || '#0f172a',
-              fontSize: '1.6rem',
-              fontWeight: '800',
-              lineHeight: 1.25,
-              margin: '0 0 0.75rem 0',
-              fontFamily: 'var(--font-serif)'
+              color: popup.titleColor || (template === 'luxury-dark' ? '#FDFBF7' : isCircular ? '#ffffff' : '#0f172a'),
+              fontFamily: template === 'luxury-dark' ? 'var(--font-serif)' : 'inherit',
+              textAlign: isCircular ? 'center' : 'inherit'
             }}
           >
             {popup.title}
@@ -316,11 +252,10 @@ export default function PromotionalPopup() {
           {/* Description */}
           {popup.description && (
             <p
+              className="gt-popup-desc"
               style={{
-                color: popup.descriptionColor || '#475569',
-                fontSize: '0.95rem',
-                lineHeight: 1.5,
-                margin: '0 0 1.25rem 0'
+                color: popup.descriptionColor || (template === 'luxury-dark' ? '#a1a1aa' : isCircular ? '#c7d2fe' : '#475569'),
+                textAlign: isCircular ? 'center' : 'inherit'
               }}
             >
               {popup.description}
@@ -330,55 +265,55 @@ export default function PromotionalPopup() {
           {/* Countdown Timer */}
           {popup.enableCountdown && (
             <div
+              className="gt-popup-timer"
               style={{
-                backgroundColor: popup.timerBgColor || '#f1f5f9',
-                color: popup.timerTextColor || '#0f172a',
-                padding: '10px 14px',
-                borderRadius: '10px',
-                marginBottom: '1.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-around',
-                textAlign: 'center'
+                backgroundColor: popup.timerBgColor || (template === 'luxury-dark' ? 'rgba(201, 169, 110, 0.12)' : isCircular ? 'rgba(255, 255, 255, 0.1)' : '#f1f5f9'),
+                color: popup.timerTextColor || (template === 'luxury-dark' ? '#C9A96E' : isCircular ? '#ffffff' : '#0f172a'),
+                border: template === 'luxury-dark' ? '1px solid rgba(201, 169, 110, 0.3)' : 'none'
               }}
             >
               <div>
-                <span style={{ fontSize: '1.2rem', fontWeight: 'bold', display: 'block' }}>
+                <span style={{ fontSize: '1.25rem', fontWeight: 800, display: 'block', lineHeight: 1 }}>
                   {String(timeLeft.hours).padStart(2, '0')}
                 </span>
-                <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', opacity: 0.8 }}>Hours</span>
+                <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.8, letterSpacing: '0.05em' }}>Hours</span>
               </div>
-              <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>:</span>
+              <span style={{ fontSize: '1.2rem', fontWeight: 800 }}>:</span>
               <div>
-                <span style={{ fontSize: '1.2rem', fontWeight: 'bold', display: 'block' }}>
+                <span style={{ fontSize: '1.25rem', fontWeight: 800, display: 'block', lineHeight: 1 }}>
                   {String(timeLeft.minutes).padStart(2, '0')}
                 </span>
-                <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', opacity: 0.8 }}>Mins</span>
+                <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.8, letterSpacing: '0.05em' }}>Mins</span>
               </div>
-              <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>:</span>
+              <span style={{ fontSize: '1.2rem', fontWeight: 800 }}>:</span>
               <div>
-                <span style={{ fontSize: '1.2rem', fontWeight: 'bold', display: 'block' }}>
+                <span style={{ fontSize: '1.25rem', fontWeight: 800, display: 'block', lineHeight: 1 }}>
                   {String(timeLeft.seconds).padStart(2, '0')}
                 </span>
-                <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', opacity: 0.8 }}>Secs</span>
+                <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', opacity: 0.8, letterSpacing: '0.05em' }}>Secs</span>
               </div>
             </div>
           )}
 
-          {/* CTA Section */}
+          {/* CTA Form / Button */}
           {popup.ctaType === 'form' ? (
             leadSubmitted ? (
-              <div style={{ backgroundColor: '#ecfdf5', color: '#065f46', padding: '12px', borderRadius: '8px', textAlign: 'center', fontSize: '0.9rem', fontWeight: 'bold' }}>
+              <div style={{ backgroundColor: '#ecfdf5', color: '#065f46', padding: '14px', borderRadius: '10px', textAlign: 'center', fontSize: '0.9rem', fontWeight: 'bold' }}>
                 ✓ {popup.ctaSuccessMessage || 'Thank you! We will get in touch shortly.'}
               </div>
             ) : (
-              <form onSubmit={handleLeadSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <form onSubmit={handleLeadSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <input
                   type="text"
                   placeholder="Your Name (Optional)"
                   value={leadName}
                   onChange={(e) => setLeadName(e.target.value)}
-                  style={{ padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem' }}
+                  className="gt-popup-input"
+                  style={{
+                    backgroundColor: template === 'luxury-dark' ? '#1c1c1c' : isCircular ? 'rgba(255,255,255,0.1)' : '#ffffff',
+                    color: template === 'luxury-dark' || isCircular ? '#ffffff' : '#0f172a',
+                    borderColor: template === 'luxury-dark' ? '#333333' : isCircular ? 'rgba(255,255,255,0.2)' : '#cbd5e1'
+                  }}
                 />
                 <input
                   type="tel"
@@ -386,48 +321,49 @@ export default function PromotionalPopup() {
                   placeholder="Phone / WhatsApp Number *"
                   value={leadPhone}
                   onChange={(e) => setLeadPhone(e.target.value)}
-                  style={{ padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '0.9rem' }}
+                  className="gt-popup-input"
+                  style={{
+                    backgroundColor: template === 'luxury-dark' ? '#1c1c1c' : isCircular ? 'rgba(255,255,255,0.1)' : '#ffffff',
+                    color: template === 'luxury-dark' || isCircular ? '#ffffff' : '#0f172a',
+                    borderColor: template === 'luxury-dark' ? '#333333' : isCircular ? 'rgba(255,255,255,0.2)' : '#cbd5e1'
+                  }}
                 />
                 <button
                   type="submit"
                   disabled={submittingLead}
+                  className="gt-popup-btn"
                   style={{
-                    backgroundColor: popup.ctaBgColor || '#0f172a',
-                    color: popup.ctaTextColor || '#ffffff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    fontSize: '1rem',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    transition: 'opacity 0.2s'
+                    backgroundColor: popup.ctaBgColor || (template === 'luxury-dark' ? '#C9A96E' : isCircular ? '#ec4899' : '#0f172a'),
+                    color: popup.ctaTextColor || (template === 'luxury-dark' ? '#000000' : '#ffffff')
                   }}
                 >
-                  {submittingLead ? 'Submitting...' : (popup.ctaText || 'Submit')}
+                  {submittingLead ? 'Submitting...' : (popup.ctaText || 'Claim Offer Now')}
                 </button>
               </form>
             )
           ) : (
             <button
               onClick={handleCtaClick}
+              className="gt-popup-btn"
               style={{
-                backgroundColor: popup.ctaBgColor || '#0f172a',
-                color: popup.ctaTextColor || '#ffffff',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '12px 20px',
-                fontSize: '1rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                textAlign: 'center',
-                width: '100%',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                transition: 'transform 0.2s'
+                backgroundColor: popup.ctaBgColor || (template === 'luxury-dark' ? '#C9A96E' : isCircular ? '#ec4899' : '#0f172a'),
+                color: popup.ctaTextColor || (template === 'luxury-dark' ? '#000000' : '#ffffff')
               }}
             >
               {popup.ctaText || 'Claim Offer'} →
             </button>
           )}
+
+          {/* Subtle Trust Note */}
+          <p style={{
+            fontSize: '0.725rem',
+            textAlign: 'center',
+            margin: '0.75rem 0 0 0',
+            opacity: 0.65,
+            color: 'inherit'
+          }}>
+            🔒 Exclusive offer • No spam guarantee
+          </p>
         </div>
       </div>
     </div>
