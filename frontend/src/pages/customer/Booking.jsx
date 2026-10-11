@@ -779,7 +779,7 @@ export default function Booking() {
           promoDiscount: i === 0 ? promoDiscountAmt : 0,
           customerNote,
           advancePaid: appliedAdvance,
-          advancePaymentStatus: isCod === true ? 'COD' : 'Pending',
+          advancePaymentStatus: 'Pending',
           paymentReceiptUrl: isCod === true ? '' : paymentReceiptUrl
         };
 
@@ -796,7 +796,8 @@ export default function Booking() {
       toast.success(isCod === true ? 'Orders placed successfully!' : 'Orders placed successfully! Please complete your transfer.', { id: toastId });
       navigate('/dashboard');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to place order', { id: toastId });
+      const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Failed to place order';
+      toast.error(errorMsg, { id: toastId });
     } finally {
       setLoading(false);
     }

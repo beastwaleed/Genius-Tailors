@@ -59,7 +59,7 @@ const orderSchema = new mongoose.Schema({
   },
   advancePaymentStatus: {
     type: String,
-    enum: ['Pending', 'Paid', 'Failed'],
+    enum: ['Pending', 'Paid', 'Failed', 'COD'],
     default: 'Pending'
   },
   pointsEarned: { 
