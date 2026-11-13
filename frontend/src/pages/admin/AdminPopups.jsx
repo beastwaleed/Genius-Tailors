@@ -735,9 +735,9 @@ export default function AdminPopups() {
                   {previewDevice === 'mobile' ? (
                     hideMobileFrame ? (
                       /* Mobile View without frame */
-                      <div style={{ width: '100%', maxWidth: '375px', padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div className="gt-popup-mobile-preview" style={{ width: '100%', maxWidth: '375px', padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)' }}>
                         <div
-                          className={`gt-popup-card gt-popup-card--${selectedTemplate}`}
+                          className={`gt-popup-card gt-popup-card--${selectedTemplate} is-mobile-preview`}
                           style={{
                             backgroundColor: backgroundColor,
                             color: descriptionColor
@@ -821,6 +821,7 @@ export default function AdminPopups() {
 
                         {/* Screen Content Simulator */}
                         <div
+                          className="gt-popup-mobile-preview"
                           style={{
                             flex: 1,
                             overflowY: 'auto',
@@ -833,7 +834,7 @@ export default function AdminPopups() {
                           }}
                         >
                           <div
-                            className={`gt-popup-card gt-popup-card--${selectedTemplate}`}
+                            className={`gt-popup-card gt-popup-card--${selectedTemplate} is-mobile-preview`}
                             style={{
                               backgroundColor: backgroundColor,
                               color: descriptionColor
