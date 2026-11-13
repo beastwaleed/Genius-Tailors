@@ -2143,35 +2143,8 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // ==========================================
-// SERVERLESS EXPORT & LOCAL LISTENER
+// AI & ADDITIONAL ROUTES
 // ==========================================
-
-// 1. Export for Vercel Serverless
-module.exports = async (req, res) => {
-  try {
-    await connectDB();
-    return app(req, res);
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Database connection failed' });
-  }
-};
-
-// 2. Production Server Startup
-const PORT = process.env.PORT || 5000;
-
-// WhatsApp is initialized lazily on-demand via /whatsapp/qr to prevent startup crashes
-
-connectDB().then(() => {
-  if (process.env.NODE_ENV !== 'test') {
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  }
-}).catch((err) => {
-  console.error('Failed to connect to database', err);
-});
-
-
 
 // AI Chatbot Route
 app.post('/api/chat', async (req, res) => {
@@ -3298,9 +3271,7 @@ app.put('/api/admin/crm/users/:id/notes', protect, admin, async (req, res) => {
 
 connectDB().catch(err => console.error('MongoDB initial connection error:', err.message));
 
-if (require.main === module) {
-  const serverPort = process.env.PORT || 5000;
-  app.listen(serverPort, () => console.log(`Server running on port ${serverPort}`));
-}
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 module.exports = app;
