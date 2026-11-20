@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import toast from 'react-hot-toast';
@@ -42,6 +43,22 @@ export default function Login() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const { data } = await api.post('/api/auth/google', {
+        credential: credentialResponse.credential
+      });
+      login(data, data.token);
+      toast.success(`Welcome, ${data.name ? data.name.split(' ')[0] : 'Customer'}!`);
+    } catch (error) {
+      console.error('Google Sign-In Error:', error);
+      toast.error(error.response?.data?.message || 'Google Sign-In failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="auth-layout">
       {/* Visual Side */}
@@ -61,7 +78,25 @@ export default function Login() {
         <div className="auth-form-container">
           <Link to="/" className="auth-logo-mobile">GT</Link>
           <h1 className="text-heading-2" style={{ marginBottom: '0.5rem', color: 'var(--onyx)' }}>Welcome Back</h1>
-          <p className="text-subtitle" style={{ color: 'var(--stone)', marginBottom: '2.5rem' }}>Please enter your details to sign in.</p>
+          <p className="text-subtitle" style={{ color: 'var(--stone)', marginBottom: '1.75rem' }}>Please enter your details to sign in.</p>
+
+          {/* Quick Google Sign-In */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => toast.error('Google Sign-In was unsuccessful')}
+                theme="outline"
+                size="large"
+                shape="pill"
+                text="continue_with"
+                width="100%"
+              />
+            </div>
+            <div className="auth-divider">
+              <span>or sign in with email</span>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="form-layout">
             <div className="form-group">
@@ -163,6 +198,28 @@ export default function Login() {
         .auth-form-container {
           width: 100%;
           max-width: 420px;
+        }
+
+        .auth-divider {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          margin: 1.5rem 0 1.25rem 0;
+          color: #94a3b8;
+          font-size: 0.8rem;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .auth-divider span {
+          padding: 0 0.75rem;
         }
 
         @media (min-width: 1024px) {

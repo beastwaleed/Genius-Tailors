@@ -2,19 +2,23 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import { AuthProvider } from './context/AuthContext'
 import { HelmetProvider } from 'react-helmet-async';
 import App from './App.jsx'
 import './index.css'
 
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1041139294066-7e1g0d901m8gkn1vbu03katn5hu72auj.apps.googleusercontent.com';
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <HelmetProvider>
-          <App />
-        </HelmetProvider>
-        <Toaster
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <AuthProvider>
+          <HelmetProvider>
+            <App />
+          </HelmetProvider>
+          <Toaster
           position="top-right"
           toastOptions={{
             duration: 3500,
@@ -36,6 +40,7 @@ createRoot(document.getElementById('root')).render(
           }}
         />
       </AuthProvider>
-    </BrowserRouter>
+    </GoogleOAuthProvider>
+  </BrowserRouter>
   </StrictMode>,
 )

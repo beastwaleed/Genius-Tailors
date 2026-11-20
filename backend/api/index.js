@@ -1,4 +1,5 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { OAuth2Client } = require('google-auth-library');
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
@@ -472,6 +473,89 @@ app.post('/api/auth/login', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: 'Login failed', error: error.message });
+  }
+});
+
+// Google OAuth Sign-In & Sign-Up
+app.post('/api/auth/google', async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: 'Google credential token is required' });
+    }
+
+    const clientId = process.env.GOOGLE_CLIENT_ID || '1041139294066-7e1g0d901m8gkn1vbu03katn5hu72auj.apps.googleusercontent.com';
+    const client = new OAuth2Client(clientId);
+
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: clientId
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(400).json({ message: 'Unable to retrieve verified email from Google.' });
+    }
+
+    const { email, name, sub: googleId, picture } = payload;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user already exists by googleId or email
+    let user = await User.findOne({
+      $or: [{ googleId }, { email: normalizedEmail }]
+    });
+
+    let isNewUser = false;
+
+    if (user) {
+      let updated = false;
+      if (!user.googleId) {
+        user.googleId = googleId;
+        updated = true;
+      }
+      if (!user.avatar && picture) {
+        user.avatar = picture;
+        updated = true;
+      }
+      if (updated) {
+        await user.save();
+      }
+    } else {
+      isNewUser = true;
+      user = await User.create({
+        name: name || 'Google Customer',
+        email: normalizedEmail,
+        googleId,
+        authProvider: 'google',
+        avatar: picture || null,
+        role: 'Customer',
+        location: { country: 'Pakistan' }
+      });
+
+      // Send welcome email asynchronously
+      try {
+        await sendWelcomeEmail(user.email, user.name);
+      } catch (err) {
+        console.error('Welcome email failed:', err.message);
+      }
+    }
+
+    res.status(isNewUser ? 201 : 200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phone: user.phone || '',
+      location: user.location || { country: 'Pakistan' },
+      loyaltyPoints: user.loyaltyPoints || 0,
+      membershipLevel: user.membershipLevel || 'Bronze',
+      avatar: user.avatar || picture || null,
+      authProvider: user.authProvider || 'google',
+      token: generateToken(user._id)
+    });
+  } catch (error) {
+    console.error('Google Auth Error:', error);
+    res.status(401).json({ message: 'Google authentication failed', error: error.message });
   }
 });
 

@@ -61,7 +61,11 @@ export default function Navbar() {
                     className="nav-user-info"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                   >
-                    <span className="nav-avatar">{user?.name?.[0]?.toUpperCase()}</span>
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt={user.name} className="nav-avatar" style={{ objectFit: 'cover' }} />
+                    ) : (
+                      <span className="nav-avatar">{user?.name?.[0]?.toUpperCase()}</span>
+                    )}
                     <span className="nav-user-name">{user?.name?.split(' ')[0]}</span>
                     {!isAdmin && user?.membershipLevel && (
                       <span className={`badge badge-${user.membershipLevel.toLowerCase()}`}>
